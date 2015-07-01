@@ -1,0 +1,156 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 100px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.gameBoard {
+    border: 1px solid black; 
+}
+
+.gameSquare {
+    float: left; 
+    background-size: 100%;
+}
+
+.whiteEmpty {
+    background-image: url('/Content/Images/SquareWhite_Empty.jpg');
+}
+
+.blackEmpty {
+    background-image: url('/Content/Images/SquareBlack_Empty.jpg');
+}
+
+.possibleMove {
+     -webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
+      box-shadow:inset 0px 0px 0px 5px #ff0000;
+}
+
+.possibleMoveYellow {
+     -webkit-box-shadow:inset 0px 0px 0px 5px #00ff00; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #00ff00;
+      box-shadow:inset 0px 0px 0px 5px #00ff00;
+}
+
+.blackEmpty {
+    background-color: #000000;
+}
+
+.whiteEmpty {
+    background-color: #ffffff;
+}
+
+.blackEmpty {
+    background-color: #000000;
+}
+
+.black_B_on_white {
+    background-image: url('/Content/Images/SquareBlack_B_on_White.jpg');
+}
+
+.black_B_on_black {
+    background-image: url('/Content/Images/SquareBlack_B_on_Black.jpg');
+}
+
+.black_K_on_white {
+    background-image: url('/Content/Images/SquareBlack_K_on_White.jpg');
+}
+
+.black_K_on_black {
+    background-image: url('/Content/Images/SquareBlack_K_on_Black.jpg');
+}
+
+.black_N_on_white {
+    background-image: url('/Content/Images/SquareBlack_N_on_White.jpg');
+}
+
+.black_N_on_black {
+    background-image: url('/Content/Images/SquareBlack_N_on_Black.jpg');
+}
+
+.black_P_on_white {
+    background-image: url('/Content/Images/SquareBlack_P_on_White.jpg');
+}
+
+.black_P_on_black {
+    background-image: url('/Content/Images/SquareBlack_P_on_Black.jpg');
+}
+
+.black_Q_on_white {
+    background-image: url('/Content/Images/SquareBlack_Q_on_White.jpg');
+}
+
+.black_Q_on_black {
+    background-image: url('/Content/Images/SquareBlack_Q_on_Black.jpg');
+}
+
+.black_R_on_white {
+    background-image: url('/Content/Images/SquareBlack_R_on_White.jpg');
+}
+
+.black_R_on_black {
+    background-image: url('/Content/Images/SquareBlack_R_on_Black.jpg');
+}
+
+
+
+.white_B_on_white {
+    background-image: url('/Content/Images/SquareWhite_B_on_White.jpg');
+}
+
+.white_B_on_black {
+    background-image: url('/Content/Images/SquareWhite_B_on_Black.jpg');
+}
+
+.white_K_on_white {
+    background-image: url('/Content/Images/SquareWhite_K_on_White.jpg');
+}
+
+.white_K_on_black {
+    background-image: url('/Content/Images/SquareWhite_K_on_Black.jpg');
+}
+
+.white_N_on_white {
+    background-image: url('/Content/Images/SquareWhite_N_on_White.jpg');
+}
+
+.white_N_on_black {
+    background-image: url('/Content/Images/SquareWhite_N_on_Black.jpg');
+}
+
+.white_P_on_white {
+    background-image: url('/Content/Images/SquareWhite_P_on_White.jpg');
+}
+
+.white_P_on_black {
+    background-image: url('/Content/Images/SquareWhite_P_on_Black.jpg');
+}
+
+.white_Q_on_white {
+    background-image: url('/Content/Images/SquareWhite_Q_on_White.jpg');
+}
+
+.white_Q_on_black {
+    background-image: url('/Content/Images/SquareWhite_Q_on_Black.jpg');
+}
+
+.white_R_on_white {
+    background-image: url('/Content/Images/SquareWhite_R_on_White.jpg');
+}
+
+.white_R_on_black {
+    background-image: url('/Content/Images/SquareWhite_R_on_Black.jpg');
+}
