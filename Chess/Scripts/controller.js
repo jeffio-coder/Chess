@@ -55,19 +55,22 @@ $(document).ready(function () {
 });
 
 function showPossibleMoves(id) {
-    var squareAllProperties = utilities.getAllSquareProperties(0, 0, id);
+    
+    var squareAllProperties = common.getAllSquareProperties(common.getRankAndFileFileFromId(id).rank, common.getRankAndFileFileFromId(id).file);
 
     if (squareAllProperties.pieceId !== '')
         view.actionShowPossibleMoves(squareAllProperties);
 };
 
 function clearSquaresMarkedForMove() {
+
     view.actionClearSquaresMarkedForMove();
-    model.possibleMoves = [];
+    model.possibleMovesModel = [];
     view.actionPaintBoardFromModel(playerColor());
 };
 
 function playerColor() {
+
     if ((playerMoveNumber % 2) === 0)
         return 'white';
     else

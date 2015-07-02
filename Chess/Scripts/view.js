@@ -65,7 +65,7 @@
         sqaureBlocked: 'blocked',
         sqaureCapturable: 'capturable',
         sqaureOpen: 'open',
-        squareAllProperties: [],
+        squareAllProperties: {},
 
         possibleMovesForPawn: function () {
 
@@ -96,12 +96,12 @@
                 rank + direction >= 1 &&
                 rank + direction <= 8) {
 
-                var enPassantquareAllPropertiesLeft = utilities.getAllSquareProperties(rank, file + this.left);
+                var enPassantquareAllPropertiesLeft = common.getAllSquareProperties(rank, file + this.left);
 
                 if (enPassantquareAllPropertiesLeft.pieceEnPassant &&
                     this.squareStatus(rank + direction, file + this.left, this.squareAllProperties.pieceColor) === this.sqaureOpen) {
 
-                    model.possibleMoves.push((rank + direction).toString() + (file + this.left).toString());
+                    model.possibleMovesModel.push((rank + direction).toString() + (file + this.left).toString());
                 }
             }
 
@@ -110,12 +110,12 @@
                 rank + direction >= 1 &&
                 rank + direction <= 8) {
 
-                var enPassantquareAllPropertiesRight = utilities.getAllSquareProperties(rank, file + this.right);
+                var enPassantquareAllPropertiesRight = common.getAllSquareProperties(rank, file + this.right);
 
                 if (enPassantquareAllPropertiesRight.pieceEnPassant &&
                     this.squareStatus(rank + direction, file + this.right, this.squareAllProperties.pieceColor) === this.sqaureOpen) {
 
-                    model.possibleMoves.push((rank + direction).toString() + (file + this.right).toString());
+                    model.possibleMovesModel.push((rank + direction).toString() + (file + this.right).toString());
                 }
             }
         },
@@ -175,10 +175,10 @@
                     case this.sqaureBlocked:
                         return;
                     case this.sqaureCapturable:
-                        model.possibleMoves.push(rank.toString() + file.toString());
+                        model.possibleMovesModel.push(rank.toString() + file.toString());
                         return;
                     case this.sqaureOpen:
-                        model.possibleMoves.push(rank.toString() + file.toString());
+                        model.possibleMovesModel.push(rank.toString() + file.toString());
                 }
                 rank += rankDirection;
                 file += fileDirection;
@@ -197,10 +197,10 @@
                     case this.sqaureBlocked:
                         return;
                     case this.sqaureCapturable:
-                        model.possibleMoves.push(rank.toString() + this.squareAllProperties.squareFile.toString());
+                        model.possibleMovesModel.push(rank.toString() + this.squareAllProperties.squareFile.toString());
                         return;
                     case this.sqaureOpen:
-                        model.possibleMoves.push(rank.toString() + this.squareAllProperties.squareFile.toString());
+                        model.possibleMovesModel.push(rank.toString() + this.squareAllProperties.squareFile.toString());
                 }
                 rank += direction;
             }
@@ -218,10 +218,10 @@
                     case this.sqaureBlocked:
                         return;
                     case this.sqaureCapturable:
-                        model.possibleMoves.push(this.squareAllProperties.squareRank.toString() + file.toString());
+                        model.possibleMovesModel.push(this.squareAllProperties.squareRank.toString() + file.toString());
                         return;
                     case this.sqaureOpen:
-                        model.possibleMoves.push(this.squareAllProperties.squareRank.toString() + file.toString());
+                        model.possibleMovesModel.push(this.squareAllProperties.squareRank.toString() + file.toString());
                 }
                 file += direction;
             }
@@ -237,7 +237,7 @@
                 (this.squareStatus(verticalMove, horitonalMove, this.squareAllProperties.pieceColor) === this.sqaureCapturable ||
                 this.squareStatus(verticalMove, horitonalMove, this.squareAllProperties.pieceColor) === this.sqaureOpen)) {
 
-                model.possibleMoves.push(verticalMove.toString() + horitonalMove.toString());
+                model.possibleMovesModel.push(verticalMove.toString() + horitonalMove.toString());
             }
         },
 
@@ -248,13 +248,13 @@
                 file <= 8 &&
                 this.squareStatus(rank, file, this.squareAllProperties.pieceColor) === squareStatus) {
 
-                model.possibleMoves.push(rank.toString() + file.toString());
+                model.possibleMovesModel.push(rank.toString() + file.toString());
             }
 
         },
 
         squareStatus: function (rank, file, movingPieceColor) {
-            var targetSquareProperties = utilities.getAllSquareProperties(rank, file);
+            var targetSquareProperties = common.getAllSquareProperties(rank, file);
 
             if (targetSquareProperties.pieceId === '')
                 return this.sqaureOpen;
@@ -281,7 +281,7 @@
 
         getClass: function (rank, file) {
 
-            var squareAllProperties = utilities.getAllSquareProperties(rank, file);
+            var squareAllProperties = common.getAllSquareProperties(rank, file);
 
             if (squareAllProperties.pieceId === '')
                 return squareAllProperties.squareColor + 'Empty';
@@ -300,15 +300,15 @@
 
         markSquaresAsPossibleMove: function () {
 
-            for (var loopIndex = 0; loopIndex < model.possibleMoves.length; loopIndex++) {
-                $('#' + model.possibleMoves[loopIndex]).addClass('possibleMove');
+            for (var loopIndex = 0; loopIndex < model.possibleMovesModel.length; loopIndex++) {
+                $('#' + model.possibleMovesModel[loopIndex]).addClass('possibleMove');
             }
         },
 
         unmarkSquaresAsPossibleMove: function () {
 
-            for (var loopIndex = 0; loopIndex < model.possibleMoves.length; loopIndex++) {
-                $('#' + model.possibleMoves[loopIndex]).removeClass('possibleMove');
+            for (var loopIndex = 0; loopIndex < model.possibleMovesModel.length; loopIndex++) {
+                $('#' + model.possibleMovesModel[loopIndex]).removeClass('possibleMove');
             }
         }
     }
