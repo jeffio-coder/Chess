@@ -26,11 +26,11 @@ textarea {
 }
 
 .whiteEmpty {
-    background-image: url('/Content/Images/SquareWhite_Empty.jpg');
+    background-color: #eddead;
 }
 
 .blackEmpty {
-    background-image: url('/Content/Images/SquareBlack_Empty.jpg');
+    background-color: #a07241;
 }
 
 .possibleMove {
@@ -45,112 +45,124 @@ textarea {
       box-shadow:inset 0px 0px 0px 5px #00ff00;
 }
 
-.blackEmpty {
-    background-color: #000000;
-}
-
-.whiteEmpty {
-    background-color: #ffffff;
-}
-
-.blackEmpty {
-    background-color: #000000;
-}
-
 .black_B_on_white {
-    background-image: url('/Content/Images/SquareBlack_B_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackBishop.png');
 }
 
 .black_B_on_black {
-    background-image: url('/Content/Images/SquareBlack_B_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackBishop.png');
 }
 
 .black_K_on_white {
-    background-image: url('/Content/Images/SquareBlack_K_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackKing.png');
 }
 
 .black_K_on_black {
-    background-image: url('/Content/Images/SquareBlack_K_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackKing.png');
 }
 
 .black_N_on_white {
-    background-image: url('/Content/Images/SquareBlack_N_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackKnight.png');
 }
 
 .black_N_on_black {
-    background-image: url('/Content/Images/SquareBlack_N_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackKnight.png');
 }
 
 .black_P_on_white {
-    background-image: url('/Content/Images/SquareBlack_P_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackPawn.png');
 }
 
 .black_P_on_black {
-    background-image: url('/Content/Images/SquareBlack_P_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackPawn.png');
 }
 
 .black_Q_on_white {
-    background-image: url('/Content/Images/SquareBlack_Q_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackQueen.png');
 }
 
 .black_Q_on_black {
-    background-image: url('/Content/Images/SquareBlack_Q_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackQueen.png');
 }
 
 .black_R_on_white {
-    background-image: url('/Content/Images/SquareBlack_R_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackRook.png');
 }
 
 .black_R_on_black {
-    background-image: url('/Content/Images/SquareBlack_R_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackRook.png');
 }
 
 
 
 .white_B_on_white {
-    background-image: url('/Content/Images/SquareWhite_B_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteBishop.png');
 }
 
 .white_B_on_black {
-    background-image: url('/Content/Images/SquareWhite_B_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteBishop.png');
 }
 
 .white_K_on_white {
-    background-image: url('/Content/Images/SquareWhite_K_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteKing.png');
 }
 
 .white_K_on_black {
-    background-image: url('/Content/Images/SquareWhite_K_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteKing.png');
 }
 
 .white_N_on_white {
-    background-image: url('/Content/Images/SquareWhite_N_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteKnight.png');
 }
 
 .white_N_on_black {
-    background-image: url('/Content/Images/SquareWhite_N_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteKnight.png');
 }
 
 .white_P_on_white {
-    background-image: url('/Content/Images/SquareWhite_P_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhitePawn.png');
 }
 
 .white_P_on_black {
-    background-image: url('/Content/Images/SquareWhite_P_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhitePawn.png');
 }
 
 .white_Q_on_white {
-    background-image: url('/Content/Images/SquareWhite_Q_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteQueen.png');
 }
 
 .white_Q_on_black {
-    background-image: url('/Content/Images/SquareWhite_Q_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteQueen.png');
 }
 
 .white_R_on_white {
-    background-image: url('/Content/Images/SquareWhite_R_on_White.jpg');
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteRook.png');
 }
 
 .white_R_on_black {
-    background-image: url('/Content/Images/SquareWhite_R_on_Black.jpg');
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteRook.png');
 }
