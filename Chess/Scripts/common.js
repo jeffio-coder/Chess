@@ -1,4 +1,6 @@
 ﻿var common = {
+    
+    squareDimension: 0,
 
     getAllSquareProperties: function (rank, file) {
 
@@ -24,9 +26,5 @@
         }
 
         return squareAllProperties;
-    },
-
-    getRankAndFileFileFromId: function(id) {
-        return { 'rank': parseInt(id.substring(0, 1)), 'file': parseInt(id.substring(1, 2)) };
     }
 }
