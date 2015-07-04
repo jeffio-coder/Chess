@@ -1,7 +1,8 @@
 ﻿var model = {
     squaresModel: {},
     piecesModel: {},
-    possibleMovesModel: [],
+    possibleMovesModel: {},
+    mouseDown: {},
 
     getSquaresModel: function() {
         return {
@@ -44,7 +45,7 @@
             '41': { 'color': 'white', 'piece': '' },
             '42': { 'color': 'black', 'piece': '' },
             '43': { 'color': 'white', 'piece': '' },
-            '44': { 'color': 'black', 'piece': '' },
+            '44': { 'color': 'black', 'piece': 'WQ1' },
             '45': { 'color': 'white', 'piece': '' },
             '46': { 'color': 'black', 'piece': '' },
             '47': { 'color': 'white', 'piece': '' },
@@ -71,7 +72,7 @@
             '11': { 'color': 'black', 'piece': 'WQR' },
             '12': { 'color': 'white', 'piece': 'WQN' },
             '13': { 'color': 'black', 'piece': 'WQB' },
-            '14': { 'color': 'white', 'piece': 'WQ1' },
+            '14': { 'color': 'white', 'piece': '' },
             '15': { 'color': 'black', 'piece': 'WK' },
             '16': { 'color': 'white', 'piece': 'WKB' },
             '17': { 'color': 'black', 'piece': 'WKN' },
@@ -116,5 +117,9 @@
             'BP8': { 'pieceType': 'P', 'color': 'black', 'hasMoved': false }
         };
 
+    },
+
+    addToPossibleMoves: function(rank, file) {
+        model.possibleMovesModel[rank.toString() + file.toString()] = '';
     }
 }

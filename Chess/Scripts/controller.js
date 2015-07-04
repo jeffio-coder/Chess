@@ -6,19 +6,25 @@
 
 // ToDo
 //
-// on mouse down check color
-// Drop
+// stop ??????????????????
+// filters
+// captures
 // Update model
 // Switch colors
 // Clear en passant
 // Redraw
+// IIS
 //
-// Refactor/Document
 // castle
-// captures
 // en passant capture
 // Promote
 // check for check
+// Fen
+// Unit tests; QUnit, Jasmine
+// Error Handling
+// Refactor/Document
+
+//ui-widget-content
 
 var playerMoveNumber = 0;
 
@@ -27,7 +33,7 @@ $(document).ready(function () {
     controller.maxDimension = window.innerHeight < window.innerWidth ? innerHeight : innerWidth;
 
     // Make the maxDimension two thirds of the page.
-    controller.maxDimension = Math.floor(controller.maxDimension * 0.66666);
+    controller.maxDimension = Math.floor(controller.maxDimension * (2 / 3));
 
     // Make the maxDimension divisible by 8.
     controller.maxDimension += 8 - (controller.maxDimension % 8);
@@ -37,36 +43,70 @@ $(document).ready(function () {
     $('#mainBoard').width(controller.maxDimension);
     $('#mainBoard').height(controller.maxDimension);
 
-
     model.squaresModel = model.getSquaresModel();
     model.piecesModel = model.getPiecesModel();
 
+    $('#draggable').draggable();
+
     $('#mainBoard').html(view.actionPaintBoardFromModel(playerColor()));
+
+    for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
+        
+        for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
+
+            var allProperties = common.getAllSquareProperties(rankIndex, fileIndex);
+
+            if (allProperties.pieceId !== '') {
+                
+                $('#' + allProperties.squareId).draggable({
+                    revert: function (droppableObject) {
+                        if (droppableObject && droppableObject[0] && droppableObject[0].id) {
+                            view.actionClearSquaresMarkedForMove();
+                            clearSquaresMarkedForMove(droppableObject[0].id);
+                        }
+                        return true;
+                    },
+                    revertDuration: 0,
+                    snapTolerance: 0,
+                    helper: 'clone'
+                });
+            }
+
+            $('#' + allProperties.squareId).droppable();
+        }
+    }
+
 
     $('.gameSquare').mousedown(function (event) {
 
-        if (event.which === 1)
-            showPossibleMoves(this.id);
+        if (event.which === 1) {
+
+            model.mouseDown.squareAllProperties = common.getAllSquareProperties(common.getRankAndFileFileFromId(this.id).rank, common.getRankAndFileFileFromId(this.id).file);
+            $('#' + model.mouseDown.squareAllProperties.squareId).addClass('squareMoving');
+
+            if (model.mouseDown.squareAllProperties.pieceColor === playerColor()) 
+                handleMouseDown();
+        }
     });
 
     $('.gameSquare').mouseup(function (event) {
-        clearSquaresMarkedForMove();
+        view.actionClearSquaresMarkedForMove();
     });
 });
 
-function showPossibleMoves(id) {
+function handleMouseDown() {
     
-    var squareAllProperties = common.getAllSquareProperties(common.getRankAndFileFileFromId(id).rank, common.getRankAndFileFileFromId(id).file);
-
-    if (squareAllProperties.pieceId !== '')
-        view.actionShowPossibleMoves(squareAllProperties);
+    if (model.mouseDown.squareAllProperties.pieceId !== '')
+        view.actionShowPossibleMoves();
 };
 
-function clearSquaresMarkedForMove() {
+function clearSquaresMarkedForMove(id) {
 
-    view.actionClearSquaresMarkedForMove();
-    model.possibleMovesModel = [];
-    view.actionPaintBoardFromModel(playerColor());
+    if (id) {
+        
+        model.possibleMovesModel = {};
+        view.actionPaintBoardFromModel(playerColor());
+    }
 };
 
 function playerColor() {

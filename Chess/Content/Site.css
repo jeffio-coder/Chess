@@ -33,10 +33,17 @@ textarea {
     background-color: #a07241;
 }
 
+.squareMoving {
+    -webkit-filter: grayscale(1);
+}
+
 .possibleMove {
+    -webkit-filter: sepia(1);
+    /*
      -webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
      -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
       box-shadow:inset 0px 0px 0px 5px #ff0000;
+    */
 }
 
 .possibleMoveYellow {
