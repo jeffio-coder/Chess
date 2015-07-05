@@ -1,24 +1,40 @@
 ﻿var view = {
-
-    actionPaintBoardFromModel: function () {
-
-        var sb = '';
+    actionPaintBoardFromModel: function() {
 
         for (var rankIndex = 8; rankIndex >= 1; rankIndex--) {
 
-            sb += '<div id=\'R' + rankIndex.toString() + '\'>\n';
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
-                sb += '<div id=\'' + rankIndex.toString() + fileIndex.toString() + '\' ';
-                sb += 'class=\'gameSquare ' + view.utils.getClassNameFromSquareModel(rankIndex, fileIndex) + ' \' ';
-                sb += 'style=\'' + view.utils.getHeightWidthStyles() + '\' ';
-                sb += '></div>\n';
+                id = rankIndex.toString() + fileIndex.toString();
+
+                $('#' + id).removeClass();
+                $('#' + id).removeAttr('style');
+
+                $('#' + id).width(common.squareDimension);
+                $('#' + id).height(common.squareDimension);
+                $('#' + id).addClass('gameSquare ' + view.utils.getClassNameFromSquareModel(rankIndex, fileIndex));
+                $('#' + id).droppable();
+
+                if (model.squaresModel[id].piece !== '')
+                    view.utils.setDraggable(id);
             }
-            sb += '<br />\n';
-            sb += '</div>\n';
         }
 
-        return sb;
+
+        $('[id^=capturePiece]').removeClass();
+        var counterTop = 0;
+        var counterBottom = 0;
+
+        Object.keys(model.piecesModel).forEach(function (key) {
+
+            if (model.piecesModel[key].captured) {
+
+                if (common.colorCurrentlyPlaying() === model.piecesModel[key].color)  // The captured piece should go on the top because the color playing is at the bottom.
+                    $('#capturePieceTop' + (++counterTop).toString()).addClass(model.piecesModel[key].color + '_' + model.piecesModel[key].pieceType);
+                else 
+                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(model.piecesModel[key].color + '_' + model.piecesModel[key].pieceType);
+            }
+        });
     },
 
     actionShowPossibleMoves: function () {
@@ -50,13 +66,12 @@
 
         view.utils.unmarkSquaresAsPossibleMove();
 
-        if (model.mouseDownModel.squareAllProperties !== {}) {
+        if (model.mouseDownModel.squareAllProperties !== {} && model.mouseDownModel.squareAllProperties.squareId) {
             
             $('#' + model.mouseDownModel.squareAllProperties.squareId).removeClass('squareMoving');
         }
     },
 
-    //// Good candidate for it's own file ///////////////////////////////
     possibleMoves: {
 
         forward: 1,
@@ -69,53 +84,44 @@
 
         possibleMovesForPawn: function () {
 
-            // direction will be 1 (move forward) if the piece is white. It will be -1 if the piece is black.
-            var direction = model.mouseDownModel.squareAllProperties.pieceColor === 'white' ? this.forward : this.backward;
-
             var rank = model.mouseDownModel.squareAllProperties.squareRank;
             var file = model.mouseDownModel.squareAllProperties.squareFile;
 
             // Move one vertical.
-            this.pawnMoves(rank + direction, file, this.sqaureOpen);
+            this.pawnMoves(rank + this.forward, file, this.sqaureOpen);
 
             // Move two vertical.
             if (!model.mouseDownModel.squareAllProperties.pieceHasMoved &&
-                rank + direction >= 1 &&
-                rank + direction <= 8 &&
-                this.squareStatus(rank + direction, file, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
+                this.squareStatus(rank + this.forward, file, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
 
-                this.pawnMoves(rank + (direction * 2), file, this.sqaureOpen);
+                this.pawnMoves(rank + (this.forward * 2), file, this.sqaureOpen, true);
             }
 
             // Capture on the diagonals.
-            this.pawnMoves(rank + direction, file + this.left, this.sqaureCapturable);
-            this.pawnMoves(rank + direction, file + this.right, this.sqaureCapturable);
+            this.pawnMoves(rank + this.forward, file + this.left, this.sqaureCapturable);
+            this.pawnMoves(rank + this.forward, file + this.right, this.sqaureCapturable);
 
             // Capture en passant left.
-            if (file + this.left >= 1 &&
-                rank + direction >= 1 &&
-                rank + direction <= 8) {
+            if (file + this.left >= 1) {
 
-                var enPassantquareAllPropertiesLeft = common.getAllSquareProperties(rank, file + this.left);
+                var enPassantSquareAllPropertiesLeft = common.getAllSquareProperties(rank, file + this.left);
 
-                if (enPassantquareAllPropertiesLeft.pieceEnPassant &&
-                    this.squareStatus(rank + direction, file + this.left, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
+                if (enPassantSquareAllPropertiesLeft.pieceEnPassantEligible &&
+                    this.squareStatus(rank + this.forward, file + this.left, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
 
-                    this.addToPossibleMoves(rank + direction,  file + this.left);
+                    this.addToPossibleMoves(rank + this.forward, file + this.left);
                 }
             }
 
             // Capture en passant right.
-            if (file + this.right <= 8 &&
-                rank + direction >= 1 &&
-                rank + direction <= 8) {
+            if (file + this.right <= 8) {
 
-                var enPassantquareAllPropertiesRight = common.getAllSquareProperties(rank, file + this.right);
+                var enPassantSquareAllPropertiesRight = common.getAllSquareProperties(rank, file + this.right);
 
-                if (enPassantquareAllPropertiesRight.pieceEnPassant &&
-                    this.squareStatus(rank + direction, file + this.right, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
+                if (enPassantSquareAllPropertiesRight.pieceEnPassantEligible &&
+                    this.squareStatus(rank + this.forward, file + this.right, model.mouseDownModel.squareAllProperties.pieceColor) === this.sqaureOpen) {
 
-                    this.addToPossibleMoves(rank + direction, file + this.right);
+                    this.addToPossibleMoves(rank + this.forward, file + this.right);
                 }
             }
         },
@@ -241,14 +247,14 @@
             }
         },
 
-        pawnMoves: function (rank, file, squareStatus) {
+        pawnMoves: function (rank, file, squareStatus, willBeEnPassantEligible) {
             if (rank >= 1 &&
                 rank <= 8 &&
                 file >= 1 &&
                 file <= 8 &&
                 this.squareStatus(rank, file, model.mouseDownModel.squareAllProperties.pieceColor) === squareStatus) {
 
-                this.addToPossibleMoves(rank, file);
+                this.addToPossibleMoves(rank, file, willBeEnPassantEligible);
             }
 
         },
@@ -276,8 +282,8 @@
                 return 1;
         },
 
-        addToPossibleMoves: function(rank, file) {
-            model.possibleMovesModel[rank.toString() + file.toString()] = '';
+        addToPossibleMoves: function (rank, file, willBeEnPassantEligible) {
+            model.possibleMovesModel[rank.toString() + file.toString()] = { willBeEnPassantEligible: willBeEnPassantEligible ? true : false };
         }
 },
 
@@ -293,8 +299,19 @@
                 return squareAllProperties.pieceColor + '_' + squareAllProperties.pieceType + '_on_' + squareAllProperties.squareColor;
         },
 
-        getHeightWidthStyles: function () {
-            return 'width:' + common.squareDimension.toString() + 'px; height:' + common.squareDimension.toString() + 'px; ';
+        setDraggable: function (id) {
+
+            $('#' + id).draggable({
+                revert: function (droppableObject) {
+                    if (droppableObject && droppableObject[0] && droppableObject[0].id) {
+                        board.handlePostDrag(droppableObject[0].id);
+                    }
+                    view.actionClearSquaresMarkedForMove();
+                    return true;
+                },
+                revertDuration: 0,
+                helper: 'clone'
+            });
         },
 
         compareIntValuesForOrder: function (first, second, direction) {
@@ -311,7 +328,7 @@
 
         unmarkSquaresAsPossibleMove: function () {
 
-            $.each(model.possibleMovesModel, function (key, value) {
+            Object.keys(model.possibleMovesModel).forEach(function (key) {
                 $('#' + key).removeClass('possibleMove');
             });
         }

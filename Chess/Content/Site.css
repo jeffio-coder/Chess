@@ -21,7 +21,7 @@ textarea {
 }
 
 .gameSquare {
-    float: left; 
+    float: left;
     background-size: 100%;
 }
 
@@ -52,124 +52,214 @@ textarea {
       box-shadow:inset 0px 0px 0px 5px #00ff00;
 }
 
-.black_B_on_white {
+/************************ white-on-white *********************************************************/
+.white_R_on_white {
     background-color: #eddead;
-    background-image: url('/Content/Images/BlackBishop.png');
-}
-
-.black_B_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackBishop.png');
-}
-
-.black_K_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/BlackKing.png');
-}
-
-.black_K_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackKing.png');
-}
-
-.black_N_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/BlackKnight.png');
-}
-
-.black_N_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackKnight.png');
-}
-
-.black_P_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/BlackPawn.png');
-}
-
-.black_P_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackPawn.png');
-}
-
-.black_Q_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/BlackQueen.png');
-}
-
-.black_Q_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackQueen.png');
-}
-
-.black_R_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/BlackRook.png');
-}
-
-.black_R_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/BlackRook.png');
-}
-
-
-
-.white_B_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/WhiteBishop.png');
-}
-
-.white_B_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/WhiteBishop.png');
-}
-
-.white_K_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/WhiteKing.png');
-}
-
-.white_K_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/WhiteKing.png');
+    background-image: url('/Content/Images/WhiteRook.png');
+    background-size: contain;
 }
 
 .white_N_on_white {
     background-color: #eddead;
     background-image: url('/Content/Images/WhiteKnight.png');
+    background-size: contain;
 }
 
-.white_N_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/WhiteKnight.png');
-}
-
-.white_P_on_white {
+.white_B_on_white {
     background-color: #eddead;
-    background-image: url('/Content/Images/WhitePawn.png');
-}
-
-.white_P_on_black {
-    background-color: #a07241;
-    background-image: url('/Content/Images/WhitePawn.png');
+    background-image: url('/Content/Images/WhiteBishop.png');
+    background-size: contain;
 }
 
 .white_Q_on_white {
     background-color: #eddead;
     background-image: url('/Content/Images/WhiteQueen.png');
+    background-size: contain;
+}
+
+.white_K_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhiteKing.png');
+    background-size: contain;
+}
+
+.white_P_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/WhitePawn.png');
+    background-size: contain;
+}
+
+/************************ white-on-black *********************************************************/
+.white_R_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteRook.png');
+    background-size: contain;
+}
+
+.white_N_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteKnight.png');
+    background-size: contain;
+}
+
+.white_B_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhiteBishop.png');
+    background-size: contain;
 }
 
 .white_Q_on_black {
     background-color: #a07241;
     background-image: url('/Content/Images/WhiteQueen.png');
+    background-size: contain;
 }
 
-.white_R_on_white {
-    background-color: #eddead;
-    background-image: url('/Content/Images/WhiteRook.png');
-}
-
-.white_R_on_black {
+.white_K_on_black {
     background-color: #a07241;
-    background-image: url('/Content/Images/WhiteRook.png');
+    background-image: url('/Content/Images/WhiteKing.png');
+    background-size: contain;
 }
+
+.white_P_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/WhitePawn.png');
+    background-size: contain;
+}
+
+/************************ black-on-white *********************************************************/
+.black_R_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackRook.png');
+    background-size: contain;
+}
+
+
+.black_N_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackKnight.png');
+    background-size: contain;
+}
+
+.black_B_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackBishop.png');
+    background-size: contain;
+}
+
+.black_Q_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackQueen.png');
+    background-size: contain;
+}
+
+.black_K_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackKing.png');
+    background-size: contain;
+}
+
+.black_P_on_white {
+    background-color: #eddead;
+    background-image: url('/Content/Images/BlackPawn.png');
+    background-size: contain;
+}
+
+/************************ black-on-black *********************************************************/
+.black_R_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackRook.png');
+    background-size: contain;
+}
+
+.black_N_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackKnight.png');
+    background-size: contain;
+}
+
+.black_B_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackBishop.png');
+    background-size: contain;
+}
+
+.black_Q_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackQueen.png');
+    background-size: contain;
+}
+
+.black_K_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackKing.png');
+    background-size: contain;
+}
+
+.black_P_on_black {
+    background-color: #a07241;
+    background-image: url('/Content/Images/BlackPawn.png');
+    background-size: contain;
+}
+
+/************************  captured white *********************************************************/
+.white_R {
+    background-image: url('/Content/Images/WhiteRook.png');
+    background-size: contain;
+}
+
+.white_N {
+    background-image: url('/Content/Images/WhiteKnight.png');
+    background-size: contain;
+}
+
+.white_B {
+    background-image: url('/Content/Images/WhiteBishop.png');
+    background-size: contain;
+}
+
+.white_Q {
+    background-image: url('/Content/Images/WhiteQueen.png');
+    background-size: contain;
+}
+
+.white_K {
+    background-image: url('/Content/Images/WhiteKing.png');
+    background-size: contain;
+}
+
+.white_P {
+    background-image: url('/Content/Images/WhitePawn.png');
+    background-size: contain;
+}
+
+/************************  captured black *********************************************************/
+.black_R {
+    background-image: url('/Content/Images/BlackRook.png');
+    background-size: contain;
+}
+
+.black_N {
+    background-image: url('/Content/Images/BlackKnight.png');
+    background-size: contain;
+}
+
+.black_B {
+    background-image: url('/Content/Images/BlackBishop.png');
+    background-size: contain;
+}
+
+.black_Q {
+    background-image: url('/Content/Images/BlackQueen.png');
+    background-size: contain;
+}
+
+.black_K {
+    background-image: url('/Content/Images/BlackKing.png');
+    background-size: contain;
+}
+
+.black_P {
+    background-image: url('/Content/Images/BlackPawn.png');
+    background-size: contain;
+}
+
