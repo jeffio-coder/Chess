@@ -69,6 +69,7 @@ var board = {
         if (event.which === 1) {
 
             model.mouseDownModel.squareAllProperties = common.getAllSquareProperties(utils.getRankAndFileFileFromId(div.id).rank, utils.getRankAndFileFileFromId(div.id).file);
+
             $('#' + div.id).addClass('squareMoving');
 
             if (model.mouseDownModel.squareAllProperties.pieceColor === common.colorCurrentlyPlaying() &&
@@ -272,35 +273,6 @@ var utils = {
             'BP7': { 'pieceType': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false },
             'BP8': { 'pieceType': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false }
         };
-    },
-
-    setDragAndDroppable: function () {
-
-        for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
-
-            for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
-
-                var allProperties = common.getAllSquareProperties(rankIndex, fileIndex);
-
-                if (allProperties.pieceId !== '') {
-
-                    $('#' + allProperties.squareId).draggable({
-                        revert: function (droppableObject) {
-                            if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                                board.handlePostDrag(droppableObject[0].id);
-                            }
-                            view.actionClearSquaresMarkedForMove();
-                            return true;
-                        },
-                        revertDuration: 0,
-                        helper: 'clone'
-                    });
-                }
-
-                $('#' + allProperties.squareId).droppable();
-            }
-        }
-
     },
 
     reverseSquaresModelForPlayerColor: function () {
