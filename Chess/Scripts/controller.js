@@ -1,12 +1,11 @@
 ﻿// ToDo
 //
-// en passant capture
+// castle
+// check for check
 //
 // filters
 //
-// castle
 // Promote
-// check for check
 // 
 // Unit tests; QUnit, Jasmine
 // Error Handling
@@ -72,8 +71,32 @@ var board = {
             model.mouseDownModel.squareAllProperties = common.getAllSquareProperties(utils.getRankAndFileFileFromId(div.id).rank, utils.getRankAndFileFileFromId(div.id).file);
             $('#' + div.id).addClass('squareMoving');
 
-            if (model.mouseDownModel.squareAllProperties.pieceColor === common.colorCurrentlyPlaying() && model.mouseDownModel.squareAllProperties.pieceId !== '')
+            if (model.mouseDownModel.squareAllProperties.pieceColor === common.colorCurrentlyPlaying() &&
+                model.mouseDownModel.squareAllProperties.pieceId !== '') {
+                
+                switch (model.mouseDownModel.squareAllProperties.pieceType) {
+                    case 'R':
+                        possibleMoves.possibleMovesForRook();
+                        break;
+                    case 'N':
+                        possibleMoves.possibleMovesForKnight();
+                        break;
+                    case 'B':
+                        possibleMoves.possibleMovesForBishop();
+                        break;
+                    case 'Q':
+                        possibleMoves.possibleMovesForQueen();
+                        break;
+                    case 'K':
+                        possibleMoves.possibleMovesForKing();
+                        break;
+                    case 'P':
+                        possibleMoves.possibleMovesForPawn();
+                        break;
+                }
+
                 view.actionShowPossibleMoves();
+            }
         }
     },
    
@@ -87,16 +110,16 @@ var board = {
             common.playerMoveNumber++;
             utils.reverseSquaresModelForPlayerColor();
             view.actionPaintBoardFromModel();
+
+            // Clear en passant pieces for the current color.
+            Object.keys(model.piecesModel).forEach(function (key) {
+
+                if (model.piecesModel[key].color === common.colorCurrentlyPlaying())
+                    model.piecesModel[key].enPassantEligible = false;
+            });
         }
 
         model.possibleMovesModel = {};
-
-        // Clear en passant pieces for the current color.
-        Object.keys(model.piecesModel).forEach(function (key) {
-
-            if (model.piecesModel[key].color === common.colorCurrentlyPlaying())
-                model.piecesModel[key].enPassantEligible = false;
-        });
     }
 }
 
@@ -108,7 +131,7 @@ var utils = {
         var sourcePiece = model.piecesModel[sourceSquare.piece];
         var targetSquare = model.squaresModel[targetId];
 
-        this.capturePieceIfApplicable(targetSquare);
+        this.capturePieceIfApplicable(targetSquare, targetId);
 
         targetSquare.piece = sourceSquare.piece;
         sourceSquare.piece = '';
@@ -116,36 +139,25 @@ var utils = {
         sourcePiece.hasMoved = true;
 
         // enPassantEligible is set when calculating possible moves. It only applies to pawns moving two squares on their first move.
-        sourcePiece.willBeEnPassantEligible = model.possibleMovesModel[targetId].willBeEnPassantEligible;
+        sourcePiece.enPassantEligible = model.possibleMovesModel[targetId].willBeEnPassantEligible;
     },
 
-    capturePieceIfApplicable: function (targetSquare) {
+    capturePieceIfApplicable: function (targetSquare, targetId) {
 
-        if (targetSquare.piece !== '')
+        if (targetSquare.piece !== '') {
             model.piecesModel[targetSquare.piece].captured = true;
-    },
+            return;
+        }
 
-    captureEnPassantIfApplicable: function (sourceSquare, targetSquare, targetId) {
-        
-        var sourcePiece = model.piecesModel[sourceSquare.piece];
-        var targetPiece = model.piecesModel[targetSquare.piece];
-
-        var targetIdRank = parseInt(targetId.substring(0, 1));
-        var targetIdFile = parseInt(targetId.substring(0, 1));
-
-/*
-        // Capture en passant if applicable.
-        if (sourcePiece.pieceType === 'P' &&
-                    targetIdRank.rank === 6) {
-// If the target Id is not in rank one, get the piece behind the target            
-
+        if (model.possibleMovesModel[targetId].enPassantEligible) {
+            
             // Get the square behind the target square.
-            var squareBehindId = (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).toString();
+            var squareBehindId = (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).file.toString();
 
-            model.piecesModel[model.squaresModel[squareBehindId].piece].captured = true;
-            model.squaresModel[squareBehindId].piece = '';
-        };
-*/
+            var behindTargetSquare = model.squaresModel[squareBehindId];
+            model.piecesModel[behindTargetSquare.piece].captured = true;
+            behindTargetSquare.piece = '';
+        }
     },
 
     getSquaresModel: function () {
