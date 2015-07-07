@@ -24,7 +24,7 @@ var common = {
             pieceColor: '',
             pieceHasMoved: false,
             pieceEnPassantEligible: false
-    };
+        };
 
         if (model.squaresModel[id].piece !== '') {
 

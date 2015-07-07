@@ -1,22 +1,20 @@
 ﻿// ToDo
 //
-// castle
 // check for check
+// castle
+//
+// Move board setup to view.
+// Move $('#' + div.id).addClass('squareMoving'); to view.
+// Do we need all properties?
 //
 // filters
 //
 // Promote
 // 
-// Unit tests; QUnit, Jasmine
 // Error Handling
 // Refactor/Document
-
-var model = {
-    squaresModel: {},
-    piecesModel: {},
-    possibleMovesModel: {},
-    mouseDownModel: {}
-}
+// Unit tests; QUnit, Jasmine
+// Blog
 
 $(document).ready(function () {
     $.ajaxSetup({
