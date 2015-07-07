@@ -2,10 +2,11 @@
 //
 // check for check calls; set rankFile
 // castle
+// checkmate
+// Promote; change piece ID's?
 //
 // filters
 //
-// Promote; change piece ID's?
 // 
 // Error Handling
 // Refactor/Document

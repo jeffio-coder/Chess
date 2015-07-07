@@ -278,6 +278,8 @@
                     targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, rankFile.file)].piece];
                     if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
+                    else
+                        return false;
             }
             rank += direction;
         }
@@ -302,6 +304,8 @@
                     targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank, file)].piece];
                     if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
+                    else
+                        return false;
             }
             file += direction;
         }
@@ -329,6 +333,8 @@
                     targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, file)].piece];
                     if (targetPiece === 'Q' || targetPiece === 'B')
                         return true;
+                    else
+                        return false;
             }
             rank += rankDirection;
             file += fileDirection;
@@ -345,6 +351,18 @@
             return true;
 
         return false;
+    },
+
+    getKingRankFile: function () {
+
+        var pieceId = common.colorCurrentlyPlaying.substring(0, 1).toUpperCase() + 'K';
+        
+        Object.keys(model.squaresModel).forEach(function (key) {
+
+            if (model.squaresModel[key].piece === pieceId) {
+                return { rank: parseInt(key.substring(0, 1)), file: parseInt(key.substring(1, 2)) };
+            }
+        });
     },
 
     compareIntValuesForOrder: function (first, second, direction) {
@@ -390,17 +408,5 @@
         }
 
         return squareAllProperties;
-    },
-
-    getKingRankFile: function () {
-
-        var pieceId = common.colorCurrentlyPlaying.substring(0, 1).toUpperCase() + 'K';
-        
-        Object.keys(model.squaresModel).forEach(function (key) {
-
-            if (model.squaresModel[key].piece === pieceId) {
-                return { rank: parseInt(key.substring(0, 1)), file: parseInt(key.substring(1, 2)) };
-            }
-        });
     }
 }
