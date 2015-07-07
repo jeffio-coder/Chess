@@ -1,5 +1,4 @@
 ﻿var model = {
-
     squaresModel: {
         'key':
             {
@@ -10,22 +9,17 @@
 
     piecesModel: {
         'key':
-        {
-            'pieceType': '',
-            'color': '',
-            'hasMoved': false,
-            'captured': false,
-            'enPassantEligible': false
-        }
+            {
+                'pieceType': '',
+                'color': '',
+                'hasMoved': false,
+                'captured': false,
+                'enPassantEligible': false
+            }
     },
 
-    possibleMovesModel: {
-        'key':
-        {
-            enPassantEligible: enPassantEligible ? true : false,
-            willBeEnPassantEligible: willBeEnPassantEligible ? true : false
-        }
-    },
-
-    mouseDownModel: {}
+    rankFile: {
+        rank: 0,
+        file: 0
+    }
 }
