@@ -20,7 +20,7 @@
         var captureSize = (this.squareDimension / 2).toString();
 
         $('[id^=captureRow]').height(captureSize);
-        $('[id^=capturePiece]').attr('style', 'float: left; ');
+        $('[id^=capturePiece]').attr('style', 'float:left; ');
         $('[id^=capturePiece]').height(captureSize);
         $('[id^=capturePiece]').width(captureSize);
     },
