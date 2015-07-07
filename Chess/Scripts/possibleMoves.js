@@ -215,21 +215,16 @@
         if (!calculatingPossibleMoves && checkForPawnCheck(rankFile)) return true;
         if (!calculatingPossibleMoves && checkForKnightCheck(rankFile)) return true;
 
-        var queenId = common.colorCurrentlyPlaying() === enums.colors.white ? 'BQ' : 'WQ';
-        var rookId = common.colorCurrentlyPlaying() === enums.colors.white ? 'BR' : 'WR';
+        if (rankFile.rank < 8 && checkForVerticalCheck(rankFile, forward)) return true;
+        if (rankFile.rank > 1 && checkForVerticalCheck(rankFile, backward)) return true;
 
-        if (rankFile.rank < 8 && checkForVerticalCheck(rankFile, forward, queenId, rookId)) return true;
-        if (rankFile.rank > 1 && checkForVerticalCheck(rankFile, backward, queenId, rookId)) return true;
+        if (rankFile.file > 1 && checkForHorizontalCheck(rankFile, left)) return true;
+        if (rankFile.file < 8 && checkForHorizontalCheck(rankFile, right)) return true;
 
-        if (rankFile.file > 1 && checkForHorizontalCheck(rankFile, left, queenId, rookId)) return true;
-        if (rankFile.file < 8 && checkForHorizontalCheck(rankFile, right, queenId, rookId)) return true;
-
-        var bishopId = common.colorCurrentlyPlaying() === enums.colors.white ? 'BB' : 'WB';
-
-        if (rankFile.rank < 8 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, forward, left, queenId, bishopId)) return true;
-        if (rankFile.rank < 8 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, forward, right, queenId, bishopId)) return true;
-        if (rankFile.rank > 1 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, backward, left, queenId, bishopId)) return true;
-        if (rankFile.rank > 1 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, backward, right, queenId, bishopId)) return true;
+        if (rankFile.rank < 8 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, forward, left)) return true;
+        if (rankFile.rank < 8 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, forward, right)) return true;
+        if (rankFile.rank > 1 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, backward, left)) return true;
+        if (rankFile.rank > 1 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, backward, right)) return true;
 
         return false;
     },
@@ -239,12 +234,14 @@
         if (rankFile.rank === 8)
             return false;
 
-        var pawnId = common.colorCurrentlyPlaying() === enums.colors.white ? 'BP' : 'WP';
+        var targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank + 1, rankFile.file + 1)].piece];
 
-        if (rankFile.file + 1 <= 8 && model.squaresModel[(rankFile.rank + 1).toString() + (rankFile.file + 1).toString()].piece.substring(0, 2) === pawnId)
+        if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
 
-        if (file - 1 >= 1 && model.squaresModel[(rankFile.rank + 1).toString() + (rankFile.file - 1).toString()].piece.substring(0, 2) === pawnId)
+        targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank + 1, rankFile.file - 1)].piece];
+
+        if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
 
         return false;
@@ -252,21 +249,19 @@
 
     checkForKnightCheck: function (rankFile) {
 
-        var knightId = common.colorCurrentlyPlaying() === enums.colors.white ? 'BN' : 'WN';
-
-        if (rankFile + 2 <= 8 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank + 2, rankFile.file + 1, knightId)) return true;
-        if (rankFile + 2 <= 8 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank + 2, rankFile.file - 1, knightId)) return true;
-        if (rankFile + 1 <= 8 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank + 1, rankFile.file + 2, knightId)) return true;
-        if (rankFile + 1 <= 8 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank + 1, rankFile.file - 2, knightId)) return true;
-        if (rankFile - 2 >= 1 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank - 2, rankFile.file + 1, knightId)) return true;
-        if (rankFile - 2 >= 1 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank - 2, rankFile.file - 1, knightId)) return true;
-        if (rankFile - 1 >= 1 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank - 1, rankFile.file + 2, knightId)) return true;
-        if (rankFile - 1 >= 1 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank - 1, rankFile.file - 2, knightId)) return true;
+        if (rankFile + 2 <= 8 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank + 2, rankFile.file + 1)) return true;
+        if (rankFile + 2 <= 8 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank + 2, rankFile.file - 1)) return true;
+        if (rankFile + 1 <= 8 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank + 1, rankFile.file + 2)) return true;
+        if (rankFile + 1 <= 8 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank + 1, rankFile.file - 2)) return true;
+        if (rankFile - 2 >= 1 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank - 2, rankFile.file + 1)) return true;
+        if (rankFile - 2 >= 1 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank - 2, rankFile.file - 1)) return true;
+        if (rankFile - 1 >= 1 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank - 1, rankFile.file + 2)) return true;
+        if (rankFile - 1 >= 1 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank - 1, rankFile.file - 2)) return true;
 
         return false;
     },
 
-    checkForVerticalCheck: function (rankFile, direction, queenId, rookId) {
+    checkForVerticalCheck: function (rankFile, direction) {
 
         var rank = rankFile.rank + direction;
         var rankStop = direction > 0 ? 8 : 1;
@@ -280,8 +275,8 @@
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.squaresModel[this.idFromRankFile(rank, rankFile.file)].piece.substring(1, 2);
-                    if (targetPiece === queenId || targetPiece === rookId)
+                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, rankFile.file)].piece];
+                    if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
             }
             rank += direction;
@@ -290,7 +285,7 @@
         return false;
     },
 
-    checkForHorizontalCheck: function (rankFile, direction, queenId, rookId) {
+    checkForHorizontalCheck: function (rankFile, direction) {
 
         var file = rankFile.file + direction;
         var fileStop = direction > 0 ? 8 : 1;
@@ -304,8 +299,8 @@
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.squaresModel[this.idFromRankFile(rankFile.rank, file)].piece.substring(1, 2);
-                    if (targetPiece === queenId || targetPiece === rookId)
+                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank, file)].piece];
+                    if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
             }
             file += direction;
@@ -314,7 +309,7 @@
         return false;
     },
 
-    checkForDiagonalCheck: function (rankFile, rankDirection, fileDirection, queenId, bishopId) {
+    checkForDiagonalCheck: function (rankFile, rankDirection, fileDirection) {
 
         var rank = rankFile.rank + rankDirection;
         var rankStop = rankDirection > 0 ? 8 : 1;
@@ -331,8 +326,8 @@
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.squaresModel[this.idFromRankFile(rank, file)].piece.substring(1, 2); 
-                    if (targetPiece === queenId || targetPiece === bishopId)
+                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, file)].piece];
+                    if (targetPiece === 'Q' || targetPiece === 'B')
                         return true;
             }
             rank += rankDirection;
@@ -342,9 +337,11 @@
         return false;
     },
 
-    knightCheck: function (rank, file, knightId) {
+    knightCheck: function (rank, file) {
 
-        if (model.squaresModel[this.idFromRankFile(rank, file)].piece.substring(0, 2) === knightId)
+        var targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, file)].piece];
+
+        if (targetPiece && targetPiece.pieceType === 'N' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
 
         return false;
