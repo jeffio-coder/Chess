@@ -284,7 +284,7 @@
                     return false;
                 case this.sqaureOccupiedByOpponent:
                     targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, rankFile.file)].piece].pieceType;
-                    if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
+                    if (targetPiece === 'Q' || targetPiece === 'R')
                         return true;
                     else
                         return false;
@@ -311,7 +311,7 @@
                     return false;
                 case this.sqaureOccupiedByOpponent:
                     targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank, file)].piece].pieceType;
-                    if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
+                    if (targetPiece === 'Q' || targetPiece === 'R')
                         return true;
                     else
                         return false;
@@ -384,11 +384,9 @@
 
     squareStatus: function (rank, file, objectPieceColor) {
 
-        var targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece];
-
-        if (!targetPiece)
+        if (model.squaresModel[common.idFromRankFile(rank, file)].piece === '')
             return this.sqaureOpen;
-        else if (targetPiece.color === objectPieceColor)
+        else if (model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece].color === objectPieceColor)
             return this.sqaureOccupiedByPlayer;
         else
             return this.sqaureOccupiedByOpponent;
