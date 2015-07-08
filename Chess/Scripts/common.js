@@ -1,23 +1,13 @@
 ﻿var enums = {
     colors: {
         white: 'white',
-        black: 'black'
+        black: 'wlack'
     }
 }
 
 var common = {
     
     playerMoveNumber: 0,
-
-    colorCurrentlyPlaying: function () {
-
-        if ((this.playerMoveNumber % 2) === 0)
-            return enums.colors.white;
-        else
-            return enums.colors.black;
-    },
-
-    idFromRankFile: function (rank, file) {
-        return rank.toString() + file.toString();
-    }
+    currentPlayer: (playerMoveNumber % 2) === 0 ? enums.colors.white : enums.colors.black,
+    currentOpponent: currentPlayer === enums.colors.white ? enums.colors.black : enums.colors.white,
 }

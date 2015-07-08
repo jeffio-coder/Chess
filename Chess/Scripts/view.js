@@ -2,7 +2,7 @@
 
     squareDimension: 0,
 
-    actionSetUpBoardSize: function() {
+    setUpBoardSize: function() {
 
         var maxDimension = window.innerHeight < window.innerWidth ? innerHeight : innerWidth;
 
@@ -27,10 +27,10 @@
         $('#checkWarning').height(captureSize);
         $('#checkWarning').width(maxDimension);
 
-        this.actionHideCheckWarning();
+        this.hideCheckWarning();
     },
 
-    actionPaintBoardFromModel: function() {
+    paintBoardFromModel: function() {
 
         var squareId = '';
 
@@ -38,7 +38,7 @@
 
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
-                squareId = common.idFromRankFile(rankIndex.toString(), fileIndex.toString());
+                squareId = rankIndex.toString() + fileIndex.toString();
 
                 $('#' + squareId).removeClass();
                 $('#' + squareId).removeAttr('style');
@@ -48,7 +48,7 @@
                 $('#' + squareId).addClass('gameSquare ' + view.utils.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (model.squaresModel[squareId].piece !== '')
+                if (squareModel.pieceId(squareId) !== '')
                     view.utils.setDraggable(squareId);
             }
         }
@@ -58,48 +58,48 @@
         var counterTop = 0;
         var counterBottom = 0;
 
-        Object.keys(model.piecesModel).forEach(function (key) {
+        Object.keys(pieceModel.pieces).forEach(function (key) {
 
-            if (model.piecesModel[key].captured) {
+            if (pieceModel.pieces[key].captured) {
 
-                if (common.colorCurrentlyPlaying() === model.piecesModel[key].color)  // The captured piece should go on the top because the color playing is at the bottom.
-                    $('#capturePieceTop' + (++counterTop).toString()).addClass(model.piecesModel[key].color + '_' + model.piecesModel[key].pieceType);
+                if (pieceModel.pieces[key].color === common.currentPlayer)  // The captured piece should go on the top because the color playing is at the bottom.
+                    $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
                 else 
-                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(model.piecesModel[key].color + '_' + model.piecesModel[key].pieceType);
+                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].color[key].pieceType);
             }
         });
     },
 
-    actionShowPossibleMoves: function () {
+    showPossibleMoves: function () {
         view.utils.markSquaresAsPossibleMove();
     },
 
-    actionShowCheckWarning: function() {
+    showCheckWarning: function() {
 
-        if (common.colorCurrentlyPlaying() === enums.colors.black) {
+        if (common.currentPlayer === enums.colors.white) {
 
-            $('#spanCheckWarning').text('Black is in Check!');
-            $('#spanCheckWarning').attr('style', 'color:#000000; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
-        } else {
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
+        } else {
+            $('#spanCheckWarning').text('Black is in Check!');
+            $('#spanCheckWarning').attr('style', 'color:#000000; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
         }
 
         $('#checkWarning').show();
     },
 
-    actionHideCheckWarning: function () {
+    hideCheckWarning: function () {
 
         $('#checkWarning').hide();
         $('#spanCheckWarning').text();
     },
 
-    actionSquareMovingSetClass: function (divId) {
+    squareMovingSetClass: function (divId) {
 
         $('#' + divId).addClass('squareMoving');
     },
 
-    actionClearSquaresMarkedForMove: function () {
+    clearSquaresMarkedForMove: function () {
 
         view.utils.unmarkSquaresAsPossibleMove();
 
@@ -113,13 +113,10 @@
 
         getClassNameFromSquareModel: function (rank, file) {
 
-            var squareId = common.idFromRankFile(rank, file);
+            if (squareModel.pieceId(rank, file) === '')
+                return squareModel.color(rank, file) + 'Empty';
 
-            if (model.squaresModel[squareId].piece === '')
-                return model.squaresModel[squareId].color + 'Empty';
-
-            var pieceId = model.squaresModel[squareId].piece;
-            return model.piecesModel[pieceId].color + '_' + model.piecesModel[pieceId].pieceType + '_on_' + model.squaresModel[squareId].color;
+            return squareModel.pieceColor(rank, file) + '_' + squareModel.pieceType(rank, file) + '_on_' + squareModel.color(rank, file);
         },
 
         setDraggable: function (id) {
@@ -129,7 +126,7 @@
                     if (droppableObject && droppableObject[0] && droppableObject[0].id) {
                         board.handlePostDrag(droppableObject[0].id);
                     }
-                    view.actionClearSquaresMarkedForMove();
+                    view.clearSquaresMarkedForMove();
                     return true;
                 },
                 revertDuration: 0,
@@ -138,15 +135,15 @@
         },
 
         markSquaresAsPossibleMove: function () {
-
-            $.each(model.possibleMovesModel, function (key, value) {
+            // ToDo dump value //////////////////////////////////////////////////////////
+            $.each(possibleMoves.moves, function (key, value) {
                 $('#' + key).addClass('possibleMove');
             });
         },
 
         unmarkSquaresAsPossibleMove: function () {
 
-            Object.keys(model.possibleMovesModel).forEach(function (key) {
+            Object.keys(possibleMoves.moves).forEach(function (key) {
                 $('#' + key).removeClass('possibleMove');
             });
         }

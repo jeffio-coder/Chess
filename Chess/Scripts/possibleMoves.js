@@ -3,11 +3,8 @@
     backward: -1,
     left: -1,
     right: 1,
-    sqaureOccupiedByPlayer: 'occupiedByPlayer',
-    sqaureOccupiedByOpponent: 'occupiedByOpponent',
-    sqaureOpen: 'open',
     squareId: '',
-    squareAllProperties: {},
+    moves: {},
 
     possibleMovesForPawn: function() {
 

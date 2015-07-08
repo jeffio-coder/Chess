@@ -25,16 +25,16 @@ var board = {
 
     initialize: function () {
 
-        model.squaresModel = {};
-        model.piecesModel = {};
+        squareModel.squares = {};
+        pieceModel.pieces = {};
         model.possibleMovesModel = {};
 
-        view.actionSetUpBoardSize();
+        view.setUpBoardSize();
 
         model.squaresModel = restCalls.getSquaresModel();
         model.piecesModel = restCalls.getPiecesModel();
 
-        view.actionPaintBoardFromModel();
+        view.paintBoardFromModel();
 
         $('.gameSquare').mousedown(function (event) {
             board.handleMouseDown(event, this);
@@ -60,7 +60,7 @@ var board = {
         possibleMoves.squareId = div.id;
         var movingPiece = model.piecesModel[model.squaresModel[div.id].piece];
 
-        view.actionSquareMovingSetClass(div.id);
+        view.squareMovingSetClass(div.id);
 
         if (movingPiece && movingPiece.color === common.colorCurrentlyPlaying()) {
                 
@@ -87,13 +87,13 @@ var board = {
 
             // ToDo Remove squares in check.
 
-            view.actionShowPossibleMoves();
+            view.showPossibleMoves();
         }
     },
    
     handlePostDrag: function (id) {
 
-        view.actionClearSquaresMarkedForMove();
+        view.clearSquaresMarkedForMove();
         
         if (id && (id in model.possibleMovesModel)) {  
 
@@ -101,9 +101,9 @@ var board = {
 
             common.playerMoveNumber++;
             utils.reverseSquaresModelForPlayerColor();
-            view.actionPaintBoardFromModel();
+            view.paintBoardFromModel();
 
-            possibleMoves.checkForCheck(false) ? view.actionShowCheckWarning() : view.actionHideCheckWarning();
+            possibleMoves.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
 
             // Clear en passant pieces for the current color.
             Object.keys(model.piecesModel).forEach(function (key) {
