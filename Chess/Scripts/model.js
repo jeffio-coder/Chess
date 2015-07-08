@@ -16,10 +16,5 @@
                 'captured': false,
                 'enPassantEligible': false
             }
-    },
-
-    rankFile: {
-        rank: 0,
-        file: 0
     }
 }

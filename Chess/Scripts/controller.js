@@ -46,6 +46,7 @@ var board = {
         });
     },
      
+    //////////////////////////////////////////////////// Refactor: too long.
     handleMouseDown: function (event, div) {
 
         if (event.which !== 1)
@@ -98,12 +99,11 @@ var board = {
 
             utils.movePieceToNewSquare(possibleMoves.squareId, id);
 
-            if (possibleMoves.checkForCheck())
-                var x = 0; // ToDo
-
             common.playerMoveNumber++;
             utils.reverseSquaresModelForPlayerColor();
             view.actionPaintBoardFromModel();
+
+            possibleMoves.checkForCheck(false) ? view.actionShowCheckWarning() : view.actionHideCheckWarning();
 
             // Clear en passant pieces for the current color.
             Object.keys(model.piecesModel).forEach(function (key) {

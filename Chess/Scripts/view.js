@@ -23,6 +23,11 @@
         $('[id^=capturePiece]').attr('style', 'float:left; ');
         $('[id^=capturePiece]').height(captureSize);
         $('[id^=capturePiece]').width(captureSize);
+
+        $('#checkWarning').height(captureSize);
+        $('#checkWarning').width(maxDimension);
+
+        this.actionHideCheckWarning();
     },
 
     actionPaintBoardFromModel: function() {
@@ -67,6 +72,26 @@
 
     actionShowPossibleMoves: function () {
         view.utils.markSquaresAsPossibleMove();
+    },
+
+    actionShowCheckWarning: function() {
+
+        if (common.colorCurrentlyPlaying() === enums.colors.black) {
+
+            $('#spanCheckWarning').text('Black is in Check!');
+            $('#spanCheckWarning').attr('style', 'color:#000000; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
+        } else {
+            $('#spanCheckWarning').text('White is in Check!');
+            $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
+        }
+
+        $('#checkWarning').show();
+    },
+
+    actionHideCheckWarning: function () {
+
+        $('#checkWarning').hide();
+        $('#spanCheckWarning').text();
     },
 
     actionSquareMovingSetClass: function (divId) {

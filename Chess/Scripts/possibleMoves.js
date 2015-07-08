@@ -101,9 +101,11 @@
         var file = this.squareAllProperties.squareFile + fileDirection;
         var fileSquaresToMove = this.getNumberOfSquaresToMove(this.squareAllProperties.squareFile, fileDirection, numberOfSquaresToMove);
 
+        var status = '';
+
         while (this.compareIntValuesForOrder(rank, rankSquaresToMove, rankDirection) && this.compareIntValuesForOrder(file, fileSquaresToMove, fileDirection)) {
 
-            var status = this.squareStatus(rank, file, this.squareAllProperties.pieceColor);
+            status = this.squareStatus(rank, file, this.squareAllProperties.pieceColor);
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return;
@@ -123,9 +125,11 @@
         var rank = this.squareAllProperties.squareRank + direction;
         var rankSquaresToMove = this.getNumberOfSquaresToMove(this.squareAllProperties.squareRank, direction, numberOfSquaresToMove);
 
+        var status = '';
+
         while (this.compareIntValuesForOrder(rank, rankSquaresToMove, direction)) {
 
-            var status = this.squareStatus(rank, this.squareAllProperties.squareFile, this.squareAllProperties.pieceColor);
+            status = this.squareStatus(rank, this.squareAllProperties.squareFile, this.squareAllProperties.pieceColor);
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return;
@@ -144,9 +148,11 @@
         var file = this.squareAllProperties.squareFile + direction;
         var fileSquaresToMove = this.getNumberOfSquaresToMove(this.squareAllProperties.squareFile, direction, numberOfSquaresToMove);
 
+        var status = '';
+
         while (this.compareIntValuesForOrder(file, fileSquaresToMove, direction)) {
 
-            var status = this.squareStatus(this.squareAllProperties.squareRank, file, this.squareAllProperties.pieceColor);
+            status = this.squareStatus(this.squareAllProperties.squareRank, file, this.squareAllProperties.pieceColor);
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return;
@@ -187,7 +193,7 @@
     },
 
     addToPossibleMoves: function (rank, file, enPassantEligible, willBeEnPassantEligible) {
-        model.possibleMovesModel[this.idFromRankFile(rank, file)] = {
+        model.possibleMovesModel[common.idFromRankFile(rank, file)] = {
             enPassantEligible: enPassantEligible ? true : false,
             willBeEnPassantEligible: willBeEnPassantEligible ? true : false
         };
@@ -210,21 +216,22 @@
         // Note: There's no reason to check for possible pawn or knight moves when this function is called
         // while calculating possible moves. A player can't move into a pawn check or a knight check.
 
-        var rankFile = getKingRankFile();  // Returns a rankFile object containing rankFile.rank and rankFile.file.
+        var rankFile = this.getKingRankFile();  // Returns a rankFile object containing rankFile.rank and rankFile.file.
 
-        if (!calculatingPossibleMoves && checkForPawnCheck(rankFile)) return true;
-        if (!calculatingPossibleMoves && checkForKnightCheck(rankFile)) return true;
+        if (!calculatingPossibleMoves && this.checkForPawnCheck(rankFile)) return true;
 
-        if (rankFile.rank < 8 && checkForVerticalCheck(rankFile, forward)) return true;
-        if (rankFile.rank > 1 && checkForVerticalCheck(rankFile, backward)) return true;
+        if (!calculatingPossibleMoves && this.checkForKnightCheck(rankFile)) return true;
 
-        if (rankFile.file > 1 && checkForHorizontalCheck(rankFile, left)) return true;
-        if (rankFile.file < 8 && checkForHorizontalCheck(rankFile, right)) return true;
+        if (rankFile.rank < 8 && this.checkForVerticalCheck(rankFile, this.forward)) return true;
+        if (rankFile.rank > 1 && this.checkForVerticalCheck(rankFile, this.backward)) return true;
 
-        if (rankFile.rank < 8 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, forward, left)) return true;
-        if (rankFile.rank < 8 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, forward, right)) return true;
-        if (rankFile.rank > 1 && rankFile.file > 1 && checkForDiagonalCheck(rankFile, backward, left)) return true;
-        if (rankFile.rank > 1 && rankFile.file < 8 && checkForDiagonalCheck(rankFile, backward, right)) return true;
+        if (rankFile.file > 1 && this.checkForHorizontalCheck(rankFile, this.left)) return true;
+        if (rankFile.file < 8 && this.checkForHorizontalCheck(rankFile, this.right)) return true;
+
+        if (rankFile.rank < 8 && rankFile.file > 1 && this.checkForDiagonalCheck(rankFile, this.forward, this.left)) return true;
+        if (rankFile.rank < 8 && rankFile.file < 8 && this.checkForDiagonalCheck(rankFile, this.forward, this.right)) return true;
+        if (rankFile.rank > 1 && rankFile.file > 1 && this.checkForDiagonalCheck(rankFile, this.backward, this.left)) return true;
+        if (rankFile.rank > 1 && rankFile.file < 8 && this.checkForDiagonalCheck(rankFile, this.backward, this.right)) return true;
 
         return false;
     },
@@ -234,12 +241,12 @@
         if (rankFile.rank === 8)
             return false;
 
-        var targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank + 1, rankFile.file + 1)].piece];
+        var targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank + 1, rankFile.file + 1)].piece];
 
         if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
 
-        targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank + 1, rankFile.file - 1)].piece];
+        targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank + 1, rankFile.file - 1)].piece];
 
         if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
@@ -249,14 +256,14 @@
 
     checkForKnightCheck: function (rankFile) {
 
-        if (rankFile + 2 <= 8 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank + 2, rankFile.file + 1)) return true;
-        if (rankFile + 2 <= 8 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank + 2, rankFile.file - 1)) return true;
-        if (rankFile + 1 <= 8 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank + 1, rankFile.file + 2)) return true;
-        if (rankFile + 1 <= 8 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank + 1, rankFile.file - 2)) return true;
-        if (rankFile - 2 >= 1 && rankFile.file + 1 <= 8 && knightCheck(rankFile.rank - 2, rankFile.file + 1)) return true;
-        if (rankFile - 2 >= 1 && rankFile.file - 1 >= 1 && knightCheck(rankFile.rank - 2, rankFile.file - 1)) return true;
-        if (rankFile - 1 >= 1 && rankFile.file + 2 <= 8 && knightCheck(rankFile.rank - 1, rankFile.file + 2)) return true;
-        if (rankFile - 1 >= 1 && rankFile.file - 2 >= 1 && knightCheck(rankFile.rank - 1, rankFile.file - 2)) return true;
+        if (rankFile.rank + 2 <= 8 && rankFile.file + 1 <= 8 && this.knightCheck(rankFile.rank + 2, rankFile.file + 1)) return true;
+        if (rankFile.rank + 2 <= 8 && rankFile.file - 1 >= 1 && this.knightCheck(rankFile.rank + 2, rankFile.file - 1)) return true;
+        if (rankFile.rank + 1 <= 8 && rankFile.file + 2 <= 8 && this.knightCheck(rankFile.rank + 1, rankFile.file + 2)) return true;
+        if (rankFile.rank + 1 <= 8 && rankFile.file - 2 >= 1 && this.knightCheck(rankFile.rank + 1, rankFile.file - 2)) return true;
+        if (rankFile.rank - 2 >= 1 && rankFile.file + 1 <= 8 && this.knightCheck(rankFile.rank - 2, rankFile.file + 1)) return true;
+        if (rankFile.rank - 2 >= 1 && rankFile.file - 1 >= 1 && this.knightCheck(rankFile.rank - 2, rankFile.file - 1)) return true;
+        if (rankFile.rank - 1 >= 1 && rankFile.file + 2 <= 8 && this.knightCheck(rankFile.rank - 1, rankFile.file + 2)) return true;
+        if (rankFile.rank - 1 >= 1 && rankFile.file - 2 >= 1 && this.knightCheck(rankFile.rank - 1, rankFile.file - 2)) return true;
 
         return false;
     },
@@ -267,15 +274,16 @@
         var rankStop = direction > 0 ? 8 : 1;
 
         var targetPiece = '';
+        var status = '';
 
         while (this.compareIntValuesForOrder(rank, rankStop, direction)) {
 
-            var status = this.squareStatus(rank, rankFile.file, common.colorCurrentlyPlaying());
+            status = this.squareStatus(rank, rankFile.file, common.colorCurrentlyPlaying());
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, rankFile.file)].piece];
+                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, rankFile.file)].piece].pieceType;
                     if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
                     else
@@ -293,15 +301,16 @@
         var fileStop = direction > 0 ? 8 : 1;
 
         var targetPiece = '';
+        var status = '';
 
         while (this.compareIntValuesForOrder(file, fileStop, direction)) {
 
-            var status = this.squareStatus(rankFile.rank, file, common.colorCurrentlyPlaying());
+            status = this.squareStatus(rankFile.rank, file, common.colorCurrentlyPlaying());
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rankFile.rank, file)].piece];
+                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank, file)].piece].pieceType;
                     if (targetPiece.pieceType === 'Q' || targetPiece.pieceType === 'R')
                         return true;
                     else
@@ -322,15 +331,16 @@
         var fileStop = fileDirection > 0 ? 8 : 1;
 
         var targetPiece = '';
+        var status = '';
 
         while (this.compareIntValuesForOrder(rank, rankStop, rankDirection) && this.compareIntValuesForOrder(file, fileStop, fileDirection)) {
 
-            var status = this.squareStatus(rank, file, common.colorCurrentlyPlaying());
+            status = this.squareStatus(rank, file, common.colorCurrentlyPlaying());
             switch (status) {
                 case this.sqaureOccupiedByPlayer:
                     return false;
                 case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, file)].piece];
+                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece].pieceType;
                     if (targetPiece === 'Q' || targetPiece === 'B')
                         return true;
                     else
@@ -345,7 +355,7 @@
 
     knightCheck: function (rank, file) {
 
-        var targetPiece = model.piecesModel[model.squaresModel[this.idFromRankFile(rank, file)].piece];
+        var targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece];
 
         if (targetPiece && targetPiece.pieceType === 'N' && targetPiece.color !== common.colorCurrentlyPlaying())
             return true;
@@ -355,14 +365,16 @@
 
     getKingRankFile: function () {
 
-        var pieceId = common.colorCurrentlyPlaying.substring(0, 1).toUpperCase() + 'K';
-        
-        Object.keys(model.squaresModel).forEach(function (key) {
+        var pieceId = common.colorCurrentlyPlaying().substring(0, 1).toUpperCase() + 'K';
+        var key = '';
 
-            if (model.squaresModel[key].piece === pieceId) {
+        for (var loopIndex = 0; loopIndex < Object.keys(model.squaresModel).length; loopIndex++) {
+            
+            key = Object.keys(model.squaresModel)[loopIndex];
+
+            if (model.squaresModel[key].piece === pieceId)
                 return { rank: parseInt(key.substring(0, 1)), file: parseInt(key.substring(1, 2)) };
-            }
-        });
+        }
     },
 
     compareIntValuesForOrder: function (first, second, direction) {
@@ -372,9 +384,9 @@
 
     squareStatus: function (rank, file, objectPieceColor) {
 
-        var targetPiece = model.squaresModel[this.idFromRankFile(rank, file)].piece;
+        var targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece];
 
-        if (targetPiece === '')
+        if (!targetPiece)
             return this.sqaureOpen;
         else if (targetPiece.color === objectPieceColor)
             return this.sqaureOccupiedByPlayer;
@@ -384,7 +396,7 @@
 
     getAllSquareProperties: function (rank, file) {
 
-        var id = this.idFromRankFile(rank, file);
+        var id = common.idFromRankFile(rank, file);
 
         var squareAllProperties = {
             squareId: id.toString(),
