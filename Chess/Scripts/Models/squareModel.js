@@ -1,5 +1,6 @@
 ﻿var squareModel = {
-    squares: {
+    squares:
+    {
         'squareId':
         {
             'color': '',
@@ -16,36 +17,63 @@
     // Otherwise, a valid rank and file have been passed.
     // Since this isn't publc code or non-deterministic code, that should be a safe assumtion.
 
+    exists: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.squares[squareId];
+    },
+
     color: function () {
 
-        return arguments.length > 1 ? this.sqaures[arguments[0].toString() + arguments[1].toString()].color : this.sqaures[arguments[0]].color;
+        return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].color : this.squares[arguments[0]].color;
     },
 
     pieceId: function () {
 
-        return arguments.length > 1 ? this.sqaures[arguments[0].toString() + arguments[1].toString()].pieceId : this.sqaures[arguments[0]].pieceId;
+        return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].pieceId : this.squares[arguments[0]].pieceId;
     },
 
     pieceType: function () {
 
-        return this.pieceId(arguments) === '' ? '' : piecesModel.pieces[this.pieceId(arguments)].pieceType;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].pieceType;
     },
 
     pieceColor: function () {
 
-        return this.pieceId(arguments) === '' ? '' : piecesModel.pieces[this.pieceId(arguments)].color;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].color;
     },
 
     pieceHasMoved: function () {
 
-        return this.pieceId(arguments) === '' ? false : piecesModel.pieces[this.pieceId(arguments)].hasMoved;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].hasMoved;
     },
 
     pieceEnPassantEligible: function () {
 
-        return this.pieceId(arguments) === '' ? false : piecesModel.pieces[this.pieceId(arguments)].enPassantEligible;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].enPassantEligible;
     },
 
-    squareStatus: pieceId(arguments) === '' ? statusOpen :
-            pieceColor(arguments) === common.currentPlayer ? statusPlayerOccupied : statusOpponentOccupied
+    pieceOnSquare: function() {
+        
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)];
+    },
+
+    squareStatus: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? statusOpen :
+            this.pieceColor(squareId) === common.currentPlayer() ? statusPlayerOccupied : statusOpponentOccupied;
+    }
 }

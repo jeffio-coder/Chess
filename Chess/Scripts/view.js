@@ -62,7 +62,7 @@
 
             if (pieceModel.pieces[key].captured) {
 
-                if (pieceModel.pieces[key].color === common.currentPlayer)  // The captured piece should go on the top because the color playing is at the bottom.
+                if (pieceModel.pieces[key].color === common.currentPlayer())  // The captured piece should go on the top because the color playing is at the bottom.
                     $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
                 else 
                     $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].color[key].pieceType);
@@ -76,7 +76,7 @@
 
     showCheckWarning: function() {
 
-        if (common.currentPlayer === enums.colors.white) {
+        if (common.currentPlayer() === enums.colors.white) {
 
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -103,9 +103,9 @@
 
         view.utils.unmarkSquaresAsPossibleMove();
 
-        if (possibleMoves.squareId !== '') {
+        if (possibleMovesModel.squareId !== '') {
 
-            $('#' + possibleMoves.squareId).removeClass('squareMoving');
+            $('#' + possibleMovesModel.squareId).removeClass('squareMoving');
         }
     },
 
@@ -136,14 +136,14 @@
 
         markSquaresAsPossibleMove: function () {
             // ToDo dump value //////////////////////////////////////////////////////////
-            $.each(possibleMoves.moves, function (key, value) {
+            $.each(possibleMovesModel.moves, function (key, value) {
                 $('#' + key).addClass('possibleMove');
             });
         },
 
         unmarkSquaresAsPossibleMove: function () {
 
-            Object.keys(possibleMoves.moves).forEach(function (key) {
+            Object.keys(possibleMovesModel.moves).forEach(function (key) {
                 $('#' + key).removeClass('possibleMove');
             });
         }

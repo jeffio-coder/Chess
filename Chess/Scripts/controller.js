@@ -27,93 +27,88 @@ var board = {
 
         squareModel.squares = {};
         pieceModel.pieces = {};
-        model.possibleMovesModel = {};
+        possibleMovesModel.moves = {};
 
         view.setUpBoardSize();
 
-        model.squaresModel = restCalls.getSquaresModel();
-        model.piecesModel = restCalls.getPiecesModel();
+        squareModel.squares = restCalls.getSquaresModel();
+        pieceModel.pieces = restCalls.getPiecesModel();
 
         view.paintBoardFromModel();
 
         $('.gameSquare').mousedown(function (event) {
-            board.handleMouseDown(event, this);
+            board.actionMouseDown(event, this);
         });
 
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
-            board.handlePostDrag();
+            board.actionPostDrag();
         });
     },
      
-    //////////////////////////////////////////////////// Refactor: too long.
-    handleMouseDown: function (event, div) {
+    actionMouseDown: function (event, div) {
 
         if (event.which !== 1)
             return;
 
-        if (!model.squaresModel[div.id] || model.squaresModel[div.id].piece === '')
+        if (!squareModel.exists[div.id] || squareModel.pieceId(div.id).piece === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
             return;
 
-        possibleMoves.squareAllProperties = possibleMoves.getAllSquareProperties(utils.getRankAndFileFileFromId(div.id).rank, utils.getRankAndFileFileFromId(div.id).file);
-
-        possibleMoves.squareId = div.id;
-        var movingPiece = model.piecesModel[model.squaresModel[div.id].piece];
-
+        possibleMovesModel.squareId = div.id;
         view.squareMovingSetClass(div.id);
 
-        if (movingPiece && movingPiece.color === common.colorCurrentlyPlaying()) {
-                
-            switch (movingPiece.pieceType) {
-                case 'R':
-                    possibleMoves.possibleMovesForRook();
-                    break;
-                case 'N':
-                    possibleMoves.possibleMovesForKnight();
-                    break;
-                case 'B':
-                    possibleMoves.possibleMovesForBishop();
-                    break;
-                case 'Q':
-                    possibleMoves.possibleMovesForQueen();
-                    break;
-                case 'K':
-                    possibleMoves.possibleMovesForKing();
-                    break;
-                case 'P':
-                    possibleMoves.possibleMovesForPawn();
-                    break;
-            }
+        switch (squareModel.pieceType(div.id)) {
 
-            // ToDo Remove squares in check.
-
-            view.showPossibleMoves();
+            case pieceModel.king:
+                possibleMovesModel.possibleMovesForKing();
+                break;
+            case pieceModel.queen:
+                possibleMovesModel.possibleMovesForQueen();
+                break;
+            case pieceModel.rook:
+                possibleMovesModel.possibleMovesForRook();
+                break;
+            case pieceModel.knight:
+                possibleMovesModel.possibleMovesForKnight();
+                break;
+            case pieceModel.bishop:
+                possibleMovesModel.possibleMovesForBishop();
+                break;
+            case pieceModel.pawn:
+                possibleMovesModel.possibleMovesForPawn();
+                break;
         }
+
+        // ToDo Remove squares in check.
+
+        view.showPossibleMoves();
     },
    
-    handlePostDrag: function (id) {
+    actionPostDrag: function (targetId) {
 
         view.clearSquaresMarkedForMove();
         
-        if (id && (id in model.possibleMovesModel)) {  
+        if (targetId && squareModel.exists(targetId)) {
 
-            utils.movePieceToNewSquare(possibleMoves.squareId, id);
+            utils.movePieceToNewSquare(possibleMovesModel.squareId, targetId);
 
+            // Incrementing common.playerMoveNumber switches current player.
             common.playerMoveNumber++;
-            utils.reverseSquaresModelForPlayerColor();
+
+            utils.reverseSquaresModel();
             view.paintBoardFromModel();
 
-            possibleMoves.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
+            possibleMovesModel.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
 
-            // Clear en passant pieces for the current color.
-            Object.keys(model.piecesModel).forEach(function (key) {
+            // Clear en passant pieces for the current player.
+            Object.keys(pieceModel.pieces).forEach(function (key) {
 
-                if (model.piecesModel[key].color === common.colorCurrentlyPlaying())
-                    model.piecesModel[key].enPassantEligible = false;
+                if (pieceModel.pieces[key].color === common.currentPlayer())
+                    pieceModel.pieces[key].enPassantEligible = false;
             });
         }
 
-        model.possibleMovesModel = {};
+        possibleMovesModel.moves = {};
     }
 }
 
@@ -121,61 +116,48 @@ var utils = {
     
     movePieceToNewSquare: function (sourceId, targetId) {
 
-        var sourceSquare = model.squaresModel[sourceId];
-        var sourcePiece = model.piecesModel[sourceSquare.piece];
-        var targetSquare = model.squaresModel[targetId];
+        this.capturePieceIfApplicable(sourceId, targetId);
 
-        this.capturePieceIfApplicable(targetSquare, targetId);
+        squareModel.squares[targetId].pieceId = squareModel.squares[sourceId].pieceId;
+        squareModel.squares[sourceId].pieceId = '';
 
-        targetSquare.piece = sourceSquare.piece;
-        sourceSquare.piece = '';
+        squareModel.pieceOnSquare(targetId).hasMoved = true;
 
-        sourcePiece.hasMoved = true;
-
-        // enPassantEligible is set when calculating possible moves. It only applies to pawns moving two squares on their first move.
-        sourcePiece.enPassantEligible = model.possibleMovesModel[targetId].willBeEnPassantEligible;
+        // enPassantEligible is set in the possibleMovesModel.moves object when calculating possible moves. It only applies to pawns moving two squares on their first move.
+        squareModel.pieceOnSquare(targetId).enPassantEligible = possibleMovesModel.moves[targetId].willBeEnPassantEligible;
     },
 
-    capturePieceIfApplicable: function (targetSquare, targetId) {
+    capturePieceIfApplicable: function (targetId) {
 
-        if (targetSquare.piece !== '') {
-            model.piecesModel[targetSquare.piece].captured = true;
+        if (squareModel.pieceId(targetId) !== '') {
+            squareModel.pieceOnSquare(targetId).captured = true;
             return;
         }
 
-        if (model.possibleMovesModel[targetId].enPassantEligible) {
+        if (possibleMovesModel.moves[targetId].enPassantEligible) {
             
-            // Get the square behind the target square.
+            // Get the squareId of the square behind the target square.
             var squareBehindId = (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).file.toString();
 
-            var behindTargetSquare = model.squaresModel[squareBehindId];
-            model.piecesModel[behindTargetSquare.piece].captured = true;
-            behindTargetSquare.piece = '';
+            squareModel.pieceOnSquare(squareBehindId).captured = true;
+            squareModel.squares[squareBehindId].pieceId = '';
         }
     },
 
-    reverseSquaresModelForPlayerColor: function () {
+    reverseSquaresModel: function () {
 
-        var id = '';
-        var reverseRank = 0;
-        var reverseFile = 0;
-        var reverseId = '';
         var newSquaresModel = {};
 
         for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
 
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
-                id = common.idFromRankFile(rankIndex.toString(), fileIndex.toString());
-                reverseRank = 9 - rankIndex;
-                reverseFile = 9 - fileIndex;
-                reverseId = reverseRank.toString() + reverseFile.toString();
-
-                newSquaresModel[reverseId] = { color: model.squaresModel[id].color, piece: model.squaresModel[id].piece };
+                newSquaresModel[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
+                    { color: squareModel.color(rank, file), piece: squareModel.pieceId(rank, file) };
             }
         }
 
-        model.squaresModel = newSquaresModel;
+        squareModel.squares = newSquaresModel;
     },
 
     getRankAndFileFileFromId: function (id) {

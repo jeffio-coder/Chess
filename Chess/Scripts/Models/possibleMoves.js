@@ -1,4 +1,4 @@
-﻿var possibleMoves = {
+﻿var possibleMovesModel = {
     forward: 1,
     backward: -1,
     left: -1,
@@ -186,11 +186,10 @@
 
             this.addToPossibleMoves(rank, file, false, willBeEnPassantEligible);
         }
-
     },
 
     addToPossibleMoves: function (rank, file, enPassantEligible, willBeEnPassantEligible) {
-        model.possibleMovesModel[common.idFromRankFile(rank, file)] = {
+        this.moves[common.idFromRankFile(rank, file)] = {
             enPassantEligible: enPassantEligible ? true : false,
             willBeEnPassantEligible: willBeEnPassantEligible ? true : false
         };
@@ -377,43 +376,5 @@
     compareIntValuesForOrder: function (first, second, direction) {
 
         return direction > 0 ? first <= second : first >= second;
-    },
-
-    squareStatus: function (rank, file, objectPieceColor) {
-
-        if (model.squaresModel[common.idFromRankFile(rank, file)].piece === '')
-            return this.sqaureOpen;
-        else if (model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece].color === objectPieceColor)
-            return this.sqaureOccupiedByPlayer;
-        else
-            return this.sqaureOccupiedByOpponent;
-    },
-
-    getAllSquareProperties: function (rank, file) {
-
-        var id = common.idFromRankFile(rank, file);
-
-        var squareAllProperties = {
-            squareId: id.toString(),
-            squareRank: rank,
-            squareFile: file,
-            squareColor: model.squaresModel[id].color,
-            pieceId: model.squaresModel[id].piece,
-            pieceType: '',
-            pieceColor: '',
-            pieceHasMoved: false,
-            pieceEnPassantEligible: false
-        };
-
-        if (model.squaresModel[id].piece !== '') {
-
-            id = model.squaresModel[id].piece;
-            squareAllProperties.pieceType = model.piecesModel[id].pieceType;
-            squareAllProperties.pieceColor = model.piecesModel[id].color;
-            squareAllProperties.pieceHasMoved = model.piecesModel[id].hasMoved;
-            squareAllProperties.pieceEnPassantEligible = model.piecesModel[id].enPassantEligible;
-        }
-
-        return squareAllProperties;
     }
 }
