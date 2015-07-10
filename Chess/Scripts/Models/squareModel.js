@@ -73,7 +73,7 @@
 
         var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
 
-        return this.pieceId(squareId) === '' ? statusOpen :
-            this.pieceColor(squareId) === common.currentPlayer() ? statusPlayerOccupied : statusOpponentOccupied;
+        return this.pieceId(squareId) === '' ? this.statusOpen :
+            this.pieceColor(squareId) === common.currentPlayer() ? this.statusPlayerOccupied : this.statusOpponentOccupied;
     }
 }

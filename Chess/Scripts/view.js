@@ -124,7 +124,7 @@
             $('#' + id).draggable({
                 revert: function (droppableObject) {
                     if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                        board.handlePostDrag(droppableObject[0].id);
+                        board.actionDragEnd(droppableObject[0].id);
                     }
                     view.clearSquaresMarkedForMove();
                     return true;

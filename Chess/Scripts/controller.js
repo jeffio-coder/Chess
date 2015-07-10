@@ -43,7 +43,7 @@ var board = {
 
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
-            board.actionPostDrag();
+            board.actionDragEnd();
         });
     },
      
@@ -52,7 +52,7 @@ var board = {
         if (event.which !== 1)
             return;
 
-        if (!squareModel.exists[div.id] || squareModel.pieceId(div.id).piece === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
+        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id).piece === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
             return;
 
         possibleMovesModel.squareId = div.id;
@@ -86,7 +86,7 @@ var board = {
         view.showPossibleMoves();
     },
    
-    actionPostDrag: function (targetId) {
+    actionDragEnd: function (targetId) {
 
         view.clearSquaresMarkedForMove();
         

@@ -17,8 +17,6 @@
     knightMoves: {},
     pawnMoves: {},
 
-    //////////////// for (var key in object) {
-
     loadSquareMoves: function() {
 
         this.loadVerticalMoves();
@@ -235,11 +233,13 @@
 
     possibleMovesForKnight: function() {
 
-        for (var loopIndex = 0; loopIndex <= this.pawnMoves[this.squareId].length; loopIndex++) {
+        for (var loopIndex = 0; loopIndex <= this.knightMoves[this.squareId].length; loopIndex++) {
 
-            if (squareModel.squareStatus(this.squareId) !== squareModel.statusPlayerOccupied) {
+            var targetId = this.knightMoves[this.squareId][loopIndex];
 
-                this.moves[this.pawnMoves[this.squareId][loopIndex]] = true;
+            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) {
+
+                this.moves[targetId] = true;
             }
         }
 
