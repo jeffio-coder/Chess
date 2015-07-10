@@ -1,5 +1,6 @@
 ﻿// ToDo
 //
+//
 // check for check calls; set rankFile
 // castle
 // checkmate
@@ -27,13 +28,13 @@ var board = {
 
         squareModel.squares = {};
         pieceModel.pieces = {};
-        possibleMovesModel.moves = {};
+        possibleMovesModel.loadSquareMoves();
 
-        view.setUpBoardSize();
 
         squareModel.squares = restCalls.getSquaresModel();
         pieceModel.pieces = restCalls.getPiecesModel();
 
+        view.setUpBoardSize();
         view.paintBoardFromModel();
 
         $('.gameSquare').mousedown(function (event) {
@@ -56,6 +57,7 @@ var board = {
 
         possibleMovesModel.squareId = div.id;
         view.squareMovingSetClass(div.id);
+        possibleMovesModel.moves = {};
 
         switch (squareModel.pieceType(div.id)) {
 
@@ -107,8 +109,6 @@ var board = {
                     pieceModel.pieces[key].enPassantEligible = false;
             });
         }
-
-        possibleMovesModel.moves = {};
     }
 }
 
