@@ -1,4 +1,5 @@
-﻿var squareModel = {
+﻿var squareModel =
+    {
     squares:
     {
         'squareId':
@@ -26,52 +27,40 @@
 
     color: function () {
 
-        if (arguments.length > 1)
-            return this.squares[arguments[0].toString() + arguments[1].toString()].color;
-        else
-            return this.squares[arguments[0]].color;
-
+        return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].color : this.squares[arguments[0]].color;
     },
 
     pieceId: function () {
 
-        if (arguments.length > 1)
-            return this.squares[arguments[0].toString() + arguments[1].toString()].pieceId;
-        else
-            return this.squares[arguments[0]].pieceId;
+        return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].pieceId : this.squares[arguments[0]].pieceId;
     },
 
     pieceType: function () {
 
-        if (arguments.length > 1)
-            return pieceModel.pieces[this.squares[arguments[0].toString() + arguments[1].toString()].pieceId].pieceType;
-        else
-            return pieceModel.pieces[this.squares[arguments[0]].pieceId].pieceType;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].pieceType;
     },
 
     pieceColor: function () {
 
-        if (arguments.length > 1)
-            return pieceModel.pieces[this.squares[arguments[0].toString() + arguments[1].toString()].pieceId].color;
-        else
-            return pieceModel.pieces[this.squares[arguments[0]].pieceId].color;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
 
+        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].color;
     },
 
     pieceHasMoved: function () {
 
-        if (arguments.length > 1)
-            return pieceModel.pieces[this.squares[arguments[0].toString() + arguments[1].toString()].pieceId].hasMoved;
-        else
-            return pieceModel.pieces[this.squares[arguments[0]].pieceId].hasMoved;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].hasMoved;
     },
 
     pieceEnPassantEligible: function () {
 
-        if (arguments.length > 1)
-            return pieceModel.pieces[this.squares[arguments[0].toString() + arguments[1].toString()].pieceId].enPassantEligible;
-        else
-            return pieceModel.pieces[this.squares[arguments[0]].pieceId].enPassantEligible;
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].enPassantEligible;
     },
 
     pieceOnSquare: function() {
@@ -79,6 +68,11 @@
         var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
 
         return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)];
+    },
+
+    setSquarePieceId: function (squareId, pieceId) {
+
+        this.squares[squareId].pieceId = pieceId;
     },
 
     squareStatus: function () {
@@ -91,9 +85,19 @@
 
     squareBehindEnPassantEligible: function (squareId) {
 
-        var rank = parseInt(squareId.substring(0, 1));
-        var file = parseInt(squareId.substring(1, 2));
+        return this.pieceEnPassantEligible(common.getRank(squareId) - 1, common.getFile(squareId)) &&
+            this.squareStatus(common.getRank(squareId) - 1, common.getFile(squareId)) === this.statusOpponentOccupied;
+    },
 
-        return this.pieceEnPassantEligible(rank - 1, file) && this.squareStatus(rank - 1, file) === this.statusOpponentOccupied;
+    squarePieceIsOppenentQueenOrRook: function (squareId) {
+
+        return (this.pieceColor(squareId) === common.currentOpponent()) &&
+            (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.rook);
+    },
+
+    squarePieceIsOppenentQueenOrBishop: function (squareId) {
+
+        return (this.pieceColor(squareId) === common.currentOpponent()) &&
+            (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.bishop);
     }
 }

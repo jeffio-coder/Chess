@@ -159,17 +159,20 @@
             targetId = this.kingMoves[this.squareId][loopIndex];
 
             if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied)  
-                this.moves[targetId] = enums.specialMoves.none;
+                this.moves[targetId] = globals.specialMoves.none;
         }
 
         // Special code for castle.
-        if (this.squareId === '15' && common.currentPlayer() === enums.colors.white && !pieceModel.pieces['WK'].hasMoved) {
+        if (this.squareId === '15' && common.currentPlayer() === globals.colors.white && !pieceModel.pieces['WK'].hasMoved) {
 
             if (!pieceModel.pieces['WKR'].hasMoved &&
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
                 squareModel.squareStatus('17') === squareModel.statusOpen) {
+                // ToDo check for squares in check
 
-                this.moves['17'] = enums.specialMoves.castleQueen;
+
+
+                this.moves['17'] = globals.specialMoves.castleKing;
             }
 
             if (!pieceModel.pieces['WQR'].hasMoved &&
@@ -177,17 +180,17 @@
                 squareModel.squareStatus('13') === squareModel.statusOpen &&
                 squareModel.squareStatus('14') === squareModel.statusOpen) {
 
-                this.moves['13'] = enums.specialMoves.castleQueen;
+                this.moves['13'] = globals.specialMoves.castleQueen;
             }
         }
 
-        if (this.squareId === '14' && common.currentPlayer() === enums.colors.black && !pieceModel.pieces['BK'].hasMoved) {
+        if (this.squareId === '14' && common.currentPlayer() === globals.colors.black && !pieceModel.pieces['BK'].hasMoved) {
 
             if (!pieceModel.pieces['BKR'].hasMoved &&
                 squareModel.squareStatus('12') === squareModel.statusOpen &&
                 squareModel.squareStatus('13') === squareModel.statusOpen) {
 
-                this.moves['12'] = enums.specialMoves.castleQueen;
+                this.moves['12'] = globals.specialMoves.castleKing;
             }
 
             if (!pieceModel.pieces['BQR'].hasMoved &&
@@ -195,7 +198,7 @@
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
                 squareModel.squareStatus('17') === squareModel.statusOpen) {
 
-                this.moves['16'] = enums.specialMoves.castleQueen;
+                this.moves['16'] = globals.specialMoves.castleQueen;
             }
         }
 
@@ -219,7 +222,7 @@
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
             if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) 
-                this.moves[targetId] = enums.specialMoves.none;
+                this.moves[targetId] = globals.specialMoves.none;
         }
     },
 
@@ -243,16 +246,16 @@
             if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpen) {
-                    if (!blocked) this.moves[targetId] = enums.specialMoves.none;
+                    if (!blocked) this.moves[targetId] = globals.specialMoves.none;
                 } else {
                     blocked = true;
                 }
             } else {
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = enums.specialMoves.none;
+                    this.moves[targetId] = globals.specialMoves.none;
                 } else {
                     if (squareModel.squareBehindEnPassantEligible(targetId))
-                        this.moves[targetId] = enums.specialMoves.enPassant;
+                        this.moves[targetId] = globals.specialMoves.enPassant;
                 }
             }
         }
@@ -279,11 +282,11 @@
                     break;
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = enums.specialMoves.none;
+                    this.moves[targetId] = globals.specialMoves.none;
                     break;
                 }
 
-                this.moves[targetId] = enums.specialMoves.none;
+                this.moves[targetId] = globals.specialMoves.none;
             }
         }
     },
@@ -309,154 +312,137 @@
                     break;
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = enums.specialMoves.none;
+                    this.moves[targetId] = globals.specialMoves.none;
                     break;
                 }
 
-                this.moves[targetId] = enums.specialMoves.none;
+                this.moves[targetId] = globals.specialMoves.none;
             }
         }
     },
 
-    checkForCheck: function (calculatingPossibleMoves) {
+    checkForPlayerInCheck: function (kingSquareId) {
 
-        // Note: There's no reason to check for possible pawn or knight moves when this function is called
-        // while calculating possible moves. A player can't move into a pawn check or a knight check.
+        if (!kingSquareId)
+            kingSquareId = this.getKingRankFile();   
 
-        var rankFile = this.getKingRankFile();  // Returns a rankFile object containing rankFile.rank and rankFile.file.
+        if (this.checkForPawnCheck(kingSquareId))
+            return true;
 
-        if (!calculatingPossibleMoves && this.checkForPawnCheck(rankFile)) return true;
+        if (this.checkForKnightCheck(kingSquareId))
+            return true;
 
-        if (!calculatingPossibleMoves && this.checkForKnightCheck(rankFile)) return true;
-
-        if (rankFile.rank < 8 && this.checkForVerticalCheck(rankFile, this.forward)) return true;
-        if (rankFile.rank > 1 && this.checkForVerticalCheck(rankFile, this.backward)) return true;
-
-        if (rankFile.file > 1 && this.checkForHorizontalCheck(rankFile, this.left)) return true;
-        if (rankFile.file < 8 && this.checkForHorizontalCheck(rankFile, this.right)) return true;
-
-        if (rankFile.rank < 8 && rankFile.file > 1 && this.checkForDiagonalCheck(rankFile, this.forward, this.left)) return true;
-        if (rankFile.rank < 8 && rankFile.file < 8 && this.checkForDiagonalCheck(rankFile, this.forward, this.right)) return true;
-        if (rankFile.rank > 1 && rankFile.file > 1 && this.checkForDiagonalCheck(rankFile, this.backward, this.left)) return true;
-        if (rankFile.rank > 1 && rankFile.file < 8 && this.checkForDiagonalCheck(rankFile, this.backward, this.right)) return true;
+        if (this.checkForVerticalHorizontalDiagonalCheck(kingSquareId))
+            return true;
 
         return false;
     },
 
-    checkForPawnCheck: function (rankFile) {
+    checkForPawnCheck: function (kingSquareId) {
 
-        if (rankFile.rank === 8)
+        if (common.getRank(kingSquareId) === 8)
             return false;
 
-        var targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank + 1, rankFile.file + 1)].piece];
+        var targetSquareId = '';
 
-        if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
-            return true;
+        if (common.getFile(kingSquareId) > 1) {
 
-        targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank + 1, rankFile.file - 1)].piece];
+            targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-        if (targetPiece && targetPiece.pieceType === 'P' && targetPiece.color !== common.colorCurrentlyPlaying())
-            return true;
+            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === common.currentOpponent())
+                return true;
+        }
 
-        return false;
-    },
+        if (common.getFile(kingSquareId) < 8) {
 
-    checkForKnightCheck: function (rankFile) {
+            targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-        if (rankFile.rank + 2 <= 8 && rankFile.file + 1 <= 8 && this.knightCheck(rankFile.rank + 2, rankFile.file + 1)) return true;
-        if (rankFile.rank + 2 <= 8 && rankFile.file - 1 >= 1 && this.knightCheck(rankFile.rank + 2, rankFile.file - 1)) return true;
-        if (rankFile.rank + 1 <= 8 && rankFile.file + 2 <= 8 && this.knightCheck(rankFile.rank + 1, rankFile.file + 2)) return true;
-        if (rankFile.rank + 1 <= 8 && rankFile.file - 2 >= 1 && this.knightCheck(rankFile.rank + 1, rankFile.file - 2)) return true;
-        if (rankFile.rank - 2 >= 1 && rankFile.file + 1 <= 8 && this.knightCheck(rankFile.rank - 2, rankFile.file + 1)) return true;
-        if (rankFile.rank - 2 >= 1 && rankFile.file - 1 >= 1 && this.knightCheck(rankFile.rank - 2, rankFile.file - 1)) return true;
-        if (rankFile.rank - 1 >= 1 && rankFile.file + 2 <= 8 && this.knightCheck(rankFile.rank - 1, rankFile.file + 2)) return true;
-        if (rankFile.rank - 1 >= 1 && rankFile.file - 2 >= 1 && this.knightCheck(rankFile.rank - 1, rankFile.file - 2)) return true;
-
-        return false;
-    },
-
-    checkForVerticalCheck: function (rankFile, direction) {
-
-        var rank = rankFile.rank + direction;
-        var rankStop = direction > 0 ? 8 : 1;
-
-        var targetPiece = '';
-        var status = '';
-
-        while (this.compareIntValuesForOrder(rank, rankStop, direction)) {
-
-            status = this.squareStatus(rank, rankFile.file, common.colorCurrentlyPlaying());
-            switch (status) {
-                case this.sqaureOccupiedByPlayer:
-                    return false;
-                case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, rankFile.file)].piece].pieceType;
-                    if (targetPiece === 'Q' || targetPiece === 'R')
-                        return true;
-                    else
-                        return false;
-            }
-            rank += direction;
+            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === common.currentOpponent())
+                return true;
         }
 
         return false;
     },
 
-    checkForHorizontalCheck: function (rankFile, direction) {
+    checkForKnightCheck: function (kingSquareId) {
 
-        var file = rankFile.file + direction;
-        var fileStop = direction > 0 ? 8 : 1;
+        for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
-        var targetPiece = '';
-        var status = '';
-
-        while (this.compareIntValuesForOrder(file, fileStop, direction)) {
-
-            status = this.squareStatus(rankFile.rank, file, common.colorCurrentlyPlaying());
-            switch (status) {
-                case this.sqaureOccupiedByPlayer:
-                    return false;
-                case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rankFile.rank, file)].piece].pieceType;
-                    if (targetPiece === 'Q' || targetPiece === 'R')
-                        return true;
-                    else
-                        return false;
-            }
-            file += direction;
+            if (squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === squareModel.statusOpponentOccupied)
+                return true;
         }
 
         return false;
     },
 
-    checkForDiagonalCheck: function (rankFile, rankDirection, fileDirection) {
+    checkForVerticalHorizontalDiagonalCheck: function (kingSquareId) {
 
-        var rank = rankFile.rank + rankDirection;
-        var rankStop = rankDirection > 0 ? 8 : 1;
+        var outerLoopIndex = 0;
+        var innerLoopIndex = 0;
 
-        var file = rankFile.file + fileDirection;
-        var fileStop = fileDirection > 0 ? 8 : 1;
+        var moveArrays = [
+            this.verticalForwardMoves[kingSquareId],
+            this.verticalBackwardMoves[kingSquareId],
+            this.horitonalLeftMoves[kingSquareId],
+            this.horitonalRightMoves[kingSquareId]
+        ];
 
-        var targetPiece = '';
-        var status = '';
+        for (outerLoopIndex = 0; outerLoopIndex < moveArrays.length; outerLoopIndex++) {
 
-        while (this.compareIntValuesForOrder(rank, rankStop, rankDirection) && this.compareIntValuesForOrder(file, fileStop, fileDirection)) {
+            for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-            status = this.squareStatus(rank, file, common.colorCurrentlyPlaying());
-            switch (status) {
-                case this.sqaureOccupiedByPlayer:
-                    return false;
-                case this.sqaureOccupiedByOpponent:
-                    targetPiece = model.piecesModel[model.squaresModel[common.idFromRankFile(rank, file)].piece].pieceType;
-                    if (targetPiece === 'Q' || targetPiece === 'B')
+                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusOpponentOccupied) {
+                    
+                    if (squareModel.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
-                        return false;
+                        break;
+                }
+
+                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusPlayerOccupied)
+                    break;
             }
-            rank += rankDirection;
-            file += fileDirection;
+        }
+
+
+        moveArrays = [
+            this.diagonalForwardLeftMoves[kingSquareId],
+            this.diagonalForwardRightMoves[kingSquareId],
+            this.diagonalBackwardLeftMoves[kingSquareId],
+            this.diagonalBackwardRightMoves[kingSquareId]
+        ];
+
+        for (outerLoopIndex = 0; outerLoopIndex < moveArrays.length; outerLoopIndex++) {
+
+            for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
+
+                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusOpponentOccupied) {
+
+                    if (squareModel.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
+                        return true;
+                    else
+                        break;
+                }
+
+                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusPlayerOccupied)
+                    break;
+            }
         }
 
         return false;
     },
+
+    getKingRankFile: function () {
+
+        var pieceId = common.currentPlayer().substring(0, 1).toUpperCase() + 'K';
+
+        for (var loopIndex = 0; loopIndex <= Object.keys(squareModel.squares).length; loopIndex++) {
+            
+            if (squareModel.squares[Object.keys(squareModel.squares)[loopIndex]].pieceId === pieceId) {
+
+                return Object.keys(squareModel.squares)[loopIndex];
+            }
+        }
+        return '';
+    }
 }

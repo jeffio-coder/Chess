@@ -1,12 +1,11 @@
 ﻿// ToDo
 //
-// actionDragEnd
-// castle
-// checkForCheck
-// remove moves checkForCheck
+// Move playerMoveNumber to restCalls
+// castle checkForCheck
 // checkmate
 // Promote; change piece ID's?
 //
+// Tooltip for moving into check
 // filters
 //
 // 
@@ -31,7 +30,6 @@ var board = {
         pieceModel.pieces = {};
         possibleMoves.loadSquareMoves();
 
-
         squareModel.squares = restCalls.getSquaresModel();
         pieceModel.pieces = restCalls.getPiecesModel();
 
@@ -53,7 +51,7 @@ var board = {
         if (event.which !== 1)
             return;
 
-        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id).piece === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
+        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
             return;
 
         possibleMoves.squareId = div.id;
@@ -82,8 +80,7 @@ var board = {
                 break;
         }
 
-        // ToDo Remove squares in check.
-
+        utils.removeMovesThatWouldResultInCheck();
         view.showPossibleMoves();
     },
    
@@ -91,25 +88,13 @@ var board = {
 
         view.clearSquaresMarkedForMove();
         
-        if (targetId && squareModel.exists(targetId)) {
+        if (targetId && (targetId in possibleMoves.moves)) {
 
             utils.movePieceToNewSquare(possibleMoves.squareId, targetId);
-
-            // Incrementing common.playerMoveNumber switches current player.
-            common.playerMoveNumber++;
-
-            utils.reverseSquaresModel();
-            view.paintBoardFromModel();
-
-            //possibleMoves.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
-
-            // Clear en passant pieces for the current player.
-            Object.keys(pieceModel.pieces).forEach(function (key) {
-
-                if (pieceModel.pieces[key].color === common.currentPlayer())
-                    pieceModel.pieces[key].enPassantEligible = false;
-            });
+            utils.changeCurrentPlayer();
         }
+
+        possibleMoves.moves = {};
     }
 }
 
@@ -119,33 +104,135 @@ var utils = {
 
         this.capturePieceIfApplicable(sourceId, targetId);
 
-        squareModel.squares[targetId].pieceId = squareModel.squares[sourceId].pieceId;
-        squareModel.squares[sourceId].pieceId = '';
-
-        squareModel.pieceOnSquare(targetId).hasMoved = true;
-
-        // enPassantEligible is set in the possibleMoves.moves object when calculating possible moves. It only applies to pawns moving two squares on their first move.
-        //squareModel.pieceOnSquare(targetId).enPassantEligible = possibleMoves.moves[targetId].willBeEnPassantEligible;
-    },
-
-    capturePieceIfApplicable: function (targetId) {
-
-        //if (squareModel.pieceId(targetId) !== '') {
-        //    squareModel.pieceOnSquare(targetId).captured = true;
-        //    return;
-        //}
-
-        //if (possibleMoves.moves[targetId].enPassantEligible) {
+        if (possibleMoves.moves[targetId] === globals.specialMoves.none || possibleMoves.moves[targetId] === globals.specialMoves.enPassant) {
             
-        //    // Get the squareId of the square behind the target square.
-        //    var squareBehindId = ''; // (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).file.toString();
+            squareModel.setSquarePieceId(targetId, squareModel.pieceId(sourceId));
+            squareModel.setSquarePieceId(sourceId, '');
 
-        //    squareModel.pieceOnSquare(squareBehindId).captured = true;
-        //    squareModel.squares[squareBehindId].pieceId = '';
-        //}
+            squareModel.pieceOnSquare(targetId).hasMoved = true;
+
+            squareModel.pieceOnSquare(targetId).enPassantEligible =
+                squareModel.pieceType(targetId) === pieceModel.pawn &&
+                common.getRank(targetId) - common.getRank(sourceId) === 2;
+        }
     },
 
-    reverseSquaresModel: function () {
+    capturePieceIfApplicable: function (sourceId, targetId) {
+
+        if (possibleMoves.moves[targetId] === globals.specialMoves.none) {
+
+            if (squareModel.pieceId(targetId) !== '')
+                squareModel.pieceOnSquare(targetId).captured = true;
+            return;
+        }
+
+        if (possibleMoves.moves[targetId] === globals.specialMoves.enPassant) {
+
+            var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
+            squareModel.pieceOnSquare(squareBehindId).captured = true;
+            squareModel.setSquarePieceId(squareBehindId, '');
+            return;
+        }
+
+        if (possibleMoves.moves[targetId] === globals.specialMoves.castleKing) {
+            
+            this.castleKing(targetId);
+            return;
+        }
+
+        if (possibleMoves.moves[targetId] === globals.specialMoves.castleQueen)
+            this.castleQueen(targetId);
+    },
+
+    castleKing: function (targetId) {
+
+        if (targetId === '17') {  // White king
+
+            squareModel.setSquarePieceId('17', 'WK');
+            squareModel.setSquarePieceId('16', 'WKR');
+            squareModel.setSquarePieceId('15', '');
+            squareModel.setSquarePieceId('18', '');
+            pieceModel.pieces['WK'].hasMoved = true;
+            pieceModel.pieces['WKR'].hasMoved = true;
+        }
+
+        if (targetId === '12') {  // Black king
+
+            squareModel.setSquarePieceId('12', 'BK');
+            squareModel.setSquarePieceId('13', 'BKR');
+            squareModel.setSquarePieceId('14', '');
+            squareModel.setSquarePieceId('11', '');
+            pieceModel.pieces['BK'].hasMoved = true;
+            pieceModel.pieces['BKR'].hasMoved = true;
+        }
+    },
+
+    castleQueen: function (targetId) {
+
+        if (targetId === '13') {  // White king
+
+            squareModel.setSquarePieceId('13', 'WK');
+            squareModel.setSquarePieceId('14', 'WQR');
+            squareModel.setSquarePieceId('15', '');
+            squareModel.setSquarePieceId('11', '');
+            pieceModel.pieces['WK'].hasMoved = true;
+            pieceModel.pieces['WQR'].hasMoved = true;
+        }
+
+        if (targetId === '16') {  // Black king
+
+            squareModel.setSquarePieceId('16', 'BK');
+            squareModel.setSquarePieceId('15', 'BQR');
+            squareModel.setSquarePieceId('14', '');
+            squareModel.setSquarePieceId('18', '');
+            pieceModel.pieces['BK'].hasMoved = true;
+            pieceModel.pieces['BQR'].hasMoved = true;
+        }
+    },
+
+    removeMovesThatWouldResultInCheck: function () {
+
+        var originalSquareModel = JSON.stringify(squareModel.squares);
+        var originalPieceModel = JSON.stringify(pieceModel.pieces);
+
+        var movesToRemove = [];
+        var loopIndex = 0;
+
+        for (loopIndex = 0; loopIndex < Object.keys(possibleMoves.moves).length; loopIndex++) {
+
+            this.movePieceToNewSquare(possibleMoves.squareId, Object.keys(possibleMoves.moves)[loopIndex]);
+
+            if (possibleMoves.checkForPlayerInCheck())
+                movesToRemove.push(Object.keys(possibleMoves.moves)[loopIndex]);
+
+            squareModel.squares = JSON.parse(originalSquareModel);
+            pieceModel.pieces = JSON.parse(originalPieceModel);
+        }
+
+        for (loopIndex = 0; loopIndex < movesToRemove.length; loopIndex++) {
+
+            delete possibleMoves.moves[movesToRemove[loopIndex]];
+        }
+    },
+ 
+    changeCurrentPlayer: function () {
+        
+        common.playerMoveNumber++;
+
+        utils.changeSquareModelToNewPlayer();
+        view.paintBoardFromModel();
+
+        possibleMoves.checkForPlayerInCheck() ? view.showCheckWarning() : view.hideCheckWarning();
+
+        // Clear en passant pieces for the current player.
+        Object.keys(pieceModel.pieces).forEach(function (key) {
+
+            if (pieceModel.pieces[key].color === common.currentPlayer())
+                pieceModel.pieces[key].enPassantEligible = false;
+        });
+    },
+     
+    changeSquareModelToNewPlayer: function () {
 
         var newSquaresModel = {};
 
@@ -154,7 +241,7 @@ var utils = {
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
                 newSquaresModel[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
-                    { color: squareModel.color(rankIndex, fileIndex), piece: squareModel.pieceId(rankIndex, fileIndex) };
+                    { color: squareModel.color(rankIndex, fileIndex), pieceId: squareModel.pieceId(rankIndex, fileIndex) };
             }
         }
 

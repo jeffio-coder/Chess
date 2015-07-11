@@ -65,7 +65,7 @@
                 if (pieceModel.pieces[key].color === common.currentPlayer())  // The captured piece should go on the top because the color playing is at the bottom.
                     $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
                 else 
-                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].color[key].pieceType);
+                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
             }
         });
     },
@@ -76,7 +76,7 @@
 
     showCheckWarning: function() {
 
-        if (common.currentPlayer() === enums.colors.white) {
+        if (common.currentPlayer() === globals.colors.white) {
 
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -135,7 +135,8 @@
         },
 
         markSquaresAsPossibleMove: function () {
-            $.each(possibleMoves.moves, function (key) {
+
+            Object.keys(possibleMoves.moves).forEach(function (key) {
                 $('#' + key).addClass('possibleMove');
             });
         },
