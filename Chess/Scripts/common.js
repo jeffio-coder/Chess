@@ -2,6 +2,13 @@
     colors: {
         white: 'white',
         black: 'wlack'
+    },
+
+    specialMoves: {
+        none: '',
+        enPassant: 'enPassant',
+        castleKing: 'castleKing',
+        castleQueen: 'castleQueen'
     }
 }
 

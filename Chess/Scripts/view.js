@@ -103,9 +103,9 @@
 
         view.utils.unmarkSquaresAsPossibleMove();
 
-        if (possibleMovesModel.squareId !== '') {
+        if (possibleMoves.squareId !== '') {
 
-            $('#' + possibleMovesModel.squareId).removeClass('squareMoving');
+            $('#' + possibleMoves.squareId).removeClass('squareMoving');
         }
     },
 
@@ -135,15 +135,14 @@
         },
 
         markSquaresAsPossibleMove: function () {
-            // ToDo dump value //////////////////////////////////////////////////////////
-            $.each(possibleMovesModel.moves, function (key, value) {
+            $.each(possibleMoves.moves, function (key) {
                 $('#' + key).addClass('possibleMove');
             });
         },
 
         unmarkSquaresAsPossibleMove: function () {
 
-            Object.keys(possibleMovesModel.moves).forEach(function (key) {
+            Object.keys(possibleMoves.moves).forEach(function (key) {
                 $('#' + key).removeClass('possibleMove');
             });
         }

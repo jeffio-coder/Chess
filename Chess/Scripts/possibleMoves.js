@@ -1,4 +1,4 @@
-﻿var possibleMovesModel = {
+﻿var possibleMoves = {
     forward: 1,
     backward: -1,
     left: -1,
@@ -17,19 +17,11 @@
     knightMoves: {},
     pawnMoves: {},
 
-    loadSquareMoves: function() {
-
-        this.loadVerticalMoves();
-        this.loadHorizontalMoves();
-        this.loadDiagonalMoves();
-        this.loadKingMoves();
-        this.loadKnightMoves();
-    },
-
-    loadVerticalMoves: function() {
+    loadSquareMoves: function () {
 
         var squareMoves = [];
         var rank = 0;
+        var file = 0;
 
         for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
@@ -44,83 +36,78 @@
                 while (rank >= 1) squareMoves.push((rank--).toString() + fileIndex.toString());
                 this.verticalBackwardMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
 
+                squareMoves = [];
+                file = fileIndex + 1;
+                while (file <= 8) squareMoves.push(rankIndex.toString() + (file++).toString());
+                this.horitonalRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
+                squareMoves = [];
+                file = fileIndex - 1;
+                while (file >= 1) squareMoves.push(rankIndex.toString() + (file--).toString());
+                this.horitonalLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
+                squareMoves = [];
+                rank = rankIndex + 1;
+                file = fileIndex + 1;
+                while (rank <= 8 && file <= 8) squareMoves.push((rank++).toString() + (file++).toString());
+                this.diagonalForwardRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
+                squareMoves = [];
+                rank = rankIndex + 1;
+                file = fileIndex - 1;
+                while (rank <= 8 && file >= 1) squareMoves.push((rank++).toString() + (file--).toString());
+                this.diagonalForwardLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
+                squareMoves = [];
+                rank = rankIndex - 1;
+                file = fileIndex + 1;
+                while (rank >= 1 && file <= 8) squareMoves.push((rank--).toString() + (file++).toString());
+                this.diagonalBackwardRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
+                squareMoves = [];
+                rank = rankIndex - 1;
+                file = fileIndex - 1;
+                while (rank >= 1 && file >= 1) squareMoves.push((rank--).toString() + (file--).toString());
+                this.diagonalBackwardLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+
                 // Load pawn moves
                 squareMoves = [];
                 if (rankIndex > 1 && rankIndex < 8) {
                     
-                    squareMoves.push((rankIndex + 1).toString() + fileIndex.toString());
-                    if (rankIndex === 2) squareMoves.push((rankIndex + 2).toString() + fileIndex.toString());
-                    if (fileIndex - 1 >= 1) squareMoves.push((rankIndex + 1).toString() + (fileIndex - 1).toString());
-                    if (fileIndex + 1 <= 8) squareMoves.push((rankIndex + 1).toString() + (fileIndex + 1).toString());
+                    squareMoves.push({ squareId: (rankIndex + 1).toString() + fileIndex.toString(), capture: false });
+                    if (rankIndex === 2) squareMoves.push({ squareId: (rankIndex + 2).toString() + fileIndex.toString(), capture: false });
+                    if (fileIndex - 1 >= 1) squareMoves.push({ squareId: (rankIndex + 1).toString() + (fileIndex - 1).toString(), capture: true });
+                    if (fileIndex + 1 <= 8) squareMoves.push({ squareId: (rankIndex + 1).toString() + (fileIndex + 1).toString(), capture: true });
                 }
                 this.pawnMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
             }
         }
+
+        this.loadKingMoves();
+        this.loadKnightMoves();
     },
 
-    loadHorizontalMoves: function () {
+    loadKingMoves: function () {
 
         var squareMoves = [];
-        var file = 0;
 
         for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
                 squareMoves = [];
-                file = fileIndex + 1;
 
-                while (file <= 8) squareMoves.push(rankIndex.toString() + (file++).toString());
-                this.horitonalRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+                if (rankIndex < 8 && fileIndex > 1) squareMoves.push((rankIndex + 1).toString() + (fileIndex - 1).toString());
+                if (rankIndex < 8) squareMoves.push((rankIndex + 1).toString() + fileIndex.toString());
+                if (rankIndex < 8 && fileIndex < 8) squareMoves.push((rankIndex + 1).toString() + (fileIndex + 1).toString());
 
+                if (fileIndex > 1) squareMoves.push(rankIndex.toString() + (fileIndex - 1).toString());
+                if (fileIndex < 8) squareMoves.push(rankIndex.toString() + (fileIndex + 1).toString());
 
-                squareMoves = [];
-                file = fileIndex - 1;
+                if (rankIndex > 1 && fileIndex > 1) squareMoves.push((rankIndex - 1).toString() + (fileIndex - 1).toString());
+                if (rankIndex > 1) squareMoves.push((rankIndex - 1).toString() + fileIndex.toString());
+                if (rankIndex > 1 && fileIndex < 8) squareMoves.push((rankIndex - 1).toString() + (fileIndex + 1).toString());
 
-                while (file >= 1) squareMoves.push(rankIndex.toString() + (file--).toString());
-                this.horitonalLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
-            }
-        }
-    },
-
-    loadDiagonalMoves: function () {
-
-        var squareMoves = [];
-        var rank = 0;
-        var file = 0;
-
-        for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
-            for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
-
-                squareMoves = [];
-                rank = rankIndex + 1;
-                file = fileIndex + 1;
-
-                while (rank <= 8 && file <= 8) squareMoves.push((rank++).toString() + (file++).toString());
-                this.diagonalForwardRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
-
-
-                squareMoves = [];
-                rank = rankIndex + 1;
-                file = fileIndex - 1;
-
-                while (rank <= 8 && file >= 1) squareMoves.push((rank++).toString() + (file--).toString());
-                this.diagonalForwardLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
-
-
-                squareMoves = [];
-                rank = rankIndex - 1;
-                file = fileIndex + 1;
-
-                while (rank >= 1 && file <= 8) squareMoves.push((rank--).toString() + (file++).toString());
-                this.diagonalBackwardRightMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
-
-
-                squareMoves = [];
-                rank = rankIndex - 1;
-                file = fileIndex - 1;
-
-                while (rank >= 1 && file >= 1) squareMoves.push((rank--).toString() + (file--).toString());
-                this.diagonalBackwardLeftMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+                this.kingMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
             }
         }
     },
@@ -163,133 +150,172 @@
         }
     },
 
-    loadKingMoves: function() {
+    possibleMovesForKing: function () {
 
-        var squareMoves = [];
+        var targetId = '';
 
-        for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
-            for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
+        for (var loopIndex = 0; loopIndex < this.kingMoves[this.squareId].length; loopIndex++) {
 
-                squareMoves = [];
+            targetId = this.kingMoves[this.squareId][loopIndex];
 
-                if (rankIndex < 8 && fileIndex > 1) squareMoves.push((rankIndex + 1).toString() + (fileIndex - 1).toString());
-                if (rankIndex < 8) squareMoves.push((rankIndex + 1).toString() + fileIndex.toString());
-                if (rankIndex < 8 && fileIndex < 8) squareMoves.push((rankIndex + 1).toString() + (fileIndex + 1).toString());
+            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied)  
+                this.moves[targetId] = enums.specialMoves.none;
+        }
 
-                if (fileIndex > 1) squareMoves.push(rankIndex.toString() + (fileIndex - 1).toString());
-                if (fileIndex < 8) squareMoves.push(rankIndex.toString() + (fileIndex + 1).toString());
+        // Special code for castle.
+        if (this.squareId === '15' && common.currentPlayer() === enums.colors.white && !pieceModel.pieces['WK'].hasMoved) {
 
-                if (rankIndex > 1 && fileIndex > 1) squareMoves.push((rankIndex - 1).toString() + (fileIndex - 1).toString());
-                if (rankIndex > 1) squareMoves.push((rankIndex - 1).toString() + fileIndex.toString());
-                if (rankIndex > 1 && fileIndex < 8) squareMoves.push((rankIndex - 1).toString() + (fileIndex + 1).toString());
-                this.kingMoves[rankIndex.toString() + fileIndex.toString()] = squareMoves;
+            if (!pieceModel.pieces['WKR'].hasMoved &&
+                squareModel.squareStatus('16') === squareModel.statusOpen &&
+                squareModel.squareStatus('17') === squareModel.statusOpen) {
+
+                this.moves['17'] = enums.specialMoves.castleQueen;
+            }
+
+            if (!pieceModel.pieces['WQR'].hasMoved &&
+                squareModel.squareStatus('12') === squareModel.statusOpen &&
+                squareModel.squareStatus('13') === squareModel.statusOpen &&
+                squareModel.squareStatus('14') === squareModel.statusOpen) {
+
+                this.moves['13'] = enums.specialMoves.castleQueen;
             }
         }
+
+        if (this.squareId === '14' && common.currentPlayer() === enums.colors.black && !pieceModel.pieces['BK'].hasMoved) {
+
+            if (!pieceModel.pieces['BKR'].hasMoved &&
+                squareModel.squareStatus('12') === squareModel.statusOpen &&
+                squareModel.squareStatus('13') === squareModel.statusOpen) {
+
+                this.moves['12'] = enums.specialMoves.castleQueen;
+            }
+
+            if (!pieceModel.pieces['BQR'].hasMoved &&
+                squareModel.squareStatus('15') === squareModel.statusOpen &&
+                squareModel.squareStatus('16') === squareModel.statusOpen &&
+                squareModel.squareStatus('17') === squareModel.statusOpen) {
+
+                this.moves['16'] = enums.specialMoves.castleQueen;
+            }
+        }
+
     },
 
-    possibleMovesForPawn: function() {
+    possibleMovesForQueen: function () {
 
-        var rank = this.squareAllProperties.squareRank;
-        var file = this.squareAllProperties.squareFile;
-
-        // Move one vertical.
-        this.pawnMoves(rank + this.forward, file, this.sqaureOpen);
-
-        // Move two vertical.
-        if (!this.squareAllProperties.pieceHasMoved &&
-            this.squareStatus(rank + this.forward, file, this.squareAllProperties.pieceColor) === this.sqaureOpen) {
-
-            this.pawnMoves(rank + (this.forward * 2), file, this.sqaureOpen, true);
-        }
-
-        // Capture on the diagonals.
-        this.pawnMoves(rank + this.forward, file + this.left, this.sqaureOccupiedByOpponent);
-        this.pawnMoves(rank + this.forward, file + this.right, this.sqaureOccupiedByOpponent);
-
-        // Capture en passant left.
-        if (file + this.left >= 1) {
-
-            var enPassantSquareAllPropertiesLeft = this.getAllSquareProperties(rank, file + this.left);
-
-            if (enPassantSquareAllPropertiesLeft.pieceEnPassantEligible &&
-                this.squareStatus(rank + this.forward, file + this.left, this.squareAllProperties.pieceColor) === this.sqaureOpen) {
-
-                this.addToPossibleMoves(rank + this.forward, file + this.left, true);
-            }
-        }
-
-        // Capture en passant right.
-        if (file + this.right <= 8) {
-
-            var enPassantSquareAllPropertiesRight = this.getAllSquareProperties(rank, file + this.right);
-
-            if (enPassantSquareAllPropertiesRight.pieceEnPassantEligible &&
-                this.squareStatus(rank + this.forward, file + this.right, this.squareAllProperties.pieceColor) === this.sqaureOpen) {
-
-                this.addToPossibleMoves(rank + this.forward, file + this.right, true);
-            }
-        }
+        this.possibleVerticalAndHorizonalMoves();
+        this.possibleDiagonalMoves();
     },
 
-    possibleMovesForKnight: function() {
+    possibleMovesForRook: function () {
 
-        for (var loopIndex = 0; loopIndex <= this.knightMoves[this.squareId].length; loopIndex++) {
+        this.possibleVerticalAndHorizonalMoves();
+    },
+
+    possibleMovesForKnight: function () {
+
+        for (var loopIndex = 0; loopIndex < this.knightMoves[this.squareId].length; loopIndex++) {
 
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
-            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) {
+            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) 
+                this.moves[targetId] = enums.specialMoves.none;
+        }
+    },
 
-                this.moves[targetId] = true;
+    possibleMovesForBishop: function () {
+
+        this.possibleDiagonalMoves();
+    },
+
+    possibleMovesForPawn: function () {
+
+        // For the forward moves, the pawnMoves will be traversed one then two (if applicable). If one is blocked,
+        // set a flag so two will be considered blocked.
+
+        var targetId = '';
+        var blocked = false;
+
+        for (var loopIndex = 0; loopIndex < this.pawnMoves[this.squareId].length; loopIndex++) {
+
+            targetId = this.pawnMoves[this.squareId][loopIndex].squareId;
+
+            if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
+
+                if (squareModel.squareStatus(targetId) === squareModel.statusOpen) {
+                    if (!blocked) this.moves[targetId] = enums.specialMoves.none;
+                } else {
+                    blocked = true;
+                }
+            } else {
+                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                    this.moves[targetId] = enums.specialMoves.none;
+                } else {
+                    if (squareModel.squareBehindEnPassantEligible(targetId))
+                        this.moves[targetId] = enums.specialMoves.enPassant;
+                }
             }
         }
-
     },
 
-    possibleMovesForKing: function() {
+    possibleVerticalAndHorizonalMoves: function() {
 
-        var numberOfSquaresToMove = 1;
-        this.possibleMovesForQueen(numberOfSquaresToMove);
+        var targetId = '';
+
+        var moveArrays = [
+            this.verticalForwardMoves[this.squareId],
+            this.verticalBackwardMoves[this.squareId],
+            this.horitonalLeftMoves[this.squareId],
+            this.horitonalRightMoves[this.squareId]
+        ];
+
+        for (var outerLoopIndex = 0; outerLoopIndex < moveArrays.length; outerLoopIndex++) {
+
+            for (var innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
+
+                targetId = moveArrays[outerLoopIndex][innerLoopIndex];
+
+                if (squareModel.squareStatus(targetId) === squareModel.statusPlayerOccupied)
+                    break;
+
+                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                    this.moves[targetId] = enums.specialMoves.none;
+                    break;
+                }
+
+                this.moves[targetId] = enums.specialMoves.none;
+            }
+        }
     },
 
-    possibleMovesForQueen: function(numberOfSquaresToMove) {
+    possibleDiagonalMoves: function () {
 
-        this.possibleMovesForRook(numberOfSquaresToMove);
-        this.possibleMovesForBishop(numberOfSquaresToMove);
-    },
+        var targetId = '';
 
-    possibleMovesForBishop: function(numberOfSquaresToMove) {
+        var moveArrays = [
+            this.diagonalForwardLeftMoves[this.squareId],
+            this.diagonalForwardRightMoves[this.squareId],
+            this.diagonalBackwardLeftMoves[this.squareId],
+            this.diagonalBackwardRightMoves[this.squareId]
+        ];
 
-        this.diagonalMoves(this.forward, this.left, numberOfSquaresToMove);
-        this.diagonalMoves(this.forward, this.right, numberOfSquaresToMove);
-        this.diagonalMoves(this.backward, this.left, numberOfSquaresToMove);
-        this.diagonalMoves(this.backward, this.right, numberOfSquaresToMove);
-    },
+        for (var outerLoopIndex = 0; outerLoopIndex < moveArrays.length; outerLoopIndex++) {
 
-    possibleMovesForRook: function(numberOfSquaresToMove) {
+            for (var innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-        this.verticalMoves(this.forward, numberOfSquaresToMove);
-        this.verticalMoves(this.backward, numberOfSquaresToMove);
-        this.horitonalMoves(this.left, numberOfSquaresToMove);
-        this.horitonalMoves(this.right, numberOfSquaresToMove);
-    },
+                targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-    addToPossibleMoves: function (rank, file, enPassantEligible, willBeEnPassantEligible) {
-        this.moves[common.idFromRankFile(rank, file)] = {
-            enPassantEligible: enPassantEligible ? true : false,
-            willBeEnPassantEligible: willBeEnPassantEligible ? true : false
-        };
-    },
+                if (squareModel.squareStatus(targetId) === squareModel.statusPlayerOccupied)
+                    break;
 
-    getNumberOfSquaresToMove: function (start, direction, numberOfSquaresToMove) {
+                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                    this.moves[targetId] = enums.specialMoves.none;
+                    break;
+                }
 
-        if (numberOfSquaresToMove && direction > 0)
-            return start + numberOfSquaresToMove > 8 ? 8 : start + numberOfSquaresToMove;
-        else if (numberOfSquaresToMove && direction < 0)
-            return start - numberOfSquaresToMove < 1 ? 1 : start - numberOfSquaresToMove;
-        else if (direction > 0)
-            return 8;
-        else
-            return 1;
+                this.moves[targetId] = enums.specialMoves.none;
+            }
+        }
     },
 
     checkForCheck: function (calculatingPossibleMoves) {

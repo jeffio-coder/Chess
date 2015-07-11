@@ -1,8 +1,9 @@
 ﻿// ToDo
 //
-//
-// check for check calls; set rankFile
+// actionDragEnd
 // castle
+// checkForCheck
+// remove moves checkForCheck
 // checkmate
 // Promote; change piece ID's?
 //
@@ -19,16 +20,16 @@ $(document).ready(function () {
         cache: false
     });
 
-    board.initialize();
+    board.actionInitialize();
 });
 
 var board = {
 
-    initialize: function () {
+    actionInitialize: function () {
 
         squareModel.squares = {};
         pieceModel.pieces = {};
-        possibleMovesModel.loadSquareMoves();
+        possibleMoves.loadSquareMoves();
 
 
         squareModel.squares = restCalls.getSquaresModel();
@@ -55,29 +56,29 @@ var board = {
         if (!squareModel.exists(div.id) || squareModel.pieceId(div.id).piece === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
             return;
 
-        possibleMovesModel.squareId = div.id;
+        possibleMoves.squareId = div.id;
         view.squareMovingSetClass(div.id);
-        possibleMovesModel.moves = {};
+        possibleMoves.moves = {};
 
         switch (squareModel.pieceType(div.id)) {
 
             case pieceModel.king:
-                possibleMovesModel.possibleMovesForKing();
+                possibleMoves.possibleMovesForKing();
                 break;
             case pieceModel.queen:
-                possibleMovesModel.possibleMovesForQueen();
+                possibleMoves.possibleMovesForQueen();
                 break;
             case pieceModel.rook:
-                possibleMovesModel.possibleMovesForRook();
+                possibleMoves.possibleMovesForRook();
                 break;
             case pieceModel.knight:
-                possibleMovesModel.possibleMovesForKnight();
+                possibleMoves.possibleMovesForKnight();
                 break;
             case pieceModel.bishop:
-                possibleMovesModel.possibleMovesForBishop();
+                possibleMoves.possibleMovesForBishop();
                 break;
             case pieceModel.pawn:
-                possibleMovesModel.possibleMovesForPawn();
+                possibleMoves.possibleMovesForPawn();
                 break;
         }
 
@@ -92,7 +93,7 @@ var board = {
         
         if (targetId && squareModel.exists(targetId)) {
 
-            utils.movePieceToNewSquare(possibleMovesModel.squareId, targetId);
+            utils.movePieceToNewSquare(possibleMoves.squareId, targetId);
 
             // Incrementing common.playerMoveNumber switches current player.
             common.playerMoveNumber++;
@@ -100,7 +101,7 @@ var board = {
             utils.reverseSquaresModel();
             view.paintBoardFromModel();
 
-            possibleMovesModel.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
+            //possibleMoves.checkForCheck(false) ? view.showCheckWarning() : view.hideCheckWarning();
 
             // Clear en passant pieces for the current player.
             Object.keys(pieceModel.pieces).forEach(function (key) {
@@ -123,25 +124,25 @@ var utils = {
 
         squareModel.pieceOnSquare(targetId).hasMoved = true;
 
-        // enPassantEligible is set in the possibleMovesModel.moves object when calculating possible moves. It only applies to pawns moving two squares on their first move.
-        squareModel.pieceOnSquare(targetId).enPassantEligible = possibleMovesModel.moves[targetId].willBeEnPassantEligible;
+        // enPassantEligible is set in the possibleMoves.moves object when calculating possible moves. It only applies to pawns moving two squares on their first move.
+        //squareModel.pieceOnSquare(targetId).enPassantEligible = possibleMoves.moves[targetId].willBeEnPassantEligible;
     },
 
     capturePieceIfApplicable: function (targetId) {
 
-        if (squareModel.pieceId(targetId) !== '') {
-            squareModel.pieceOnSquare(targetId).captured = true;
-            return;
-        }
+        //if (squareModel.pieceId(targetId) !== '') {
+        //    squareModel.pieceOnSquare(targetId).captured = true;
+        //    return;
+        //}
 
-        if (possibleMovesModel.moves[targetId].enPassantEligible) {
+        //if (possibleMoves.moves[targetId].enPassantEligible) {
             
-            // Get the squareId of the square behind the target square.
-            var squareBehindId = (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).file.toString();
+        //    // Get the squareId of the square behind the target square.
+        //    var squareBehindId = ''; // (this.getRankAndFileFileFromId(targetId).rank - 1).toString() + this.getRankAndFileFileFromId(targetId).file.toString();
 
-            squareModel.pieceOnSquare(squareBehindId).captured = true;
-            squareModel.squares[squareBehindId].pieceId = '';
-        }
+        //    squareModel.pieceOnSquare(squareBehindId).captured = true;
+        //    squareModel.squares[squareBehindId].pieceId = '';
+        //}
     },
 
     reverseSquaresModel: function () {
@@ -153,14 +154,10 @@ var utils = {
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
                 newSquaresModel[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
-                    { color: squareModel.color(rank, file), piece: squareModel.pieceId(rank, file) };
+                    { color: squareModel.color(rankIndex, fileIndex), piece: squareModel.pieceId(rankIndex, fileIndex) };
             }
         }
 
         squareModel.squares = newSquaresModel;
-    },
-
-    getRankAndFileFileFromId: function (id) {
-        return { 'rank': parseInt(id.substring(0, 1)), 'file': parseInt(id.substring(1, 2)) };
     }
 }
