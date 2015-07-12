@@ -13,8 +13,6 @@
 }
 
 var common = {
-    
-    playerMoveNumber: 0,
 
     getRank: function(squareId) {
 
@@ -25,14 +23,4 @@ var common = {
 
         return parseInt(squareId.substring(1, 2));
     },
-
-    currentPlayer: function () {
-
-        return (this.playerMoveNumber % 2) === 0 ? globals.colors.white : globals.colors.black;
-    },
-
-    currentOpponent: function() {
-
-        return this.currentPlayer() === globals.colors.white ? globals.colors.black : globals.colors.white;
-    } 
 }

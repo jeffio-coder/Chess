@@ -1,5 +1,15 @@
 ﻿var restCalls = {
 
+    playerMoveNumber: 0,
+    gameOver: false,
+    currentPlayer: '',
+    currentOpponent: '',
+    
+    setGameOver: function() {
+
+        this.gameOver = true;
+    },
+
     getSquaresModel: function () {
         return {
             '81': { 'color': 'white', 'pieceId': 'BQR' },

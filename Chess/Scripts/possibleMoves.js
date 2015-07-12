@@ -150,6 +150,33 @@
         }
     },
 
+    loadPossibleMoves: function() {
+
+        possibleMoves.moves = {};
+
+        switch (squareModel.pieceType(this.squareId)) {
+
+            case pieceModel.king:
+                this.possibleMovesForKing();
+                break;
+            case pieceModel.queen:
+                this.possibleMovesForQueen();
+                break;
+            case this.rook:
+                this.possibleMovesForRook();
+                break;
+            case this.knight:
+                this.possibleMovesForKnight();
+                break;
+            case this.bishop:
+                this.possibleMovesForBishop();
+                break;
+            case pieceModel.pawn:
+                this.possibleMovesForPawn();
+                break;
+        }
+    },
+
     possibleMovesForKing: function () {
 
         var targetId = '';
@@ -163,40 +190,47 @@
         }
 
         // Special code for castle.
-        if (this.squareId === '15' && common.currentPlayer() === globals.colors.white && !pieceModel.pieces['WK'].hasMoved) {
+        if (this.squareId === '15' && restCalls.currentPlayer === globals.colors.white && !pieceModel.pieces['WK'].hasMoved) {
 
             if (!pieceModel.pieces['WKR'].hasMoved &&
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
-                squareModel.squareStatus('17') === squareModel.statusOpen) {
-                // ToDo check for squares in check
-
-
+                !this.checkForPlayerInCheck('16') &&
+                squareModel.squareStatus('17') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('17')) {
 
                 this.moves['17'] = globals.specialMoves.castleKing;
             }
 
             if (!pieceModel.pieces['WQR'].hasMoved &&
                 squareModel.squareStatus('12') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('12') &&
                 squareModel.squareStatus('13') === squareModel.statusOpen &&
-                squareModel.squareStatus('14') === squareModel.statusOpen) {
+                !this.checkForPlayerInCheck('13') &&
+                squareModel.squareStatus('14') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('14')) {
 
                 this.moves['13'] = globals.specialMoves.castleQueen;
             }
         }
 
-        if (this.squareId === '14' && common.currentPlayer() === globals.colors.black && !pieceModel.pieces['BK'].hasMoved) {
+        if (this.squareId === '14' && restCalls.currentPlayer === globals.colors.black && !pieceModel.pieces['BK'].hasMoved) {
 
             if (!pieceModel.pieces['BKR'].hasMoved &&
                 squareModel.squareStatus('12') === squareModel.statusOpen &&
-                squareModel.squareStatus('13') === squareModel.statusOpen) {
+                !this.checkForPlayerInCheck('12') &&
+                squareModel.squareStatus('13') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('13')) {
 
                 this.moves['12'] = globals.specialMoves.castleKing;
             }
 
             if (!pieceModel.pieces['BQR'].hasMoved &&
                 squareModel.squareStatus('15') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('15') &&
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
-                squareModel.squareStatus('17') === squareModel.statusOpen) {
+                !this.checkForPlayerInCheck('16') &&
+                squareModel.squareStatus('17') === squareModel.statusOpen &&
+                !this.checkForPlayerInCheck('17')) {
 
                 this.moves['16'] = globals.specialMoves.castleQueen;
             }
@@ -349,7 +383,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === common.currentOpponent())
+            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -357,7 +391,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === common.currentOpponent())
+            if (squareModel.pieceType(targetSquareId) === pieceModel.pawn && squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -434,7 +468,7 @@
 
     getKingRankFile: function () {
 
-        var pieceId = common.currentPlayer().substring(0, 1).toUpperCase() + 'K';
+        var pieceId = restCalls.currentPlayer.substring(0, 1).toUpperCase() + 'K';
 
         for (var loopIndex = 0; loopIndex <= Object.keys(squareModel.squares).length; loopIndex++) {
             

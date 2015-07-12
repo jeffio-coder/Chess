@@ -1,9 +1,9 @@
 ﻿// ToDo
 //
-// Move playerMoveNumber to restCalls
-// castle checkForCheck
-// checkmate
+// check for castling out of check
+// End game
 // Promote; change piece ID's?
+// Change case
 //
 // Tooltip for moving into check
 // filters
@@ -30,6 +30,9 @@ var board = {
         pieceModel.pieces = {};
         possibleMoves.loadSquareMoves();
 
+        restCalls.currentPlayer = globals.colors.white;
+        restCalls.currentOpponent = globals.colors.black;
+
         squareModel.squares = restCalls.getSquaresModel();
         pieceModel.pieces = restCalls.getPiecesModel();
 
@@ -48,15 +51,15 @@ var board = {
      
     actionMouseDown: function (event, div) {
 
-        if (event.which !== 1)
+        if (event.which !== 1 || restCalls.gameOver)
             return;
 
-        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== common.currentPlayer())
+        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
             return;
 
-        possibleMoves.squareId = div.id;
         view.squareMovingSetClass(div.id);
-        possibleMoves.moves = {};
+        possibleMoves.squareId = div.id;
+        possibleMoves.loadPossibleMoves();
 
         switch (squareModel.pieceType(div.id)) {
 
@@ -192,8 +195,8 @@ var utils = {
 
     removeMovesThatWouldResultInCheck: function () {
 
-        var originalSquareModel = JSON.stringify(squareModel.squares);
-        var originalPieceModel = JSON.stringify(pieceModel.pieces);
+        var currentSquareModel = JSON.stringify(squareModel.squares);
+        var currentPieceModel = JSON.stringify(pieceModel.pieces);
 
         var movesToRemove = [];
         var loopIndex = 0;
@@ -205,8 +208,8 @@ var utils = {
             if (possibleMoves.checkForPlayerInCheck())
                 movesToRemove.push(Object.keys(possibleMoves.moves)[loopIndex]);
 
-            squareModel.squares = JSON.parse(originalSquareModel);
-            pieceModel.pieces = JSON.parse(originalPieceModel);
+            squareModel.squares = JSON.parse(currentSquareModel);
+            pieceModel.pieces = JSON.parse(currentPieceModel);
         }
 
         for (loopIndex = 0; loopIndex < movesToRemove.length; loopIndex++) {
@@ -214,25 +217,76 @@ var utils = {
             delete possibleMoves.moves[movesToRemove[loopIndex]];
         }
     },
- 
+
     changeCurrentPlayer: function () {
         
-        common.playerMoveNumber++;
+        restCalls.playerMoveNumber++;
+        restCalls.currentPlayer = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.white : globals.colors.black;
+        restCalls.currentOpponent = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.black : globals.colors.white;
 
-        utils.changeSquareModelToNewPlayer();
+        utils.changeSquareModelToOtherPlayer();
+
+        if (possibleMoves.checkForPlayerInCheck()) {
+
+            if (this.checkForCheckMate()) {
+                
+                view.showCheckmate();
+                view.paintBoardFromModel();
+                return;
+            } else {
+                view.showCheckWarning();
+            }          
+        } else {
+            view.hideCheckWarning();
+        }
+
         view.paintBoardFromModel();
-
-        possibleMoves.checkForPlayerInCheck() ? view.showCheckWarning() : view.hideCheckWarning();
 
         // Clear en passant pieces for the current player.
         Object.keys(pieceModel.pieces).forEach(function (key) {
 
-            if (pieceModel.pieces[key].color === common.currentPlayer())
+            if (pieceModel.pieces[key].color === restCalls.currentPlayer)
                 pieceModel.pieces[key].enPassantEligible = false;
         });
     },
      
-    changeSquareModelToNewPlayer: function () {
+    checkForCheckMate: function () {
+
+        var currentSquareModel = JSON.stringify(squareModel.squares);
+        var currentPieceModel = JSON.stringify(pieceModel.pieces);
+        var squareId = '';
+
+        for (var outerLoopIndex = 0; outerLoopIndex < Object.keys(squareModel.squares).length; outerLoopIndex++) {
+
+            squareId = Object.keys(squareModel.squares)[outerLoopIndex];
+
+            if (squareModel.pieceId(squareId) !== '' && squareModel.pieceColor(squareId) === restCalls.currentPlayer) {
+                
+                possibleMoves.squareId = squareId;
+                possibleMoves.loadPossibleMoves();
+
+                for (var innerLoopIndex = 0; innerLoopIndex < Object.keys(possibleMoves.moves).length; innerLoopIndex++) {
+
+                    this.movePieceToNewSquare(squareId, Object.keys(possibleMoves.moves)[innerLoopIndex]);
+
+                    if (!possibleMoves.checkForPlayerInCheck()) {
+                        
+                        squareModel.squares = JSON.parse(currentSquareModel);
+                        pieceModel.pieces = JSON.parse(currentPieceModel);
+                        pieceModel.squareId = '';
+                        return false;
+                    }
+                    squareModel.squares = JSON.parse(currentSquareModel);
+                    pieceModel.pieces = JSON.parse(currentPieceModel);
+                }
+            }
+        }
+
+        pieceModel.squareId = '';
+        return true;
+    },
+
+    changeSquareModelToOtherPlayer: function () {
 
         var newSquaresModel = {};
 

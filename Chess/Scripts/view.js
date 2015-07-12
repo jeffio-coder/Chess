@@ -62,7 +62,7 @@
 
             if (pieceModel.pieces[key].captured) {
 
-                if (pieceModel.pieces[key].color === common.currentPlayer())  // The captured piece should go on the top because the color playing is at the bottom.
+                if (pieceModel.pieces[key].color === restCalls.currentPlayer)  // The captured piece should go on the top because the color playing is at the bottom.
                     $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
                 else 
                     $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
@@ -76,7 +76,7 @@
 
     showCheckWarning: function() {
 
-        if (common.currentPlayer() === globals.colors.white) {
+        if (restCalls.currentPlayer === globals.colors.white) {
 
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -92,6 +92,20 @@
 
         $('#checkWarning').hide();
         $('#spanCheckWarning').text();
+    },
+
+    showCheckmate: function () {
+
+        if (restCalls.currentPlayer === globals.colors.white) {
+
+            $('#spanCheckWarning').text('Checkmate, Black wins!');
+            $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
+        } else {
+            $('#spanCheckWarning').text('Checkmate, Black wins!');
+            $('#spanCheckWarning').attr('style', 'color:#000000; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
+        }
+
+        $('#checkWarning').show();
     },
 
     squareMovingSetClass: function (divId) {

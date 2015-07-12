@@ -80,7 +80,7 @@
         var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
 
         return this.pieceId(squareId) === '' ? this.statusOpen :
-            this.pieceColor(squareId) === common.currentPlayer() ? this.statusPlayerOccupied : this.statusOpponentOccupied;
+            this.pieceColor(squareId) === restCalls.currentPlayer ? this.statusPlayerOccupied : this.statusOpponentOccupied;
     },
 
     squareBehindEnPassantEligible: function (squareId) {
@@ -91,13 +91,13 @@
 
     squarePieceIsOppenentQueenOrRook: function (squareId) {
 
-        return (this.pieceColor(squareId) === common.currentOpponent()) &&
+        return (this.pieceColor(squareId) === restCalls.currentOpponent) &&
             (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.rook);
     },
 
     squarePieceIsOppenentQueenOrBishop: function (squareId) {
 
-        return (this.pieceColor(squareId) === common.currentOpponent()) &&
+        return (this.pieceColor(squareId) === restCalls.currentOpponent) &&
             (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.bishop);
     }
 }
