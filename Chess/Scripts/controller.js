@@ -1,5 +1,6 @@
 ﻿// ToDo
 //
+// debug check
 // check for castling out of check
 // End game
 // Promote; change piece ID's?
