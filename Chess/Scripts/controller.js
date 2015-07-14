@@ -1,14 +1,16 @@
 ﻿// ToDo
 //
+// remove utils
 // debug check
-// check for castling out of check
+// Click And Click Again
+// check Bootstrap alert
 // End game
 // Promote; change piece ID's?
-// Change case
+// Use IIFE for globals
+// Use closures for privates
 //
-// Tooltip for moving into check
-// filters
-//
+// Tooltip for moving into check / Bootstrap alert 
+// background for possible moves
 // 
 // Error Handling
 // Refactor/Document
@@ -47,7 +49,22 @@ var board = {
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
             board.actionDragEnd();
+            //board.actionMouseUp(event, this);
         });
+    },
+
+    actionMouseUp: function (event, div) {
+
+        if (event.which !== 1 || restCalls.gameOver)
+            return;
+
+        if (common.mouseDownDivId === '') {
+            common.mouseDownDivId = div.id;
+            actionMouseDown(event, div);
+        } else {
+            if (common.mouseDownDivId !== div.id)
+            board.actionDragEnd(div.id);
+        }
     },
      
     actionMouseDown: function (event, div) {
@@ -235,9 +252,11 @@ var utils = {
                 view.paintBoardFromModel();
                 return;
             } else {
+                common.inCheck = true;
                 view.showCheckWarning();
             }          
         } else {
+            common.inCheck = false;
             view.hideCheckWarning();
         }
 

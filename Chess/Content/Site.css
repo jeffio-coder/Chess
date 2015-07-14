@@ -43,12 +43,23 @@ black  #a07241
 }
 
 .possibleMove {
-    /*-webkit-filter: sepia(1);*/
-    
      -webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
      -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
       box-shadow:inset 0px 0px 0px 5px #ff0000;
-    
+}
+
+.possibleMoveWhite {
+    background-color: #cba578;
+     /*-webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
+      box-shadow:inset 0px 0px 0px 5px #ff0000;*/
+}
+
+.possibleMoveBlack {
+    background-color: #926131;
+     /*-webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
+      box-shadow:inset 0px 0px 0px 5px #ff0000;*/
 }
 
 .possibleMoveYellow {

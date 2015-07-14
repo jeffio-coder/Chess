@@ -152,6 +152,11 @@
 
             Object.keys(possibleMoves.moves).forEach(function (key) {
                 $('#' + key).addClass('possibleMove');
+
+                //if (squareModel.color(key) === globals.colors.white)
+                //    $('#' + key).addClass('possibleMoveWhite');
+                //else
+                //    $('#' + key).addClass('possibleMoveBlack');
             });
         },
 
@@ -159,6 +164,12 @@
 
             Object.keys(possibleMoves.moves).forEach(function (key) {
                 $('#' + key).removeClass('possibleMove');
+
+                //if (squareModel.color(key) === globals.colors.white)
+                //    $('#' + key).removeClass('possibleMoveWhite');
+                //else
+                //    $('#' + key).removeClass('possibleMoveBlack');
+
             });
         }
     }

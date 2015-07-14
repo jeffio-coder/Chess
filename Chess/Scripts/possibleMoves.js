@@ -189,7 +189,10 @@
                 this.moves[targetId] = globals.specialMoves.none;
         }
 
-        // Special code for castle.
+        if (common.inCheck)  // A player may not castle of of check.
+            return;
+
+        // Special code for castling.
         if (this.squareId === '15' && restCalls.currentPlayer === globals.colors.white && !pieceModel.pieces['WK'].hasMoved) {
 
             if (!pieceModel.pieces['WKR'].hasMoved &&
