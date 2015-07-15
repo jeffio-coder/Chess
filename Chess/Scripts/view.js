@@ -45,11 +45,11 @@
 
                 $('#' + squareId).width(this.squareDimension);
                 $('#' + squareId).height(this.squareDimension);
-                $('#' + squareId).addClass('gameSquare ' + view.utils.getClassNameFromSquareModel(rankIndex, fileIndex));
+                $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
                 if (squareModel.pieceId(squareId) !== '')
-                    view.utils.setDraggable(squareId);
+                    this.setDraggable(squareId);
             }
         }
 
@@ -71,7 +71,7 @@
     },
 
     showPossibleMoves: function () {
-        view.utils.markSquaresAsPossibleMove();
+        this.markSquaresAsPossibleMove();
     },
 
     showCheckWarning: function() {
@@ -115,7 +115,7 @@
 
     clearSquaresMarkedForMove: function () {
 
-        view.utils.unmarkSquaresAsPossibleMove();
+        this.unmarkSquaresAsPossibleMove();
 
         if (possibleMoves.squareId !== '') {
 
@@ -123,54 +123,45 @@
         }
     },
 
-    utils: {
+    getClassNameFromSquareModel: function (rank, file) {
 
-        getClassNameFromSquareModel: function (rank, file) {
+        if (squareModel.pieceId(rank, file) === '')
+            return squareModel.color(rank, file) + '_Square';
 
-            if (squareModel.pieceId(rank, file) === '')
-                return squareModel.color(rank, file) + 'Empty';
+        return  squareModel.color(rank, file) + '_Square ' + squareModel.pieceColor(rank, file) + '_' + squareModel.pieceType(rank, file);
+    },
 
-            return squareModel.pieceColor(rank, file) + '_' + squareModel.pieceType(rank, file) + '_on_' + squareModel.color(rank, file);
-        },
+    setDraggable: function (id) {
 
-        setDraggable: function (id) {
+        $('#' + id).draggable({
+            revert: function (droppableObject) {
+                if (droppableObject && droppableObject[0] && droppableObject[0].id) {
+                    board.actionDragEnd(droppableObject[0].id);
+                }
+                view.clearSquaresMarkedForMove();
+                return true;
+            },
+            revertDuration: 0,
+            helper: 'clone'
+        });
+    },
 
-            $('#' + id).draggable({
-                revert: function (droppableObject) {
-                    if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                        board.actionDragEnd(droppableObject[0].id);
-                    }
-                    view.clearSquaresMarkedForMove();
-                    return true;
-                },
-                revertDuration: 0,
-                helper: 'clone'
-            });
-        },
+    markSquaresAsPossibleMove: function () {
 
-        markSquaresAsPossibleMove: function () {
+        Object.keys(possibleMoves.moves).forEach(function (key) {
 
-            Object.keys(possibleMoves.moves).forEach(function (key) {
-                $('#' + key).addClass('possibleMove');
+            $('#' + key).removeClass(squareModel.color(key) + '_Square');
+            $('#' + key).addClass(squareModel.color(key) + '_PossibleMove');
+        });
+    },
 
-                //if (squareModel.color(key) === globals.colors.white)
-                //    $('#' + key).addClass('possibleMoveWhite');
-                //else
-                //    $('#' + key).addClass('possibleMoveBlack');
-            });
-        },
+    unmarkSquaresAsPossibleMove: function () {
 
-        unmarkSquaresAsPossibleMove: function () {
+        Object.keys(possibleMoves.moves).forEach(function (key) {
 
-            Object.keys(possibleMoves.moves).forEach(function (key) {
-                $('#' + key).removeClass('possibleMove');
-
-                //if (squareModel.color(key) === globals.colors.white)
-                //    $('#' + key).removeClass('possibleMoveWhite');
-                //else
-                //    $('#' + key).removeClass('possibleMoveBlack');
-
-            });
-        }
+            $('#' + key).removeClass(squareModel.color(key) + '_PossibleMove');
+            $('#' + key).addClass(squareModel.color(key) + '_Square');
+        });
     }
+   
 }

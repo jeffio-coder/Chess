@@ -1,7 +1,6 @@
 ﻿var globals = {
 
     inCheck: false,
-    mouseDownDivId: '',
 
     colors: {
         white: 'white',

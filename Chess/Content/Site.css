@@ -25,199 +25,26 @@ textarea {
     background-size: 100%;
 }
 
-/*
-white  #eddead
-black  #a07241
-*/
-
-.whiteEmpty {
-    background-color: #fecf97;
-}
-
-.blackEmpty {
-    background-color: #d18b46;
-}
-
 .squareMoving {
     -webkit-filter: grayscale(1);
 }
 
-.possibleMove {
-     -webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
-     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
-      box-shadow:inset 0px 0px 0px 5px #ff0000;
+.white_Square {
+    background-color: #fecf97;
 }
 
-.possibleMoveWhite {
+.black_Square {
+    background-color: #d18b46;
+}
+
+.white_PossibleMove {
     background-color: #cba578;
-     /*-webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
-     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
-      box-shadow:inset 0px 0px 0px 5px #ff0000;*/
 }
 
-.possibleMoveBlack {
+.black_PossibleMove {
     background-color: #926131;
-     /*-webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
-     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
-      box-shadow:inset 0px 0px 0px 5px #ff0000;*/
 }
 
-.possibleMoveYellow {
-     -webkit-box-shadow:inset 0px 0px 0px 5px #00ff00; 
-     -moz-box-shadow:inset 0px 0px 0px 5px #00ff00;
-      box-shadow:inset 0px 0px 0px 5px #00ff00;
-}
-
-/************************ white-on-white *********************************************************/
-.white_R_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhiteRook.png');
-    background-size: contain;
-}
-
-.white_N_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhiteKnight.png');
-    background-size: contain;
-}
-
-.white_B_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhiteBishop.png');
-    background-size: contain;
-}
-
-.white_Q_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhiteQueen.png');
-    background-size: contain;
-}
-
-.white_K_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhiteKing.png');
-    background-size: contain;
-}
-
-.white_P_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/WhitePawn.png');
-    background-size: contain;
-}
-
-/************************ white-on-black *********************************************************/
-.white_R_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhiteRook.png');
-    background-size: contain;
-}
-
-.white_N_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhiteKnight.png');
-    background-size: contain;
-}
-
-.white_B_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhiteBishop.png');
-    background-size: contain;
-}
-
-.white_Q_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhiteQueen.png');
-    background-size: contain;
-}
-
-.white_K_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhiteKing.png');
-    background-size: contain;
-}
-
-.white_P_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/WhitePawn.png');
-    background-size: contain;
-}
-
-/************************ black-on-white *********************************************************/
-.black_R_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackRook.png');
-    background-size: contain;
-}
-
-
-.black_N_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackKnight.png');
-    background-size: contain;
-}
-
-.black_B_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackBishop.png');
-    background-size: contain;
-}
-
-.black_Q_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackQueen.png');
-    background-size: contain;
-}
-
-.black_K_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackKing.png');
-    background-size: contain;
-}
-
-.black_P_on_white {
-    background-color: #fecf97;
-    background-image: url('/Content/Images/BlackPawn.png');
-    background-size: contain;
-}
-
-/************************ black-on-black *********************************************************/
-.black_R_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackRook.png');
-    background-size: contain;
-}
-
-.black_N_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackKnight.png');
-    background-size: contain;
-}
-
-.black_B_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackBishop.png');
-    background-size: contain;
-}
-
-.black_Q_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackQueen.png');
-    background-size: contain;
-}
-
-.black_K_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackKing.png');
-    background-size: contain;
-}
-
-.black_P_on_black {
-    background-color: #d18b46;
-    background-image: url('/Content/Images/BlackPawn.png');
-    background-size: contain;
-}
-
-/************************  captured white *********************************************************/
 .white_R {
     background-image: url('/Content/Images/WhiteRook.png');
     background-size: contain;
@@ -248,7 +75,6 @@ black  #a07241
     background-size: contain;
 }
 
-/************************  captured black *********************************************************/
 .black_R {
     background-image: url('/Content/Images/BlackRook.png');
     background-size: contain;
@@ -279,3 +105,16 @@ black  #a07241
     background-size: contain;
 }
 
+/*
+.possibleMove {
+     -webkit-box-shadow:inset 0px 0px 0px 5px #ff0000; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #ff0000;
+      box-shadow:inset 0px 0px 0px 5px #ff0000;
+}
+
+.possibleMoveYellow {
+     -webkit-box-shadow:inset 0px 0px 0px 5px #00ff00; 
+     -moz-box-shadow:inset 0px 0px 0px 5px #00ff00;
+      box-shadow:inset 0px 0px 0px 5px #00ff00;
+}
+*/

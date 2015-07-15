@@ -1,21 +1,18 @@
 ﻿// ToDo
 //
-// remove utils
 // debug check
-// Click And Click Again
 // check Bootstrap alert
 // End game
 // Promote; change piece ID's?
+// Tooltip for moving into check / Bootstrap alert 
+// Error Handling
+// convert to rest calls
+// Unit tests; QUnit, Jasmine
+//
 // Use IIFE for globals
 // Use closures for privates
 //
-// Tooltip for moving into check / Bootstrap alert 
-// background for possible moves
-// 
-// Error Handling
 // Refactor/Document
-// Unit tests; QUnit, Jasmine
-// Blog
 
 $(document).ready(function () {
     $.ajaxSetup({
@@ -26,6 +23,8 @@ $(document).ready(function () {
 });
 
 var board = {
+
+    mouseUpDivId: '',
 
     actionInitialize: function () {
 
@@ -48,8 +47,7 @@ var board = {
 
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
-            board.actionDragEnd();
-            //board.actionMouseUp(event, this);
+            board.actionMouseUp(event, this);
         });
     },
 
@@ -58,11 +56,28 @@ var board = {
         if (event.which !== 1 || restCalls.gameOver)
             return;
 
-        if (common.mouseDownDivId === '') {
-            common.mouseDownDivId = div.id;
-            actionMouseDown(event, div);
+        if (this.mouseUpDivId === '' && (
+            !squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
+            )
+            return;
+
+
+        if (this.mouseUpDivId === '') {
+            this.mouseUpDivId = div.id;
         } else {
-            if (common.mouseDownDivId !== div.id)
+            if (this.mouseUpDivId !== div.id) {
+
+                view.clearSquaresMarkedForMove();
+
+                if (div.id in possibleMoves.moves) {
+                    
+                    this.movePieceToNewSquare(this.mouseUpDivId, div.id);
+                    this.changeCurrentPlayer();
+                }
+                
+                possibleMoves.moves = {};
+                this.mouseUpDivId = '';
+            }
             board.actionDragEnd(div.id);
         }
     },
@@ -72,7 +87,7 @@ var board = {
         if (event.which !== 1 || restCalls.gameOver)
             return;
 
-        if (!squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
+        if (this.mouseUpDivId !== '' || !squareModel.exists(div.id) || squareModel.pieceId(div.id) === '' || squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
             return;
 
         view.squareMovingSetClass(div.id);
@@ -101,25 +116,23 @@ var board = {
                 break;
         }
 
-        utils.removeMovesThatWouldResultInCheck();
+        this.removeMovesThatWouldResultInCheck();
         view.showPossibleMoves();
     },
    
     actionDragEnd: function (targetId) {
-
+       
         view.clearSquaresMarkedForMove();
-        
+
         if (targetId && (targetId in possibleMoves.moves)) {
 
-            utils.movePieceToNewSquare(possibleMoves.squareId, targetId);
-            utils.changeCurrentPlayer();
+            this.movePieceToNewSquare(possibleMoves.squareId, targetId);
+            this.changeCurrentPlayer();
         }
 
         possibleMoves.moves = {};
-    }
-}
-
-var utils = {
+        this.mouseUpDivId = '';
+    },
     
     movePieceToNewSquare: function (sourceId, targetId) {
 
@@ -242,7 +255,7 @@ var utils = {
         restCalls.currentPlayer = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.white : globals.colors.black;
         restCalls.currentOpponent = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.black : globals.colors.white;
 
-        utils.changeSquareModelToOtherPlayer();
+        this.changeSquareModelToOtherPlayer();
 
         if (possibleMoves.checkForPlayerInCheck()) {
 
