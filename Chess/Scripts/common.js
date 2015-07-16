@@ -26,4 +26,33 @@ var common = {
 
         return parseInt(squareId.substring(1, 2));
     },
+
+    stopWatch: {
+
+        startTime: 0.0,
+        stopTime: 0.0,
+
+        start: function() {
+
+            this.startTime = new Date().getTime();
+        },
+
+        stop: function () {
+            //var d = new Date();
+            //var n = d.getTime();
+            this.stopTime = new Date().getTime();
+        },
+
+        elapsedTime: function() {
+
+            return this.stopTime - this.startTime;
+        },
+
+        reset: function() {
+
+            this.startTime = 0.0;
+            this.stopTime = 0.0;
+        }
+
+    }
 }

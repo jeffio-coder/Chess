@@ -25,79 +25,57 @@
         return this.squares[squareId];
     },
 
-    color: function () {
+    getColor: function () {
 
         return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].color : this.squares[arguments[0]].color;
     },
 
-    pieceId: function () {
+    getPieceId: function () {
 
         return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].pieceId : this.squares[arguments[0]].pieceId;
     },
 
-    pieceType: function () {
-
-        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
-
-        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].pieceType;
+    getModel: function () {
+        return JSON.parse(JSON.stringify(this.squares));
     },
 
-    pieceColor: function () {
+    getKeys: function () {
 
-        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
-
-        return this.pieceId(squareId) === '' ? '' : pieceModel.pieces[this.pieceId(squareId)].color;
+        return Object.keys(this.squares);
     },
 
-    pieceHasMoved: function () {
+    setPieceId: function (squareId, value) {
 
-        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
-
-        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].hasMoved;
+        this.squares[squareId].pieceId = value;
     },
 
-    pieceEnPassantEligible: function () {
-
-        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
-
-        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)].enPassantEligible;
-    },
-
-    pieceOnSquare: function() {
-        
-        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
-
-        return this.pieceId(squareId) === '' ? false : pieceModel.pieces[this.pieceId(squareId)];
-    },
-
-    setSquarePieceId: function (squareId, pieceId) {
-
-        this.squares[squareId].pieceId = pieceId;
+    setModel: function (value) {
+        this.squares = JSON.parse(JSON.stringify(value));
     },
 
     squareStatus: function () {
 
         var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
 
-        return this.pieceId(squareId) === '' ? this.statusOpen :
-            this.pieceColor(squareId) === restCalls.currentPlayer ? this.statusPlayerOccupied : this.statusOpponentOccupied;
+        return this.getPieceId(squareId) === '' ? this.statusOpen :
+            pieceModel.getColorFromSquare(squareId) === restCalls.currentPlayer ? this.statusPlayerOccupied : this.statusOpponentOccupied;
     },
 
     squareBehindEnPassantEligible: function (squareId) {
 
-        return this.pieceEnPassantEligible(common.getRank(squareId) - 1, common.getFile(squareId)) &&
+        return pieceModel.getEnPassantEligibleSquare(common.getRank(squareId) - 1, common.getFile(squareId)) &&
             this.squareStatus(common.getRank(squareId) - 1, common.getFile(squareId)) === this.statusOpponentOccupied;
     },
 
     squarePieceIsOppenentQueenOrRook: function (squareId) {
 
-        return (this.pieceColor(squareId) === restCalls.currentOpponent) &&
-            (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.rook);
+        return (pieceModel.getColorFromSquare(squareId) === restCalls.currentOpponent) &&
+            (pieceModel.getPieceType(this.getPieceId(squareId)) === pieceModel.queen || pieceModel.getPieceType(this.getPieceId(squareId)) === pieceModel.rook);
     },
 
     squarePieceIsOppenentQueenOrBishop: function (squareId) {
 
-        return (this.pieceColor(squareId) === restCalls.currentOpponent) &&
-            (this.pieceType(squareId) === pieceModel.queen || this.pieceType(squareId) === pieceModel.bishop);
+        return (pieceModel.getColorFromSquare(squareId) === restCalls.currentOpponent) &&
+            (pieceModel.getPieceType(this.getPieceId(squareId)) === pieceModel.queen || pieceModel.getPieceType(this.getPieceId(squareId)) === pieceModel.bishop);
     }
 }

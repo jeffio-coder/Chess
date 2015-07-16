@@ -48,7 +48,7 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (squareModel.pieceId(squareId) !== '')
+                if (squareModel.getPieceId(squareId) !== '')
                     this.setDraggable(squareId);
             }
         }
@@ -58,16 +58,19 @@
         var counterTop = 0;
         var counterBottom = 0;
 
-        Object.keys(pieceModel.pieces).forEach(function (key) {
+        for (var loopIndex = 0; loopIndex < pieceModel.getKeys().length; loopIndex++) {
 
-            if (pieceModel.pieces[key].captured) {
+            var key = pieceModel.getKeys()[loopIndex];
 
-                if (pieceModel.pieces[key].color === restCalls.currentPlayer)  // The captured piece should go on the top because the color playing is at the bottom.
-                    $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
-                else 
-                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.pieces[key].color + '_' + pieceModel.pieces[key].pieceType);
+            if (pieceModel.getCaptured(key)) {
+                
+                if (pieceModel.getColor(key) === restCalls.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
+
+                    $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.getColor(key) + '_' + pieceModel.getPieceType(key));
+                else
+                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.getColor(key) + '_' + pieceModel.getPieceType(key));
             }
-        });
+        }
     },
 
     showPossibleMoves: function () {
@@ -125,10 +128,10 @@
 
     getClassNameFromSquareModel: function (rank, file) {
 
-        if (squareModel.pieceId(rank, file) === '')
-            return squareModel.color(rank, file) + '_Square';
+        if (squareModel.getPieceId(rank, file) === '')
+            return squareModel.getColor(rank, file) + '_Square';
 
-        return  squareModel.color(rank, file) + '_Square ' + squareModel.pieceColor(rank, file) + '_' + squareModel.pieceType(rank, file);
+        return squareModel.getColor(rank, file) + '_Square ' + pieceModel.getColorFromSquare(rank, file) + '_' + pieceModel.getPieceTypeFromSquare(rank, file);
     },
 
     setDraggable: function (id) {
@@ -150,8 +153,8 @@
 
         Object.keys(possibleMoves.moves).forEach(function (key) {
 
-            $('#' + key).removeClass(squareModel.color(key) + '_Square');
-            $('#' + key).addClass(squareModel.color(key) + '_PossibleMove');
+            $('#' + key).removeClass(squareModel.getColor(key) + '_Square');
+            $('#' + key).addClass(squareModel.getColor(key) + '_PossibleMove');
         });
     },
 
@@ -159,8 +162,8 @@
 
         Object.keys(possibleMoves.moves).forEach(function (key) {
 
-            $('#' + key).removeClass(squareModel.color(key) + '_PossibleMove');
-            $('#' + key).addClass(squareModel.color(key) + '_Square');
+            $('#' + key).removeClass(squareModel.getColor(key) + '_PossibleMove');
+            $('#' + key).addClass(squareModel.getColor(key) + '_Square');
         });
     }
    
