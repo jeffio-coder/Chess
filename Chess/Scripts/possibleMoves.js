@@ -1,10 +1,10 @@
 ﻿var possibleMoves = {
+    moves: {},
+    squareId: '',
     forward: 1,
     backward: -1,
     left: -1,
     right: 1,
-    squareId: '',
-    moves: {},
     verticalForwardMoves: {},
     verticalBackwardMoves: {},
     horitonalLeftMoves: {},
@@ -45,7 +45,7 @@
 
     deleteElement: function (movesKey) {
         
-        delete possibleMoves.moves[movesKey];
+        delete this.moves[movesKey];
     },
 
     inMoves: function (movesKey) {
@@ -222,7 +222,7 @@
             targetId = this.kingMoves[this.squareId][loopIndex];
 
             if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied)  
-                this.setMoves(targetId, globals.specialMoves.none);
+                this.setValue(targetId, globals.specialMoves.none);
         }
 
         if (common.inCheck)  // A player may not castle of of check.
@@ -237,7 +237,7 @@
                 squareModel.squareStatus('17') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('17')) {
 
-                this.setMoves('17', globals.specialMoves.castleKing);
+                this.setValue('17', globals.specialMoves.castleKing);
             }
 
             if (!pieceModel.getHasMoved('WQR') &&
@@ -248,7 +248,7 @@
                 squareModel.squareStatus('14') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('14')) {
 
-                this.setMoves('13', globals.specialMoves.castleQueen);
+                this.setValue('13', globals.specialMoves.castleQueen);
             }
         }
 
@@ -260,7 +260,7 @@
                 squareModel.squareStatus('13') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('13')) {
 
-                this.moves['12'] = globals.specialMoves.castleKing;
+                this.setValue('12', globals.specialMoves.castleKing);
             }
 
             if (!pieceModel.getHasMoved('BQR') &&
@@ -271,7 +271,7 @@
                 squareModel.squareStatus('17') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('17')) {
 
-                this.moves['16'] = globals.specialMoves.castleQueen;
+                this.setValue('16', globals.specialMoves.castleQueen);
             }
         }
 
@@ -295,7 +295,7 @@
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
             if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) 
-                this.moves[targetId] = globals.specialMoves.none;
+                this.setValue(targetId, globals.specialMoves.none);
         }
     },
 
@@ -319,16 +319,16 @@
             if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpen) {
-                    if (!blocked) this.moves[targetId] = globals.specialMoves.none;
+                    if (!blocked) this.setValue(targetId, globals.specialMoves.none);
                 } else {
                     blocked = true;
                 }
             } else {
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = globals.specialMoves.none;
+                    this.setValue(targetId, globals.specialMoves.none);
                 } else {
                     if (squareModel.squareBehindEnPassantEligible(targetId))
-                        this.moves[targetId] = globals.specialMoves.enPassant;
+                        this.setValue(targetId, globals.specialMoves.enPassant);
                 }
             }
         }
@@ -355,11 +355,11 @@
                     break;
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = globals.specialMoves.none;
+                    this.setValue(targetId, globals.specialMoves.none);
                     break;
                 }
 
-                this.moves[targetId] = globals.specialMoves.none;
+                this.setValue(targetId, globals.specialMoves.none);
             }
         }
     },
@@ -385,11 +385,11 @@
                     break;
 
                 if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
-                    this.moves[targetId] = globals.specialMoves.none;
+                    this.setValue(targetId, globals.specialMoves.none);
                     break;
                 }
 
-                this.moves[targetId] = globals.specialMoves.none;
+                this.setValue(targetId, globals.specialMoves.none);
             }
         }
     },
@@ -441,7 +441,8 @@
 
         for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
-            if (squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === squareModel.statusOpponentOccupied)
+            if (squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === squareModel.statusOpponentOccupied &&
+                pieceModel.getPieceTypeFromSquare(this.knightMoves[kingSquareId][loopIndex]) === pieceModel.knight)
                 return true;
         }
 

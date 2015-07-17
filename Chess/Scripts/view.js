@@ -151,20 +151,20 @@
 
     markSquaresAsPossibleMove: function () {
 
-        Object.keys(possibleMoves.moves).forEach(function (key) {
+        for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + key).removeClass(squareModel.getColor(key) + '_Square');
-            $('#' + key).addClass(squareModel.getColor(key) + '_PossibleMove');
-        });
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+        }
     },
 
     unmarkSquaresAsPossibleMove: function () {
 
-        Object.keys(possibleMoves.moves).forEach(function (key) {
+        for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + key).removeClass(squareModel.getColor(key) + '_PossibleMove');
-            $('#' + key).addClass(squareModel.getColor(key) + '_Square');
-        });
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
+        }
     }
    
 }

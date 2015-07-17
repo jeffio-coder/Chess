@@ -1,20 +1,20 @@
 ﻿// ToDo
 //
-// hide possibleMoves.
-// Make models private??
-// Move timer
-// debug check
+// move pieces into model
+// make squareModel movePiece(squareId, targetId) function.
+// Make models private
+// Make possible moves model
+// convert timer to object
+// convert to rest calls
+// format timer
 // check Bootstrap alert
 // End game
 // Promote; change piece ID's?
 // Tooltip for moving into check / Bootstrap alert 
 // Error Handling
-// convert to rest calls
 // Unit tests; QUnit, Jasmine
 //
-// Use IIFE for globals
-//
-// Refactor/Document
+// Document
 
 $(document).ready(function () {
     $.ajaxSetup({

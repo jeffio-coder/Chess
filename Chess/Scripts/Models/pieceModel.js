@@ -136,7 +136,7 @@
         for (var loopIndex = 0; loopIndex < this.getKeys().length; loopIndex++) {
 
             if (this.getColor(this.getKeys()[loopIndex]) === restCalls.currentPlayer)
-                this.setEnPassantEligible(this.getKeys()[loopIndex], true);
+                this.setEnPassantEligible(this.getKeys()[loopIndex], false);
         }
     }
 }
