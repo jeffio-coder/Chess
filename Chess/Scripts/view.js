@@ -48,8 +48,10 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (squareModel.getPieceId(squareId) !== '')
-                    this.setDraggable(squareId);
+                //if (squareModel.getPieceId(squareId) !== '')
+                //    this.setDraggable(squareId);
+                if (squareModel.squares !== {})
+                    this.setDraggable
             }
         }
 

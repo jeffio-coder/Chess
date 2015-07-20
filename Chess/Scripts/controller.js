@@ -1,16 +1,18 @@
 ﻿// ToDo
 //
-// move pieces into model
+// move pieces into model  ???
 // make squareModel movePiece(squareId, targetId) function.
 // Make models private
 // Make possible moves model
 // convert timer to object
-// convert to rest calls
-// format timer
+// hover messages
 // check Bootstrap alert
-// End game
 // Promote; change piece ID's?
 // Tooltip for moving into check / Bootstrap alert 
+// convert to rest calls
+// format timer
+// web workers on check for check/checkmate -- http://keithwhor.github.io/multithread.js/  http://codersblock.com/blog/multi-threaded-javascript-with-web-workers/
+// End game
 // Error Handling
 // Unit tests; QUnit, Jasmine
 //
@@ -42,8 +44,8 @@ var board = {
         restCalls.currentPlayer = globals.colors.white;
         restCalls.currentOpponent = globals.colors.black;
 
-        squareModel.squares = restCalls.getSquaresModel();
         pieceModel.pieces = restCalls.getPiecesModel();
+        squareModel.squares = restCalls.getSquaresModel();
 
         view.setUpBoardSize();
         view.paintBoardFromModel();
