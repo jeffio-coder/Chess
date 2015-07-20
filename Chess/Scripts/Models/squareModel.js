@@ -9,6 +9,24 @@
         }
     },
 
+    pieces:
+    {
+        'pieceId':
+        {
+            'pieceType': '',
+            'color': '',
+            'hasMoved': false,
+            'captured': false,
+            'enPassantEligible': false
+        }
+    },
+
+    king: 'K',
+    queen: 'Q',
+    rook: 'R',
+    knight: 'N',
+    bishop: 'B',
+    pawn: 'P',
     statusOpen: 'open',
     statusPlayerOccupied: 'occupiedByPlayer',
     statusOpponentOccupied: 'occupiedByOpponent',
@@ -25,18 +43,17 @@
         return this.squares[squareId];
     },
 
-    getColor: function () {
+    getSquareColor: function () {
 
         return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].color : this.squares[arguments[0]].color;
     },
 
-    getPieceId: function () {
-
-        return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].pieceId : this.squares[arguments[0]].pieceId;
-    },
-
     getModel: function () {
         return JSON.parse(JSON.stringify(this.squares));
+    },
+
+    setModel: function (value) {
+        this.squares = JSON.parse(JSON.stringify(value));
     },
 
     getKeys: function () {
@@ -44,13 +61,66 @@
         return Object.keys(this.squares);
     },
 
-    setPieceId: function (squareId, value) {
+    // replace
+    //getPieceId: function () {
 
-        this.squares[squareId].pieceId = value;
+    //    return arguments.length > 1 ? this.squares[arguments[0].toString() + arguments[1].toString()].pieceId : this.squares[arguments[0]].pieceId;
+    //}
+
+        // replace
+    //setPieceId: function (squareId, value) {
+
+    //    this.squares[squareId].pieceId = value;
+    //},
+
+    getPieceColor: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        if (this.squares[squareId].piece === {})
+            return '';
+
+        return this.squares[squareId].piece.color;
     },
 
-    setModel: function (value) {
-        this.squares = JSON.parse(JSON.stringify(value));
+    getPieceType: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        if (this.squares[squareId].piece === {})
+            return '';
+
+        return this.squares[squareId].piece.pieceType;
+    },
+
+    getPieceHasMoved: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        if (this.squares[squareId].piece === {})
+            return '';
+
+        return this.squares[squareId].piece.hasMoved;
+    },
+
+    getCaptured: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        if (this.squares[squareId].piece === {})
+            return '';
+
+        return this.squares[squareId].piece.captured;
+    },
+
+    getEnPassantEligible: function () {
+
+        var squareId = arguments.length > 1 ? arguments[0].toString() + arguments[1].toString() : arguments[0];
+
+        if (this.squares[squareId].piece === {})
+            return '';
+
+        return this.squares[squareId].piece.enPassantEligible;
     },
 
     squareStatus: function () {

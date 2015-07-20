@@ -332,7 +332,7 @@ var board = {
             for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
 
                 newSquaresModel[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
-                    { color: squareModel.getColor(rankIndex, fileIndex), pieceId: squareModel.getPieceId(rankIndex, fileIndex) };
+                    { color: squareModel.getSquareColor(rankIndex, fileIndex), pieceId: squareModel.getPieceId(rankIndex, fileIndex) };
             }
         }
 

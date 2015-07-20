@@ -51,7 +51,7 @@
                 //if (squareModel.getPieceId(squareId) !== '')
                 //    this.setDraggable(squareId);
                 if (squareModel.squares !== {})
-                    this.setDraggable
+                    this.setDraggable();
             }
         }
 
@@ -130,10 +130,15 @@
 
     getClassNameFromSquareModel: function (rank, file) {
 
-        if (squareModel.getPieceId(rank, file) === '')
-            return squareModel.getColor(rank, file) + '_Square';
+        //if (squareModel.getPieceId(rank, file) === '')
+        //    return squareModel.getColor(rank, file) + '_Square';
+        if (squareModel.squares[rank.toString() + file.toString()].piece === {})
+            return squareModel.getSquareColor(rank, file) + '_Square';
 
-        return squareModel.getColor(rank, file) + '_Square ' + pieceModel.getColorFromSquare(rank, file) + '_' + pieceModel.getPieceTypeFromSquare(rank, file);
+//        return squareModel.getColor(rank, file) + '_Square ' + pieceModel.getColorFromSquare(rank, file) + '_' + pieceModel.getPieceTypeFromSquare(rank, file);
+        return squareModel.getSquareColor(rank, file) + '_Square ' +
+            squareModel.squares[rank.toString() + file.toString()].piece.color + '_' +
+            squareModel.squares[rank.toString() + file.toString()].piece.pieceType;
     },
 
     setDraggable: function (id) {
@@ -155,8 +160,8 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getSquareColor(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getSquareColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
         }
     },
 
@@ -164,7 +169,7 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getSquareColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
             $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
         }
     }
