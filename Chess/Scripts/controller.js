@@ -17,6 +17,51 @@
 // Unit tests; QUnit, Jasmine
 //
 // Document
+/*
+
+      <script src="scripts/jquery.easyModal.js" type="text/javascript"></script>
+
+    <div id="popup-census-info" style="width: 800px; background-color:white;background-color: rgb(204, 204, 204);">
+
+            $('#popup-census-info').easyModal();
+
+            $('#btnPopupYes').click(function () {
+
+                $('#popup-census-info').trigger('closeModal');
+
+                // Saves the proposal
+                $('#ctl00_ctl00_mainContentPlaceholder_stepContentPlaceholder_topSaveProposalButton').click();
+            });
+
+
+            $('#btnPopupNo').click(function () {
+
+                $('#popup-census-info').trigger('closeModal');
+            });
+
+
+var controller = function() {
+
+    var privatefunc = function() {
+
+
+    };
+
+
+    var priv = 3;
+
+    return {
+        publicFunc: function () { return priv; },
+        Pro : priv
+        
+
+    };
+}
+
+squares
+
+
+*/
 
 $(document).ready(function () {
     $.ajaxSetup({

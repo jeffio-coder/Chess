@@ -1,51 +1,49 @@
-﻿var pieceModel = {
+﻿var pieceModel = function () {
 
-
-    // For the sake of speed, there is no argument checking done.
-    // The functions below assume that if arguments.length === 1, a valid squareId is passed. 
-    // Otherwise, a valid rank and file have been passed.
-    // Since this isn't publc code or non-deterministic code, that should be a safe assumtion.
-
-
-    getModel: function() {
-        return JSON.parse(JSON.stringify(this.pieces));
-    },
-
-    getKeys: function() {
-
-        return Object.keys(this.pieces);
-    },
-
-    setPieceType: function(pieceId, value) {
-
-        this.pieces[pieceId].pieceType = value;
-    },
-
-    setHasMoved: function(pieceId, value) {
-
-        this.pieces[pieceId].hasMoved = value;
-    },
-
-    setCaptured: function(pieceId, value) {
-
-        this.pieces[pieceId].captured = value;
-    },
-
-    setEnPassantEligible: function(pieceId, value) {
-
-        this.pieces[pieceId].enPassantEligible = value;
-    },
-
-    setModel: function(value) {
-        this.pieces = JSON.parse(JSON.stringify(value));
-    },
-
-    setEnPassantIneligiblePlayer: function () {
-
-        for (var loopIndex = 0; loopIndex < this.getKeys().length; loopIndex++) {
-
-            if (this.getColor(this.getKeys()[loopIndex]) === restCalls.currentPlayer)
-                this.setEnPassantEligible(this.getKeys()[loopIndex], false);
+    var pieces =
+    {
+        'pieceId':
+        {
+            'type': '',
+            'color': '',
+            'hasMoved': false,
+            'captured': false,
+            'enPassantEligible': false
         }
-    }
+    };
+
+    return {
+        king: 'K',
+        queen: 'Q',
+        rook: 'R',
+        knight: 'N',
+        bishop: 'B',
+        pawn: 'P',
+
+        getModel: function () { JSON.parse(JSON.stringify(pieces)); },
+        setModel: function (jsonObject) { pieces = JSON.parse(JSON.stringify(jsonObject)) },
+
+        getType: function (pieceId) { return pieces[pieceId].type; },
+        setType: function (pieceId, value) { pieces[pieceId].type = value; },
+
+        getColor: function (pieceId) { return pieces[pieceId].color; },
+
+        getHasMoved: function (pieceId) { return pieces[pieceId].hasMoved; },
+        setHasMoved: function (pieceId, value) { pieces[pieceId].hasMoved = value; },
+
+        getCaptured: function (pieceId) { return pieces[pieceId].captured; },
+        setCaptured: function (pieceId, value) { pieces[pieceId].captured = value; },
+
+        getEnPassantEligible: function (pieceId) { return pieces[pieceId].enPassantEligible; },
+        setEnPassantEligible: function (pieceId, value) { pieces[pieceId].enPassantEligible = value; },
+
+        setEnPassantIneligibleForPlayer: function() {
+            
+            for (var loopIndex = 0; loopIndex < Object.keys(pieces).length; loopIndex++) {
+
+                if (pieces[Object.keys(pieces)[loopIndex]].color === restCalls.currentPlayer && pieces[Object.keys(pieces)[loopIndex]].type === 'P')
+                    pieces[Object.keys(pieces)[loopIndex]].enPassantEligible = false;
+            }
+        }
+    };
 }
