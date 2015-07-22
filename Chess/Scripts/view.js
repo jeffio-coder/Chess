@@ -48,10 +48,8 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                //if (squareModel.getPieceId(squareId) !== '')
-                //    this.setDraggable(squareId);
-                if (squareModel.squares !== {})
-                    this.setDraggable();
+                if (!squareModel.squareIsOccupied())
+                    this.setDraggable(squareId);
             }
         }
 
@@ -59,19 +57,19 @@
         $('[id^=capturePiece]').removeClass();
         var counterTop = 0;
         var counterBottom = 0;
+        var key = '';
+        var color = '';
 
-        for (var loopIndex = 0; loopIndex < pieceModel.getKeys().length; loopIndex++) {
+        for (var loopIndex = 0; loopIndex < Object.keys(squareModel.getCapturedPieces()).length; loopIndex++) {
 
-            var key = pieceModel.getKeys()[loopIndex];
-
-            if (pieceModel.getCaptured(key)) {
+            key = Object.keys(squareModel.getCapturedPieces())[loopIndex];
+            color = squareModel.getCapturedPieces()[key].color;
                 
-                if (pieceModel.getColor(key) === restCalls.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
+            if (color === restCalls.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
 
-                    $('#capturePieceTop' + (++counterTop).toString()).addClass(pieceModel.getColor(key) + '_' + pieceModel.getPieceType(key));
-                else
-                    $('#capturePieceBottom' + (++counterBottom).toString()).addClass(pieceModel.getColor(key) + '_' + pieceModel.getPieceType(key));
-            }
+                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + squareModel.getCapturedPieces()[key].type);
+            else
+                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + squareModel.getCapturedPieces()[key].type);
         }
     },
 
