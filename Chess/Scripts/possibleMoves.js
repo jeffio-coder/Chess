@@ -190,24 +190,24 @@
 
         this.setMoves({});
 
-        switch (pieceModel.getPieceTypeFromSquare(this.squareId)) {
+        switch (squareModel.getPieceType(this.squareId)) {
 
-            case pieceModel.king:
+            case globals.king:
                 this.possibleMovesForKing();
                 break;
-            case pieceModel.queen:
+            case globals.queen:
                 this.possibleMovesForQueen();
                 break;
-            case this.rook:
-                this.possibleMovesForRook();
+            case globals.rook:
+                globals.possibleMovesForRook();
                 break;
-            case this.knight:
+            case globals.knight:
                 this.possibleMovesForKnight();
                 break;
-            case this.bishop:
+            case globals.bishop:
                 this.possibleMovesForBishop();
                 break;
-            case pieceModel.pawn:
+            case globals.pawn:
                 this.possibleMovesForPawn();
                 break;
         }
@@ -229,9 +229,9 @@
             return;
 
         // Special code for castling.
-        if (this.squareId === '15' && restCalls.currentPlayer === globals.colors.white && !pieceModel.getHasMoved('WK')) {
+        if (this.squareId === '15' && restCalls.currentPlayer === globals.colors.white && !squareModel.getPieceHasMoved('15')) {
 
-            if (!pieceModel.getHasMoved('WKR') &&
+            if (!squareModel.getPieceHasMoved('18') &&
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('16') &&
                 squareModel.squareStatus('17') === squareModel.statusOpen &&
@@ -240,7 +240,7 @@
                 this.setValue('17', globals.specialMoves.castleKing);
             }
 
-            if (!pieceModel.getHasMoved('WQR') &&
+            if (!squareModel.getPieceHasMoved('11') &&
                 squareModel.squareStatus('12') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('12') &&
                 squareModel.squareStatus('13') === squareModel.statusOpen &&
@@ -252,9 +252,9 @@
             }
         }
 
-        if (this.squareId === '14' && restCalls.currentPlayer === globals.colors.black && !pieceModel.getHasMoved('BK')) {
+        if (this.squareId === '14' && restCalls.currentPlayer === globals.colors.black && !squareModel.getPieceHasMoved('14')) {
 
-            if (!pieceModel.getHasMoved('BKR') &&
+            if (!squareModel.getPieceHasMoved('11') &&
                 squareModel.squareStatus('12') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('12') &&
                 squareModel.squareStatus('13') === squareModel.statusOpen &&
@@ -263,7 +263,7 @@
                 this.setValue('12', globals.specialMoves.castleKing);
             }
 
-            if (!pieceModel.getHasMoved('BQR') &&
+            if (!squareModel.getPieceHasMoved('18') &&
                 squareModel.squareStatus('15') === squareModel.statusOpen &&
                 !this.checkForPlayerInCheck('15') &&
                 squareModel.squareStatus('16') === squareModel.statusOpen &&
@@ -422,7 +422,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-            if (pieceModel.getPieceTypeFromSquare(targetSquareId) === pieceModel.pawn && pieceModel.getColorFromSquare(targetSquareId) === restCalls.currentOpponent)
+            if (squareModel.getPieceType(targetSquareId) === globals.pawn && squareModel.getPieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -430,7 +430,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-            if (pieceModel.getPieceTypeFromSquare(targetSquareId) === pieceModel.pawn && pieceModel.getColorFromSquare(targetSquareId) === restCalls.currentOpponent)
+            if (squareModel.getPieceType(targetSquareId) === globals.pawn && squareModel.getPieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -442,7 +442,7 @@
         for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
             if (squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === squareModel.statusOpponentOccupied &&
-                pieceModel.getPieceTypeFromSquare(this.knightMoves[kingSquareId][loopIndex]) === pieceModel.knight)
+                squareModel.getPieceType(this.knightMoves[kingSquareId][loopIndex]) === globals.knight)
                 return true;
         }
 

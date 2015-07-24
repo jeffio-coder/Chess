@@ -1,4 +1,5 @@
-﻿var globals = {
+﻿
+var globals = {
 
     inCheck: false,
 
