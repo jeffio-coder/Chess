@@ -39,29 +39,53 @@
             });
 
 
-var controller = function() {
+<!DOCTYPE html>
+<html>
+<body>
 
-    var privatefunc = function() {
+    <p>Creating and using an object method.</p>
 
+    <p>
+        An object method is stored as a function definition,
+        in an object property.
+    </p>
 
-    };
+    <p id="demo"></p>
 
+    <script>
 
-    var priv = 3;
+        var controller = function () {
 
-    return {
-        publicFunc: function () { return priv; },
-        Pro : priv
-        
+            var display = [];
 
-    };
-}
+            var setter  = function (value) {
 
-squares
+                display.push(value);
+            };
 
+            var getter = function(index) {
+                return display[index];
+            }
+
+            var priv = "Byte me";
+
+            return {
+                setter: function (value) { return setter(value); },
+                getter: function (index) { return getter(index); }
+            };
+        }
+
+        var yyy = controller();
+        yyy.setter("fuck me");
+        yyy.setter("fuck you");
+
+        document.getElementById("demo").innerHTML = yyy.getter(0) + '; ' + yyy.getter(1);
+
+    </script>
+</body>
+</html>
 
 */
-var squareModel = xyxyx.SquareModel();
 
 $(document).ready(function () {
     $.ajaxSetup({
@@ -77,7 +101,9 @@ var board = {
 
     actionInitialize: function () {
 
-        this.squareModel.setModel({});
+        var squareModel = SquareModel();
+        var setModel = squareModel.setModel;
+        setModel({});
 
         common.stopWatch.start();
         possibleMoves.loadSquareMoves();
@@ -87,8 +113,8 @@ var board = {
         restCalls.currentPlayer = globals.colors.white;
         restCalls.currentOpponent = globals.colors.black;
 
-        this.squareModel.setModel(restCalls.getSquaresAndPieces());
-
+        squareModel.setModel()(restCalls.getSquaresAndPieces());
+        
         view.setUpBoardSize();
         view.paintBoardFromModel();
 
