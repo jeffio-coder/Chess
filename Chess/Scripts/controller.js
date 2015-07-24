@@ -96,13 +96,14 @@ $(document).ready(function () {
 });
 
 var board = {
-    squareModel: SquareModel(),
 
     mouseUpDivId: '',
 
     actionInitialize: function () {
 
-        this.squareModel.setModel({});
+        common.squareModel = SquareModel();
+
+        common.squareModel.model({});
 
         common.stopWatch.start();
         possibleMoves.loadSquareMoves();
@@ -112,7 +113,7 @@ var board = {
         restCalls.currentPlayer = globals.colors.white;
         restCalls.currentOpponent = globals.colors.black;
 
-        this.squareModel.setModel()(restCalls.getSquaresAndPieces());
+        common.squareModel.model(restCalls.getSquaresAndPieces());
         
         view.setUpBoardSize();
         view.paintBoardFromModel();
@@ -133,9 +134,9 @@ var board = {
             return;
 
         if (this.mouseUpDivId === '' && 
-            (!this.squareModel.squareIdExists(div.id) ||
-            this.squareModel.squareStatus(div.id) === this.squareModel.statusOpen ||
-            this.squareModel.getPieceColor(div.id) !== restCalls.currentPlayer)
+            (!common.squareModel.squareExists(div.id) ||
+            common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
+            common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
         )
             return;
 
@@ -166,9 +167,9 @@ var board = {
             return;
 
         if (this.mouseUpDivId !== '' ||
-            !this.squareModel.squareIdExists(div.id) ||
-            this.squareModel.getPieceId(div.id) === '' ||
-            this.squareModel.getPieceColor(div.id) !== restCalls.currentPlayer
+            !common.squareModel.squareExists(div.id) ||
+            common.squareModel.pieceId(div.id) === '' ||
+            common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer
         )
             return;
 
@@ -176,24 +177,24 @@ var board = {
         possibleMoves.squareId = div.id;
         possibleMoves.loadPossibleMoves();
 
-        switch (this.squareModel.getPieceType(div.id)) {
+        switch (common.squareModel.pieceType(div.id)) {
 
-            case globals.king:
+            case globals.pieces.king:
                 possibleMoves.possibleMovesForKing();
                 break;
-            case globals.queen:
+            case globals.pieces.queen:
                 possibleMoves.possibleMovesForQueen();
                 break;
-            case globals.rook:
+            case globals.pieces.rook:
                 possibleMoves.possibleMovesForRook();
                 break;
-            case globals.knight:
+            case globals.pieces.knight:
                 possibleMoves.possibleMovesForKnight();
                 break;
-            case globals.bishop:
+            case globals.pieces.bishop:
                 possibleMoves.possibleMovesForBishop();
                 break;
-            case globals.pawn:
+            case globals.pieces.pawn:
                 possibleMoves.possibleMovesForPawn();
                 break;
         }
@@ -222,13 +223,13 @@ var board = {
 
         if (possibleMoves.getValue(targetId) === globals.specialMoves.none || possibleMoves.getValue(targetId) === globals.specialMoves.enPassant) {
             
-            this.squareModel.setPieceId(targetId, this.squareModel.getPieceId(sourceId));
-            this.squareModel.setPieceId(sourceId, '');
+            common.squareModel.pieceId(targetId, common.squareModel.pieceId(sourceId));
+            common.squareModel.pieceId(sourceId, globals.pieceIds.none);
 
-            this.squareModel.setPieceHasMoved(targetId, true);
+            common.squareModel.pieceHasMoved(targetId, true);
 
-            this.squareModel.setPieceEnPassantEligible(targetId,
-                this.squareModel.getPieceType(targetId) === globals.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+            common.squareModel.pieceEnPassantEligible(targetId,
+                common.squareModel.pieceType(targetId) === globals.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
         }
     },
 
@@ -236,8 +237,8 @@ var board = {
 
         if (possibleMoves.getValue(targetId) === globals.specialMoves.none) {
 
-            if (this.squareModel.squareStatus(targetId) !== this.squareModel.statusOpen)
-                this.squareModel.setPieceCaptured(targetId, true);
+            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusOpen)
+                common.squareModel.pieceCaptured(targetId, true);
 
             return;
         }
@@ -245,8 +246,8 @@ var board = {
         if (possibleMoves.getValue(targetId) === globals.specialMoves.enPassant) {
 
             var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
-            this.squareModel.setPieceCaptured(targetId, squareBehindId);
-            this.squareModel.setPieceId(squareBehindId, '');
+            common.squareModel.pieceCaptured(targetId, squareBehindId);
+            common.squareModel.pieceId(squareBehindId, globals.pieceIds.none);
             return;
         }
 
@@ -262,53 +263,71 @@ var board = {
 
     castleKing: function (targetId) {
 
-        if (targetId === '17') {  // White king
+        var whiteKingTargetId = '17';
+        var whiteKingsRookTargetId = '16';
+        var whiteKingSourceId = '15';
+        var whiteKingsRookSourceId = '18';
+        var blackKingTargetId = '12';
+        var blackKingsRookTargetId = '13';
+        var blackKingSourceId = '14';
+        var blackKingsRookSourceId = '11';
 
-            this.squareModel.setPieceId('17', 'WK');
-            this.squareModel.setPieceId('16', 'WKR');
-            this.squareModel.setPieceId('15', '');
-            this.squareModel.setPieceId('18', '');
-            this.squareModel.setPieceHasMoved('WK', true);
-            this.squareModel.setPieceHasMoved('WKR', true);
+        if (targetId === whiteKingTargetId) {   
+
+            common.squareModel.pieceId(whiteKingTargetId, globals.pieceIds.whiteKing);
+            common.squareModel.pieceId(whiteKingsRookTargetId, globals.pieceIds.whiteKingsRook);
+            common.squareModel.pieceId(whiteKingSourceId, globals.pieceIds.none);
+            common.squareModel.pieceId(whiteKingsRookSourceId, globals.pieceIds.none);
+            common.squareModel.pieceHasMoved(globals.pieceIds.whiteKing, true);
+            common.squareModel.pieceHasMoved(globals.pieceIds.whiteKingsRook, true);
         }
 
-        if (targetId === '12') {  // Black king
+        if (targetId === blackKingTargetId) {  
 
-            this.squareModel.setPieceId('12', 'BK');
-            this.squareModel.setPieceId('13', 'BKR');
-            this.squareModel.setPieceId('14', '');
-            this.squareModel.setPieceId('11', '');
-            this.squareModel.setPieceHasMoved('BK', true);
-            this.squareModel.setPieceHasMoved('BKR', true);
+            common.squareModel.pieceId(blackKingTargetId, globals.pieceIds.blackKing);
+            common.squareModel.pieceId(blackKingsRookTargetId, globals.pieceIds.blackKingsRook);
+            common.squareModel.pieceId(blackKingSourceId, globals.pieceIds.none);
+            common.squareModel.pieceId(blackKingsRookSourceId, globals.pieceIds.none);
+            common.squareModel.pieceHasMoved(globals.pieceIds.blackKing, true);
+            common.squareModel.pieceHasMoved(globals.pieceIds.blackKingsRook, true);
         }
     },
 
     castleQueen: function (targetId) {
 
-        if (targetId === '13') {  // White king
+        var whiteKingTargetId = '13';
+        var whiteQueensRookTargetId = '14';
+        var whiteKingSourceId = '15';
+        var whiteQueensRookSourceId = '11';
+        var blackKingTargetId = '16';
+        var blackQueensRookTargetId = '15';
+        var blackKingSourceId = '14';
+        var blackQueensRookSourceId = '18';
 
-            this.squareModel.setPieceId('13', 'WK');
-            this.squareModel.setPieceId('14', 'WQR');
-            this.squareModel.setPieceId('15', '');
-            this.squareModel.setPieceId('11', '');
-            this.squareModel.setPieceHasMoved('WK', true);
-            this.squareModel.setPieceHasMoved('WQR', true);
+        if (targetId === whiteKingTargetId) {
+
+            common.squareModel.pieceId(whiteKingTargetId, globals.pieceIds.whiteKing);
+            common.squareModel.pieceId(whiteQueensRookTargetId, globals.pieceIds.whiteQueensRook);
+            common.squareModel.pieceId(whiteKingSourceId, globals.pieceIds.none);
+            common.squareModel.pieceId(whiteQueensRookSourceId, globals.pieceIds.none);
+            common.squareModel.pieceHasMoved(globals.pieceIds.whiteKing, true);
+            common.squareModel.pieceHasMoved(globals.pieceIds.whiteQueensRook, true);
         }
 
-        if (targetId === '16') {  // Black king
+        if (targetId === blackKingTargetId) {
 
-            this.squareModel.setPieceId('16', 'BK');
-            this.squareModel.setPieceId('15', 'BQR');
-            this.squareModel.setPieceId('14', '');
-            this.squareModel.setPieceId('18', '');
-            this.squareModel.setPieceHasMoved('BK', true);
-            this.squareModel.setPieceHasMoved('BQR', true);
+            common.squareModel.pieceId(blackKingTargetId, globals.pieceIds.blackKing);
+            common.squareModel.pieceId(blackQueensRookTargetId, globals.pieceIds.blackQueensRook);
+            common.squareModel.pieceId(blackKingSourceId, globals.pieceIds.none);
+            common.squareModel.pieceId(blackQueensRookSourceId, globals.pieceIds.none);
+            common.squareModel.pieceHasMoved(globals.pieceIds.blackKing, true);
+            common.squareModel.pieceHasMoved(globals.pieceIds.blackQueensRook, true);
         }
     },
 
     removeMovesThatWouldResultInCheck: function () {
 
-        var currentSquareModel = this.squareModel.getModelCopy();
+        var currentSquareModel = common.squareModel.modelCopy();
 
         // ToDo possible moves model
         var movesToRemove = [];
@@ -321,7 +340,7 @@ var board = {
             if (possibleMoves.checkForPlayerInCheck())
                 movesToRemove.push(possibleMoves.getValue(loopIndex));
 
-            this.squareModel.setModel(currentSquareModel);
+            common.squareModel.model(currentSquareModel);
         }
 
         for (loopIndex = 0; loopIndex < movesToRemove.length; loopIndex++) {
@@ -336,7 +355,7 @@ var board = {
         restCalls.currentPlayer = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.white : globals.colors.black;
         restCalls.currentOpponent = (restCalls.playerMoveNumber % 2) === 0 ? globals.colors.black : globals.colors.white;
 
-        this.squareModel.changeSquareModelToOtherPlayer();
+        common.squareModel.changeSquareModelToOtherPlayer();
 
         if (possibleMoves.checkForPlayerInCheck()) {
 
@@ -356,12 +375,12 @@ var board = {
 
         view.paintBoardFromModel();
 
-        this.squareModel.setEnPassantIneligibleForPlayer();
+        common.squareModel.setEnPassantIneligibleForPlayer();
     },
      
     checkForCheckMate: function () {
 
-        var currentSquareModel = this.squareModel.getModelCopy();
+        var currentSquareModel = common.squareModel.modelCopy();
         var squareId = '';
 
         for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
@@ -370,7 +389,7 @@ var board = {
 
                 squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
 
-                if (this.squareModel.squareStatus(squareId) !== this.squareModel.statusOpen && this.squareModel.getPieceColor(squareId) === restCalls.currentPlayer) {
+                if (common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen && common.squareModel.pieceColor(squareId) === restCalls.currentPlayer) {
 
                     possibleMoves.squareId = squareId;
                     possibleMoves.loadPossibleMoves();
@@ -381,15 +400,15 @@ var board = {
 
                         if (!possibleMoves.checkForPlayerInCheck()) {
 
-                            this.squareModel.setModel(currentSquareModel);
+                            common.squareModel.model(currentSquareModel);
                             return false;
                         }
-                        this.squareModel.setModel(currentSquareModel);
+                        common.squareModel.model(currentSquareModel);
                     }
                 }
             }
         }
 
         return true;
-    },
+    }
 }

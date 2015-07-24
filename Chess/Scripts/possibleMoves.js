@@ -190,7 +190,7 @@
 
         this.setMoves({});
 
-        switch (squareModel.getPieceType(this.squareId)) {
+        switch (common.squareModel.pieceType(this.squareId)) {
 
             case globals.king:
                 this.possibleMovesForKing();
@@ -221,60 +221,87 @@
 
             targetId = this.kingMoves[this.squareId][loopIndex];
 
-            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied)  
+            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusPlayerOccupied)
                 this.setValue(targetId, globals.specialMoves.none);
         }
 
         if (common.inCheck)  // A player may not castle of of check.
             return;
 
+
         // Special code for castling.
-        if (this.squareId === '15' && restCalls.currentPlayer === globals.colors.white && !squareModel.getPieceHasMoved('15')) {
 
-            if (!squareModel.getPieceHasMoved('18') &&
-                squareModel.squareStatus('16') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('16') &&
-                squareModel.squareStatus('17') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('17')) {
+        var whiteKing = '15';
+        var whiteKingsRook = '18';
+        var whiteKingsKnight = '17';
+        var whiteKingsBishop = '16';
+        var whiteQueensRook = '11';
+        var whiteQueensKnight = '12';
+        var whiteQueensBishop = '13';
+        var whiteQueen = '14';
 
-                this.setValue('17', globals.specialMoves.castleKing);
+        if (this.squareId === whiteKing
+            &&
+            restCalls.currentPlayer === globals.colors.white
+            &&
+            !common.squareModel.pieceHasMoved(whiteKing)) {
+
+            if (!common.squareModel.pieceHasMoved(whiteKingsRook)
+                &&
+                common.squareModel.squareStatus(whiteKingsKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteKingsKnight)
+                &&
+                common.squareModel.squareStatus(whiteKingsBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteKingsBishop)) {
+
+                this.setValue(whiteKingsKnight, globals.specialMoves.castleKing);
             }
 
-            if (!squareModel.getPieceHasMoved('11') &&
-                squareModel.squareStatus('12') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('12') &&
-                squareModel.squareStatus('13') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('13') &&
-                squareModel.squareStatus('14') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('14')) {
+            if (!common.squareModel.pieceHasMoved(whiteQueensRook)
+                &&
+                common.squareModel.squareStatus(whiteQueensKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueensKnight)
+                &&
+                common.squareModel.squareStatus(whiteQueensBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueensBishop)
+                &&
+                common.squareModel.squareStatus(whiteQueen) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueen)) {
 
-                this.setValue('13', globals.specialMoves.castleQueen);
-            }
-        }
-
-        if (this.squareId === '14' && restCalls.currentPlayer === globals.colors.black && !squareModel.getPieceHasMoved('14')) {
-
-            if (!squareModel.getPieceHasMoved('11') &&
-                squareModel.squareStatus('12') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('12') &&
-                squareModel.squareStatus('13') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('13')) {
-
-                this.setValue('12', globals.specialMoves.castleKing);
-            }
-
-            if (!squareModel.getPieceHasMoved('18') &&
-                squareModel.squareStatus('15') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('15') &&
-                squareModel.squareStatus('16') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('16') &&
-                squareModel.squareStatus('17') === squareModel.statusOpen &&
-                !this.checkForPlayerInCheck('17')) {
-
-                this.setValue('16', globals.specialMoves.castleQueen);
+                this.setValue(whiteQueensBishop, globals.specialMoves.castleQueen);
             }
         }
 
+        var blackKing = '14';
+        var blackKingsRook = '11';
+        var blackKingsKnight = '12';
+        var blackKingsBishop = '13';
+        var blackQueensRook = '18';
+        var blackQueensKnight = '17';
+        var blackQueensBishop = '16';
+        var blackQueen = '15';
+
+        if (this.squareId === blackKing
+            &&
+            restCalls.currentPlayer === globals.colors.black
+            &&
+            !common.squareModel.pieceHasMoved(blackKing)) {
+
+            if (!common.squareModel.pieceHasMoved(blackKingsRook)
+                &&
+                common.squareModel.squareStatus(blackKingsKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackKingsKnight)
+                &&
+                common.squareModel.squareStatus(blackKingsBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackKingsBishop)) {
+
+                this.setValue(blackKingsKnight, globals.specialMoves.castleKing);
+            }
+
+            if (!common.squareModel.pieceHasMoved(blackQueensRook)
+                &&
+                common.squareModel.squareStatus(blackQueensKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueensKnight)
+                &&
+                common.squareModel.squareStatus(blackQueensBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueensBishop)
+                &&
+                common.squareModel.squareStatus(blackQueen) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueen)) {
+
+                this.setValue(blackQueensBishop, globals.specialMoves.castleQueen);
+            }
+        }
     },
 
     possibleMovesForQueen: function () {
@@ -294,7 +321,7 @@
 
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
-            if (squareModel.squareStatus(targetId) !== squareModel.statusPlayerOccupied) 
+            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusPlayerOccupied)
                 this.setValue(targetId, globals.specialMoves.none);
         }
     },
@@ -310,6 +337,7 @@
         // set a flag so two will be considered blocked.
 
         var targetId = '';
+        var squareBehindId = '';
         var blocked = false;
 
         for (var loopIndex = 0; loopIndex < this.pawnMoves[this.squareId].length; loopIndex++) {
@@ -318,16 +346,18 @@
 
             if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
 
-                if (squareModel.squareStatus(targetId) === squareModel.statusOpen) {
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpen) {
                     if (!blocked) this.setValue(targetId, globals.specialMoves.none);
                 } else {
                     blocked = true;
                 }
             } else {
-                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
                     this.setValue(targetId, globals.specialMoves.none);
                 } else {
-                    if (squareModel.squareBehindEnPassantEligible(targetId))
+                    squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
+
+                    if (common.squareModel.pieceEnPassantEligible(squareBehindId))
                         this.setValue(targetId, globals.specialMoves.enPassant);
                 }
             }
@@ -351,10 +381,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (squareModel.squareStatus(targetId) === squareModel.statusPlayerOccupied)
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusPlayerOccupied)
                     break;
 
-                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
                     this.setValue(targetId, globals.specialMoves.none);
                     break;
                 }
@@ -381,10 +411,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (squareModel.squareStatus(targetId) === squareModel.statusPlayerOccupied)
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusPlayerOccupied)
                     break;
 
-                if (squareModel.squareStatus(targetId) === squareModel.statusOpponentOccupied) {
+                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
                     this.setValue(targetId, globals.specialMoves.none);
                     break;
                 }
@@ -397,7 +427,7 @@
     checkForPlayerInCheck: function (kingSquareId) {
 
         if (!kingSquareId)
-            kingSquareId = this.getKingRankFile();   
+            kingSquareId = common.squareModel.getKingRankFile(restCalls.currentPlayer);   
 
         if (this.checkForPawnCheck(kingSquareId))
             return true;
@@ -422,7 +452,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-            if (squareModel.getPieceType(targetSquareId) === globals.pawn && squareModel.getPieceColor(targetSquareId) === restCalls.currentOpponent)
+            if (common.squareModel.pieceType(targetSquareId) === globals.pawn && common.squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -430,7 +460,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-            if (squareModel.getPieceType(targetSquareId) === globals.pawn && squareModel.getPieceColor(targetSquareId) === restCalls.currentOpponent)
+            if (common.squareModel.pieceType(targetSquareId) === globals.pawn && common.squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
                 return true;
         }
 
@@ -441,8 +471,8 @@
 
         for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
-            if (squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === squareModel.statusOpponentOccupied &&
-                squareModel.getPieceType(this.knightMoves[kingSquareId][loopIndex]) === globals.knight)
+            if (common.squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === common.squareModel.statusOpponentOccupied &&
+                common.squareModel.pieceType(this.knightMoves[kingSquareId][loopIndex]) === globals.knight)
                 return true;
         }
 
@@ -465,15 +495,15 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusOpponentOccupied) {
+                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusOpponentOccupied) {
                     
-                    if (squareModel.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (common.squareModel.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusPlayerOccupied)
+                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusPlayerOccupied)
                     break;
             }
         }
@@ -490,33 +520,19 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusOpponentOccupied) {
+                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusOpponentOccupied) {
 
-                    if (squareModel.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (common.squareModel.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === squareModel.statusPlayerOccupied)
+                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusPlayerOccupied)
                     break;
             }
         }
 
         return false;
-    },
-
-    getKingRankFile: function () {
-
-        var pieceId = restCalls.currentPlayer.substring(0, 1).toUpperCase() + 'K';
-
-        for (var loopIndex = 0; loopIndex <= Object.keys(squareModel.squares).length; loopIndex++) {
-            
-            if (squareModel.squares[Object.keys(squareModel.squares)[loopIndex]].pieceId === pieceId) {
-
-                return Object.keys(squareModel.squares)[loopIndex];
-            }
-        }
-        return '';
     }
 }

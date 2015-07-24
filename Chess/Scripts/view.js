@@ -48,7 +48,7 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (!squareModel.squareIsOccupied())
+                if (!common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen)
                     this.setDraggable(squareId);
             }
         }
@@ -60,16 +60,16 @@
         var key = '';
         var color = '';
 
-        for (var loopIndex = 0; loopIndex < Object.keys(squareModel.getCapturedPieces()).length; loopIndex++) {
+        for (var loopIndex = 0; loopIndex < Object.keys(common.squareModel.getCapturedPieces()).length; loopIndex++) {
 
-            key = Object.keys(squareModel.getCapturedPieces())[loopIndex];
-            color = squareModel.getCapturedPieces()[key].color;
+            key = Object.keys(common.squareModel.getCapturedPieces())[loopIndex];
+            color = common.squareModel.getCapturedPieces()[key].color;
                 
             if (color === restCalls.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
 
-                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + squareModel.getCapturedPieces()[key].type);
+                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + common.squareModel.getCapturedPieces()[key].type);
             else
-                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + squareModel.getCapturedPieces()[key].type);
+                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + common.squareModel.getCapturedPieces()[key].type);
         }
     },
 
@@ -128,10 +128,12 @@
 
     getClassNameFromSquareModel: function (rank, file) {
 
-        if (squareModel.squareStatus(rank, file) === squareModel.statusOpen)
-            return squareModel.getColor(rank, file) + '_Square';
+        var squareId = rank.toString() + file.toString();
 
-        return squareModel.getColor(rank, file) + '_Square ' + squareModel.getPieceColor(rank, file) + '_' + squareModel.getPieceType(rank, file);
+        if (common.squareModel.squareStatus(squareId) === common.squareModel.statusOpen)
+            return common.squareModel.color(squareId) + '_Square';
+
+        return common.squareModel.color(squareId) + '_Square ' + common.squareModel.pieceColor(squareId) + '_' + common.squareModel.pieceType(squareId);
 
     },
 
@@ -154,8 +156,8 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
         }
     },
 
@@ -163,9 +165,8 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(squareModel.getColor(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_Square');
         }
     }
-   
 }

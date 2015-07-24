@@ -1,5 +1,4 @@
-﻿
-var globals = {
+﻿var globals = {
 
     inCheck: false,
 
@@ -22,10 +21,22 @@ var globals = {
         knight: 'N',
         bishop: 'B',
         pawn: 'P'
+    },
+
+    pieceIds: {
+        none: '',
+        whiteKing: 'WK',
+        blackKing: 'BK',
+        whiteKingsRook: 'WKR',
+        blackKingsRook: 'BKR',
+        whiteQueensRook: 'WQR',
+        blackQueensRook: 'BQR'
     }
 }
 
 var common = {
+
+    squareModel: {},
 
     getRank: function(squareId) {
 
