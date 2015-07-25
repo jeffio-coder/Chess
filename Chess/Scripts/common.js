@@ -1,5 +1,6 @@
-﻿var globals = {
+﻿var common = {
 
+    squareModel: {},
     inCheck: false,
 
     colors: {
@@ -31,12 +32,7 @@
         blackKingsRook: 'BKR',
         whiteQueensRook: 'WQR',
         blackQueensRook: 'BQR'
-    }
-}
-
-var common = {
-
-    squareModel: {},
+    },
 
     getRank: function(squareId) {
 

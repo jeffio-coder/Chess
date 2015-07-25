@@ -35,10 +35,6 @@
         squaresAndPieces = value;
     };
 
-    var getModelCopy = function () {
-        return JSON.parse(JSON.stringify(squaresAndPieces));
-    };
-
     var squareIdExists = function (squareId) {
         return squaresAndPieces.squares[squareId];
     };
@@ -63,12 +59,12 @@
     var setPieceType = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '' &&
             (value === '' ||
-            value === globals.pieces.king ||
-            value === globals.pieces.queen ||
-            value === globals.pieces.rook ||
-            value === globals.pieces.knight ||
-            value === globals.pieces.bishop ||
-            value === globals.pieces.pawn)
+            value === common.pieces.king ||
+            value === common.pieces.queen ||
+            value === common.pieces.rook ||
+            value === common.pieces.knight ||
+            value === common.pieces.bishop ||
+            value === common.pieces.pawn)
             )
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type = value;
     };
@@ -109,20 +105,22 @@
     };
     
     var squareStatus = function (squareId) {
+        view.showMessage(this.caller());
         return squaresAndPieces.squares[squareId].pieceId === '' ? statusOpen :
-            squaresAndPieces.squares[squareId].color === restCalls.currentPlayer ? statusPlayerOccupied : statusOpponentOccupied;
+            squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === restCalls.currentPlayer ?
+            statusPlayerOccupied : statusOpponentOccupied;
     };
 
     var squarePieceIsOppenentQueenOrRook = function (squareId) {
         return (squaresAndPieces.squares[squareId].pieceId === restCalls.currentOpponent) &&
-                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === globals.pieces.queen ||
-                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === globals.pieces.rook);
+                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
+                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.rook);
     };
 
     var squarePieceIsOppenentQueenOrBishop = function (squareId) {
         return (getPieceColor(squareId) === restCalls.currentOpponent) &&
-                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === globals.pieces.queen ||
-                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === globals.pieces.bishop);
+                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
+                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.bishop);
     };
 
     var setEnPassantIneligibleForPlayer = function () {
@@ -132,7 +130,7 @@
 
             key = Object.keys(squaresAndPieces.pieces)[loopIndex];
 
-            if (squaresAndPieces.pieces[key].color === restCalls.currentPlayer && squaresAndPieces.pieces[key].type === globals.pieces.pawn)
+            if (squaresAndPieces.pieces[key].color === restCalls.currentPlayer && squaresAndPieces.pieces[key].type === common.pieces.pawn)
                 squaresAndPieces.pieces[key].enPassantEligible = false;
         }
     };
@@ -174,7 +172,7 @@
 
     var getKingRankFile = function (color) {
 
-        var pieceId = color === globals.colors.white ? globals.pieceIds.whiteKing : globals.pieceIds.blackKing;
+        var pieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
 
         for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares).length; loopIndex++) {
 
@@ -192,8 +190,6 @@
         statusOpponentOccupied: statusOpponentOccupied,
 
         model: function (value) { return arguments.length === 0 ? getModel() : setModel(value); },
-
-        modelCopy: function () { return getModelCopy(); },
 
         squareExists: function (squareId) { return squareIdExists(squareId); },
 

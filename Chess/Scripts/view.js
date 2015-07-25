@@ -82,7 +82,7 @@
 
     showCheckWarning: function() {
 
-        if (restCalls.currentPlayer === globals.colors.white) {
+        if (restCalls.currentPlayer === common.colors.white) {
 
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -114,7 +114,7 @@
 
     showCheckmate: function () {
 
-        if (restCalls.currentPlayer === globals.colors.white) {
+        if (restCalls.currentPlayer === common.colors.white) {
 
             $('#spanCheckWarning').text('Checkmate, Black wins!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
