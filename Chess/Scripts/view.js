@@ -27,7 +27,10 @@
         $('#checkWarning').height(captureSize);
         $('#checkWarning').width(maxDimension);
 
+        $('#divShowMessage').width(maxDimension);
+
         this.hideCheckWarning();
+        this.hideMessage();
     },
 
     paintBoardFromModel: function() {
@@ -95,6 +98,18 @@
 
         $('#checkWarning').hide();
         $('#spanCheckWarning').text();
+    },
+
+    showMessage: function (message) {
+
+        $('#showMessage').text(message);
+        $('#divShowMessage').show();
+    },
+
+    hideMessage: function () {
+
+        $('#divShowMessage').hide();
+        $('#showMessage').text();
     },
 
     showCheckmate: function () {

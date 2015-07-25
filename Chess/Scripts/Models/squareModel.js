@@ -176,7 +176,7 @@
 
         var pieceId = color === globals.colors.white ? globals.pieceIds.whiteKing : globals.pieceIds.blackKing;
 
-        for (var loopIndex = 0; loopIndex <= Object.keys(squaresAndPieces.squares).length; loopIndex++) {
+        for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares).length; loopIndex++) {
 
             if (squaresAndPieces.squares[Object.keys(squaresAndPieces.squares)[loopIndex]].pieceId === pieceId) {
 

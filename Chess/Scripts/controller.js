@@ -1,5 +1,7 @@
 ﻿// ToDo
 //
+// 
+// scrap globals - make all common
 // Make possible moves model (include "in check moves")
 // in check as possible move type
 // convert timer to object
@@ -98,6 +100,7 @@ $(document).ready(function () {
 var board = {
 
     mouseUpDivId: '',
+    message: '',
 
     actionInitialize: function () {
 
@@ -108,7 +111,6 @@ var board = {
         common.stopWatch.start();
         possibleMoves.loadSquareMoves();
         common.stopWatch.stop();
-        $('#timer').text(common.stopWatch.elapsedTime().toString());
 
         restCalls.currentPlayer = globals.colors.white;
         restCalls.currentOpponent = globals.colors.black;
@@ -143,6 +145,8 @@ var board = {
 
         if (this.mouseUpDivId === '') {
             this.mouseUpDivId = div.id;
+            this.message += ' mu; pm.Sq: ' + possibleMoves.squareId + '; div.id: ' + div.id;
+            view.showMessage(this.message);
         } else {
             if (this.mouseUpDivId !== div.id) {
 
@@ -157,47 +161,27 @@ var board = {
                 possibleMoves.setMoves({});
                 this.mouseUpDivId = '';
             }
-            board.actionDragEnd(div.id);
         }
     },
      
     actionMouseDown: function (event, div) {
 
+        this.message = '';
         if (event.which !== 1 || restCalls.gameOver)
             return;
 
         if (this.mouseUpDivId !== '' ||
             !common.squareModel.squareExists(div.id) ||
-            common.squareModel.pieceId(div.id) === '' ||
+            common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
             common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer
         )
             return;
 
+
         view.squareMovingSetClass(div.id);
         possibleMoves.squareId = div.id;
         possibleMoves.loadPossibleMoves();
-
-        switch (common.squareModel.pieceType(div.id)) {
-
-            case globals.pieces.king:
-                possibleMoves.possibleMovesForKing();
-                break;
-            case globals.pieces.queen:
-                possibleMoves.possibleMovesForQueen();
-                break;
-            case globals.pieces.rook:
-                possibleMoves.possibleMovesForRook();
-                break;
-            case globals.pieces.knight:
-                possibleMoves.possibleMovesForKnight();
-                break;
-            case globals.pieces.bishop:
-                possibleMoves.possibleMovesForBishop();
-                break;
-            case globals.pieces.pawn:
-                possibleMoves.possibleMovesForPawn();
-                break;
-        }
+        this.message = 'md; pm.Sq: ' + possibleMoves.squareId;
 
         this.removeMovesThatWouldResultInCheck();
         view.showPossibleMoves();
@@ -229,8 +213,17 @@ var board = {
             common.squareModel.pieceHasMoved(targetId, true);
 
             common.squareModel.pieceEnPassantEligible(targetId,
-                common.squareModel.pieceType(targetId) === globals.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+                common.squareModel.pieceType(targetId) === globals.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
         }
+
+        if (possibleMoves.getValue(targetId) === globals.specialMoves.castleKing) {
+
+            this.castleKing(targetId);
+            return;
+        }
+
+        if (possibleMoves.getValue(targetId) === globals.specialMoves.castleQueen)
+            this.castleQueen(targetId);
     },
 
     capturePieceIfApplicable: function (sourceId, targetId) {
@@ -246,19 +239,10 @@ var board = {
         if (possibleMoves.getValue(targetId) === globals.specialMoves.enPassant) {
 
             var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
-            common.squareModel.pieceCaptured(targetId, squareBehindId);
+            common.squareModel.pieceCaptured(squareBehindId, true);
             common.squareModel.pieceId(squareBehindId, globals.pieceIds.none);
             return;
         }
-
-        if (possibleMoves.getValue(targetId) === globals.specialMoves.castleKing) {
-            
-            this.castleKing(targetId);
-            return;
-        }
-
-        if (possibleMoves.getValue(targetId) === globals.specialMoves.castleQueen)
-            this.castleQueen(targetId);
     },
 
     castleKing: function (targetId) {
@@ -341,6 +325,7 @@ var board = {
                 movesToRemove.push(possibleMoves.getValue(loopIndex));
 
             common.squareModel.model(currentSquareModel);
+            currentSquareModel = common.squareModel.modelCopy();
         }
 
         for (loopIndex = 0; loopIndex < movesToRemove.length; loopIndex++) {

@@ -192,22 +192,22 @@
 
         switch (common.squareModel.pieceType(this.squareId)) {
 
-            case globals.king:
+            case globals.pieces.king:
                 this.possibleMovesForKing();
                 break;
-            case globals.queen:
+            case globals.pieces.queen:
                 this.possibleMovesForQueen();
                 break;
-            case globals.rook:
-                globals.possibleMovesForRook();
+            case globals.pieces.rook:
+                this.possibleMovesForRook();
                 break;
-            case globals.knight:
+            case globals.pieces.knight:
                 this.possibleMovesForKnight();
                 break;
-            case globals.bishop:
+            case globals.pieces.bishop:
                 this.possibleMovesForBishop();
                 break;
-            case globals.pawn:
+            case globals.pieces.pawn:
                 this.possibleMovesForPawn();
                 break;
         }
