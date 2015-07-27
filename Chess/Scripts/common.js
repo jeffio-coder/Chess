@@ -13,7 +13,7 @@
         enPassant: 'enPassant',
         castleKing: 'castleKing',
         castleQueen: 'castleQueen'
-    },
+},
 
     pieces: {
         king: 'K',
@@ -44,32 +44,43 @@
         return parseInt(squareId.substring(1, 2));
     },
 
-    stopWatch: {
+    stopWatch: function () {
 
-        startTime: 0.0,
-        stopTime: 0.0,
+        var startTime = 0.0;
+        var stopTime = 0.0;
 
-        start: function() {
+        var start = function ()  {
 
-            this.startTime = new Date().getTime();
-        },
+            startTime = new Date().getTime();
+        };
 
-        stop: function () {
-            //var d = new Date();
-            //var n = d.getTime();
-            this.stopTime = new Date().getTime();
-        },
+        var stop = function () {
 
-        elapsedTime: function() {
+            stopTime = new Date().getTime();
+        };
 
-            return this.stopTime - this.startTime;
-        },
+        var elapsedTime = function () {
 
-        reset: function() {
+            return stopTime - this.startTime;
+        };
 
-            this.startTime = 0.0;
-            this.stopTime = 0.0;
+        var reset = function () {
+
+            startTime = 0.0;
+            stopTime = 0.0;
+        };
+
+        var currentTime = function () {
+
+            return startTime === 0.0 ? 0.0 : new Date().getTime() - startTime;
+        };
+
+        return {
+            start: function () { return start(); },
+            stop: function () { return stop(); },
+            elapsedTime: function () { elapsedTime(); },
+            reset: function () { return reset(); },
+            currentTime: function () { return currentTime(); }
         }
-
     }
 }

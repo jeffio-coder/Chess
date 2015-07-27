@@ -1,20 +1,15 @@
 ﻿// ToDo
 //
-// 
-// scrap globals - make all common
-// Make possible moves model (include "in check moves")
-// in check as possible move type
-// convert timer to object
-// hover messages
-// check Bootstrap alert
+// Finish hover
+// show move timer
+//     
+//     http://www.elated.com/articles/creating-a-javascript-clock/
 // Promote; change piece ID's?
-// Tooltip for moving into check / Bootstrap alert 
-// convert to rest calls
-// format timer
-// move timer
-// web workers on check for check/checkmate -- http://keithwhor.github.io/multithread.js/  http://codersblock.com/blog/multi-threaded-javascript-with-web-workers/
+// IIS  http://www.iis.net/learn/get-started/planning-for-security/how-to-use-locking-in-iis-configuration
+// convert to rest calls - possible moves; change script names; move Game.html
 // End game
-// Error Handling
+// web workers on check for check/checkmate -- http://keithwhor.github.io/multithread.js/  http://codersblock.com/blog/multi-threaded-javascript-with-web-workers/
+// Error Handling; logging
 // Unit tests; QUnit, Jasmine
 //
 // Document
@@ -41,52 +36,6 @@
             });
 
 
-<!DOCTYPE html>
-<html>
-<body>
-
-    <p>Creating and using an object method.</p>
-
-    <p>
-        An object method is stored as a function definition,
-        in an object property.
-    </p>
-
-    <p id="demo"></p>
-
-    <script>
-
-        var controller = function () {
-
-            var display = [];
-
-            var setter  = function (value) {
-
-                display.push(value);
-            };
-
-            var getter = function(index) {
-                return display[index];
-            }
-
-            var priv = "Byte me";
-
-            return {
-                setter: function (value) { return setter(value); },
-                getter: function (index) { return getter(index); }
-            };
-        }
-
-        var yyy = controller();
-        yyy.setter("fuck me");
-        yyy.setter("fuck you");
-
-        document.getElementById("demo").innerHTML = yyy.getter(0) + '; ' + yyy.getter(1);
-
-    </script>
-</body>
-</html>
-
 */
 
 $(document).ready(function () {
@@ -99,9 +48,9 @@ $(document).ready(function () {
 
 var board = {
 
-    mouseUpDivId: '',
-    mdMessage: '',
-    muMessage: '',
+    mouseDownDivId: '',
+    droppableInvoked: false,
+    movesResultingInCheck: {},
 
     actionInitialize: function () {
 
@@ -109,9 +58,7 @@ var board = {
 
         common.squareModel.model({});
 
-        common.stopWatch.start();
         possibleMoves.loadSquareMoves();
-        common.stopWatch.stop();
 
         restCalls.currentPlayer = common.colors.white;
         restCalls.currentOpponent = common.colors.black;
@@ -121,6 +68,14 @@ var board = {
         view.setUpBoardSize();
         view.paintBoardFromModel();
 
+        //setInterval(function () {
+        //    $('.Timer').text((new Date - start) / 1000 + " Seconds");
+        //}, 1000);
+        //intervalId = setInterval(function () {
+        //    incrementOrDecrementValue = 1;
+        //    setPic();
+        //}, interval);
+
         $('.gameSquare').mousedown(function (event) {
             board.actionMouseDown(event, this);
         });
@@ -129,6 +84,16 @@ var board = {
         $('.gameSquare').mouseup(function(event) {
             board.actionMouseUp(event, this);
         });
+
+        $('.gameSquare').mouseenter(function() {
+
+            board.actionMouseEnter(this.id);
+        });
+
+        $('.gameSquare').mouseleave(function () {
+
+            board.actionMouseLeave();
+        });
     },
 
     actionMouseDown: function (event, div) {
@@ -136,7 +101,7 @@ var board = {
         if (event.which !== 1 || restCalls.gameOver)
             return;
 
-        if (this.mouseUpDivId !== '' ||
+        if (this.mouseDownDivId !== '' ||
             !common.squareModel.squareExists(div.id) ||
             common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
             common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer
@@ -147,6 +112,9 @@ var board = {
         view.squareMovingSetClass(div.id);
         possibleMoves.squareId = div.id;
         possibleMoves.loadPossibleMoves();
+
+        this.removeMovesThatWouldResultInCheck();
+        view.showPossibleMoves();
     },
 
     actionMouseUp: function (event, div) {
@@ -154,43 +122,69 @@ var board = {
         if (event.which !== 1 || restCalls.gameOver)
             return;
 
-        if (this.mouseUpDivId === '' &&
+        if (this.mouseDownDivId === '' &&
             (!common.squareModel.squareExists(div.id) ||
             common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
             common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
         )
             return;
 
+        if (this.mouseDownDivId === '') {
 
-        if (this.mouseUpDivId === '') {
-
-            this.mouseUpDivId = div.id;
+            this.mouseDownDivId = div.id;
         } else {
 
-            view.clearSquaresMarkedForMove();
+            // this.actionDragEnd's second parameter indicates whether to execute a move.
+            // this.mouseDownDivId !== div.id is true if the mouse up is in a diffent square than the mouse down.
 
-            if (this.mouseUpDivId !== div.id) {
-
-                this.actionDragEnd(div.id);
-            }
-
-            possibleMoves.setMoves({});
-            this.mouseUpDivId = '';
+            this.actionDragEnd(div.id, this.mouseDownDivId !== div.id);
         }
     },
    
-    actionDragEnd: function (targetId) {
+    actionMouseEnter: function (divId) {
+
+        if (this.mouseDownDivId === '' && !this.droppableInvoked) return;
+
+        if (possibleMoves.isPossibleMove(divId) || this.mouseDownDivId === divId) {
+
+            view.hideMessage();
+            return;
+        }
+
+        if (divId in this.movesResultingInCheck) {
+
+            view.showMessage('You may not move into check.');
+            return;
+        }
+
+        view.showMessage('Invalid move.');
+    },
+
+    actionMouseLeave: function() {
+
+        view.hideMessage();
+    },
+
+    actionInvokeDroppable: function (divId) {
+
+        this.droppableInvoked = true;
+        this.actionMouseLeave(divId);
+        this.droppableInvoked = false;
+    },
+
+    actionDragEnd: function (targetId, executeMove) {
        
         view.clearSquaresMarkedForMove();
 
-        if (targetId && (possibleMoves.inMoves(targetId))) {
+        if (targetId && (possibleMoves.isPossibleMove(targetId)) && executeMove) {
 
             this.movePieceToNewSquare(possibleMoves.squareId, targetId);
             this.changeCurrentPlayer();
         }
 
         possibleMoves.setMoves({});
-        this.mouseUpDivId = '';
+        this.mouseDownDivId = '';
+        view.hideMessage();
     },
     
     movePieceToNewSquare: function (sourceId, targetId) {
@@ -254,8 +248,8 @@ var board = {
             common.squareModel.pieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
             common.squareModel.pieceId(whiteKingSourceId, common.pieceIds.none);
             common.squareModel.pieceId(whiteKingsRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(common.pieceIds.whiteKing, true);
-            common.squareModel.pieceHasMoved(common.pieceIds.whiteKingsRook, true);
+            common.squareModel.pieceHasMoved(whiteKingTargetId, true);
+            common.squareModel.pieceHasMoved(whiteKingsRookTargetId, true);
         }
 
         if (targetId === blackKingTargetId) {  
@@ -264,8 +258,8 @@ var board = {
             common.squareModel.pieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
             common.squareModel.pieceId(blackKingSourceId, common.pieceIds.none);
             common.squareModel.pieceId(blackKingsRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(common.pieceIds.blackKing, true);
-            common.squareModel.pieceHasMoved(common.pieceIds.blackKingsRook, true);
+            common.squareModel.pieceHasMoved(blackKingTargetId, true);
+            common.squareModel.pieceHasMoved(blackKingsRookTargetId, true);
         }
     },
 
@@ -286,8 +280,8 @@ var board = {
             common.squareModel.pieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
             common.squareModel.pieceId(whiteKingSourceId, common.pieceIds.none);
             common.squareModel.pieceId(whiteQueensRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(common.pieceIds.whiteKing, true);
-            common.squareModel.pieceHasMoved(common.pieceIds.whiteQueensRook, true);
+            common.squareModel.pieceHasMoved(whiteKingTargetId, true);
+            common.squareModel.pieceHasMoved(whiteQueensRookTargetId, true);
         }
 
         if (targetId === blackKingTargetId) {
@@ -296,8 +290,8 @@ var board = {
             common.squareModel.pieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
             common.squareModel.pieceId(blackKingSourceId, common.pieceIds.none);
             common.squareModel.pieceId(blackQueensRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(common.pieceIds.blackKing, true);
-            common.squareModel.pieceHasMoved(common.pieceIds.blackQueensRook, true);
+            common.squareModel.pieceHasMoved(blackKingTargetId, true);
+            common.squareModel.pieceHasMoved(blackQueensRookTargetId, true);
         }
     },
 
@@ -305,8 +299,7 @@ var board = {
 
         var currentSquareModel = JSON.parse(JSON.stringify(common.squareModel.model()));
 
-        // ToDo possible moves model
-        var movesToRemove = [];
+        this.movesResultingInCheck = {};
         var loopIndex = 0;
 
         for (loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
@@ -314,14 +307,14 @@ var board = {
             this.movePieceToNewSquare(possibleMoves.squareId, possibleMoves.getValue(loopIndex));
 
             if (possibleMoves.checkForPlayerInCheck())
-                movesToRemove.push(possibleMoves.getValue(loopIndex));
+                this.movesResultingInCheck[possibleMoves.getValue(loopIndex)] = '';
 
             common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
         }
 
-        for (loopIndex = 0; loopIndex < movesToRemove.length; loopIndex++) {
+        for (loopIndex = 0; loopIndex < Object.keys(this.movesResultingInCheck).length ; loopIndex++) {
 
-            possibleMoves.deleteElement(movesToRemove[loopIndex]);
+            possibleMoves.deleteElement(Object.keys(this.movesResultingInCheck)[loopIndex]);
         }
     },
 
@@ -356,7 +349,7 @@ var board = {
      
     checkForCheckMate: function () {
 
-        var currentSquareModel = common.squareModel.modelCopy();
+        var currentSquareModel = JSON.parse(JSON.stringify(common.squareModel.model()));
         var squareId = '';
 
         for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
@@ -365,7 +358,7 @@ var board = {
 
                 squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
 
-                if (common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen && common.squareModel.pieceColor(squareId) === restCalls.currentPlayer) {
+                if (common.squareModel.squareStatus(squareId) === common.squareModel.statusPlayerOccupied) {
 
                     possibleMoves.squareId = squareId;
                     possibleMoves.loadPossibleMoves();
@@ -376,10 +369,10 @@ var board = {
 
                         if (!possibleMoves.checkForPlayerInCheck()) {
 
-                            common.squareModel.model(currentSquareModel);
+                            common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
                             return false;
                         }
-                        common.squareModel.model(currentSquareModel);
+                        common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
                     }
                 }
             }

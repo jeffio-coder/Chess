@@ -35,7 +35,7 @@
         squaresAndPieces = value;
     };
 
-    var squareIdExists = function (squareId) {
+    var squareExists = function (squareId) {
         return squaresAndPieces.squares[squareId];
     };
     
@@ -105,20 +105,19 @@
     };
     
     var squareStatus = function (squareId) {
-        view.showMessage(this.caller());
         return squaresAndPieces.squares[squareId].pieceId === '' ? statusOpen :
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === restCalls.currentPlayer ?
             statusPlayerOccupied : statusOpponentOccupied;
     };
 
     var squarePieceIsOppenentQueenOrRook = function (squareId) {
-        return (squaresAndPieces.squares[squareId].pieceId === restCalls.currentOpponent) &&
+        return (squaresAndPieces.squares[squareId].color === restCalls.currentOpponent) &&
                 (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
                 squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.rook);
     };
 
     var squarePieceIsOppenentQueenOrBishop = function (squareId) {
-        return (getPieceColor(squareId) === restCalls.currentOpponent) &&
+        return (squaresAndPieces.squares[squareId].color === restCalls.currentOpponent) &&
                 (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
                 squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.bishop);
     };
@@ -191,7 +190,7 @@
 
         model: function (value) { return arguments.length === 0 ? getModel() : setModel(value); },
 
-        squareExists: function (squareId) { return squareIdExists(squareId); },
+        squareExists: function (squareId) { return squareExists(squareId); },
 
         color: function (squareId) { return getColor(squareId); },
 

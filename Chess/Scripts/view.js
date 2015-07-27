@@ -49,7 +49,14 @@
                 $('#' + squareId).width(this.squareDimension);
                 $('#' + squareId).height(this.squareDimension);
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
-                $('#' + squareId).droppable();
+                $('#' + squareId).droppable({
+                    over: function (event, ui) {
+                        board.actionInvokeDroppable(this.id);
+                    },
+                    out: function (event, ui) {
+                        board.actionMouseLeave();
+                    }
+                });
 
                 if (!common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen)
                     this.setDraggable(squareId);
@@ -103,13 +110,15 @@
     showMessage: function (message) {
 
         $('#showMessage').text(message);
-        $('#divShowMessage').show();
+        $('#divShowMessage').removeClass('gameMessageHide');
+        $('#divShowMessage').addClass('gameMessageShow');
     },
 
     hideMessage: function () {
 
-        $('#divShowMessage').hide();
-        $('#showMessage').text();
+        $('#showMessage').text('');
+        $('#divShowMessage').removeClass('gameMessageShow');
+        $('#divShowMessage').addClass('gameMessageHide');
     },
 
     showCheckmate: function () {
@@ -157,7 +166,7 @@
         $('#' + id).draggable({
             revert: function (droppableObject) {
                 if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                    board.actionDragEnd(droppableObject[0].id);
+                    board.actionDragEnd(droppableObject[0].id, true);
                 }
                 view.clearSquaresMarkedForMove();
                 return true;

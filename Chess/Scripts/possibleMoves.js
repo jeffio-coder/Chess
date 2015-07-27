@@ -48,7 +48,7 @@
         delete this.moves[movesKey];
     },
 
-    inMoves: function (movesKey) {
+    isPossibleMove: function (movesKey) {
 
         return movesKey in this.moves;
     },

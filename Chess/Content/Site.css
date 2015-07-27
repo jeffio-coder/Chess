@@ -16,6 +16,18 @@ textarea {
     max-width: 280px;
 }
 
+.gameMessageShow {
+    height: 20px; 
+    align-content: center; 
+    background-color: #ffffcc
+}
+
+.gameMessageHide {
+    height: 20px;
+    align-content: center;
+    background-color: #ffffff;
+}
+
 .gameBoard {
     border: 1px solid black; 
 }
