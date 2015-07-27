@@ -143,7 +143,8 @@ var board = {
    
     actionMouseEnter: function (divId) {
 
-        if (this.mouseDownDivId === '' && !this.droppableInvoked) return;
+        if (this.mouseDownDivId === '' && !this.droppableInvoked)
+            return;
 
         if (possibleMoves.isPossibleMove(divId) || this.mouseDownDivId === divId) {
 
@@ -168,13 +169,13 @@ var board = {
     actionInvokeDroppable: function (divId) {
 
         this.droppableInvoked = true;
-        this.actionMouseLeave(divId);
-        this.droppableInvoked = false;
+        this.actionMouseEnter(divId);
     },
 
     actionDragEnd: function (targetId, executeMove) {
        
         view.clearSquaresMarkedForMove();
+        this.droppableInvoked = false;
 
         if (targetId && (possibleMoves.isPossibleMove(targetId)) && executeMove) {
 
