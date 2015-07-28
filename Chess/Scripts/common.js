@@ -85,3 +85,44 @@
         }
     }
 }
+
+var xyxyxy =
+{
+    squares: {
+        'squareId':
+        {
+            'color': '',
+            'pieceId': ''
+        }
+    },
+
+    pieces: {
+        'pieceId':
+        {
+            'type': '',
+            'color': '',
+            'hasMoved': false,
+            'captured': false,
+            'enPassantEligible': false
+        }
+    },
+
+    frontMoves: {},
+    rearMoves: {},
+    leftMoves: {},
+    rightMoves: {},
+    frontLeftMoves: {},
+    frontRightMoves: {},
+    rearLeftMoves: {},
+    rearRightMoves: {},
+    whiteKingMoves: {},
+    blackKingMoves: {},
+    knightMoves: {},
+    pawnMoves: {},
+    possibleMoves: {},
+    attacking: {},
+    attackedBy: {},
+    blocking: {},
+    blockedAttacking: {},
+    blockedAttackedBy: {}
+};
