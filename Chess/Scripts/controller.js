@@ -1,11 +1,9 @@
 ﻿// ToDo
 //
-// Finish hover
-// show move timer
-//     
-//     http://www.elated.com/articles/creating-a-javascript-clock/
 // Promote; change piece ID's?
+// Ckeckmate issues (queen covered by bishop)
 // IIS  http://www.iis.net/learn/get-started/planning-for-security/how-to-use-locking-in-iis-configuration
+// Rename and move scripts.
 // convert to rest calls - possible moves; change script names; move Game.html
 // End game
 // web workers on check for check/checkmate -- http://keithwhor.github.io/multithread.js/  http://codersblock.com/blog/multi-threaded-javascript-with-web-workers/
@@ -49,7 +47,6 @@ $(document).ready(function () {
 var board = {
 
     mouseDownDivId: '',
-    droppableInvoked: false,
     movesResultingInCheck: {},
 
     actionInitialize: function () {
@@ -68,13 +65,13 @@ var board = {
         view.setUpBoardSize();
         view.paintBoardFromModel();
 
-        //setInterval(function () {
-        //    $('.Timer').text((new Date - start) / 1000 + " Seconds");
-        //}, 1000);
-        //intervalId = setInterval(function () {
-        //    incrementOrDecrementValue = 1;
-        //    setPic();
-        //}, interval);
+        common.stopWatch = common.StopWatch();
+        common.stopWatch.start();
+        view.updateClock();
+
+        setInterval(function () {
+            view.updateClock();
+        }, 1000);
 
         $('.gameSquare').mousedown(function (event) {
             board.actionMouseDown(event, this);
@@ -83,16 +80,6 @@ var board = {
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
             board.actionMouseUp(event, this);
-        });
-
-        $('.gameSquare').mouseenter(function() {
-
-            board.actionMouseEnter(this.id);
-        });
-
-        $('.gameSquare').mouseleave(function () {
-
-            board.actionMouseLeave();
         });
     },
 
@@ -140,42 +127,10 @@ var board = {
             this.actionDragEnd(div.id, this.mouseDownDivId !== div.id);
         }
     },
-   
-    actionMouseEnter: function (divId) {
-
-        if (this.mouseDownDivId === '' && !this.droppableInvoked)
-            return;
-
-        if (possibleMoves.isPossibleMove(divId) || this.mouseDownDivId === divId) {
-
-            view.hideMessage();
-            return;
-        }
-
-        if (divId in this.movesResultingInCheck) {
-
-            view.showMessage('You may not move into check.');
-            return;
-        }
-
-        view.showMessage('Invalid move.');
-    },
-
-    actionMouseLeave: function() {
-
-        view.hideMessage();
-    },
-
-    actionInvokeDroppable: function (divId) {
-
-        this.droppableInvoked = true;
-        this.actionMouseEnter(divId);
-    },
 
     actionDragEnd: function (targetId, executeMove) {
        
         view.clearSquaresMarkedForMove();
-        this.droppableInvoked = false;
 
         if (targetId && (possibleMoves.isPossibleMove(targetId)) && executeMove) {
 
@@ -344,6 +299,7 @@ var board = {
         }
 
         view.paintBoardFromModel();
+        common.stopWatch.start();
 
         common.squareModel.setEnPassantIneligibleForPlayer();
     },

@@ -17,6 +17,8 @@
         $('#mainBoard').width(maxDimension);
         $('#mainBoard').height(maxDimension);
 
+        $('#divTimer').width(maxDimension);
+
         var captureSize = (this.squareDimension / 2).toString();
 
         $('[id^=captureRow]').height(captureSize);
@@ -31,6 +33,24 @@
 
         this.hideCheckWarning();
         this.hideMessage();
+    },
+
+    updateClock: function() {
+
+        var seconds = Math.floor(common.stopWatch.currentTime() / 1000);
+        var minutes = Math.floor(seconds / 60);
+        var hours = Math.floor(minutes / 60);
+        var days = Math.floor(hours / 24);
+        seconds %= 60;
+        minutes %= 60;
+        hours %= 24;
+
+        var displayTime = (days === 0 ? '' : days === 1 ? days.toString() + ' day, ' : days.toString() + ' days, ').toString() +
+            hours.toString() + ':' +
+            (minutes < 10 ? '0' + minutes.toString() : minutes.toString()).toString() + ':' +
+            (seconds < 10 ? '0' + seconds.toString() : seconds.toString()).toString();
+
+        $('#timer').text(displayTime);
     },
 
     paintBoardFromModel: function() {
@@ -49,14 +69,7 @@
                 $('#' + squareId).width(this.squareDimension);
                 $('#' + squareId).height(this.squareDimension);
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
-                $('#' + squareId).droppable({
-                    over: function (event, ui) {
-                        board.actionInvokeDroppable(this.id);
-                    },
-                    out: function (event, ui) {
-                        board.actionMouseLeave();
-                    }
-                });
+                $('#' + squareId).droppable();
 
                 if (!common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen)
                     this.setDraggable(squareId);
@@ -110,15 +123,15 @@
     showMessage: function (message) {
 
         $('#showMessage').text(message);
-        $('#divShowMessage').removeClass('gameMessageHide');
-        $('#divShowMessage').addClass('gameMessageShow');
+        $('#showMessage').removeClass('gameMessageHide');
+        $('#showMessage').addClass('gameMessageShow');
     },
 
     hideMessage: function () {
 
         $('#showMessage').text('');
-        $('#divShowMessage').removeClass('gameMessageShow');
-        $('#divShowMessage').addClass('gameMessageHide');
+        $('#showMessage').removeClass('gameMessageShow');
+        $('#showMessage').addClass('gameMessageHide');
     },
 
     showCheckmate: function () {

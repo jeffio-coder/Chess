@@ -2,6 +2,7 @@
 
     squareModel: {},
     inCheck: false,
+    stopWatch: {},
 
     colors: {
         white: 'white',
@@ -44,10 +45,10 @@
         return parseInt(squareId.substring(1, 2));
     },
 
-    stopWatch: function () {
+    StopWatch: function () {
 
-        var startTime = 0.0;
-        var stopTime = 0.0;
+        var startTime = 0;
+        var stopTime = 0;
 
         var start = function ()  {
 
@@ -61,18 +62,18 @@
 
         var elapsedTime = function () {
 
-            return stopTime - this.startTime;
+            return this.stopTime - this.startTime;
         };
 
         var reset = function () {
 
-            startTime = 0.0;
-            stopTime = 0.0;
+            startTime = 0;
+            stopTime = 0;
         };
 
         var currentTime = function () {
 
-            return startTime === 0.0 ? 0.0 : new Date().getTime() - startTime;
+            return startTime === 0 ? 0 : new Date().getTime() - startTime;
         };
 
         return {

@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="/Content/jquery-ui.css" />
 </head>
 <body style="align-content: center;">
-    <div style="height: 40px; align-content: center;"><span id="timer"></span></div>
+    <div id="divTimer" style="height: 40px; text-align: center;"><span id="timer" style="font-size: 56px;">0:00</span></div>
     <div id="captureRowTop" style="height: 40px;">
         <div id="capturePieceTop1"></div>
         <div id="capturePieceTop2"></div>
@@ -34,7 +34,7 @@
         <div id="capturePieceTop16"></div>
     </div>
     <br/>
-    <div id="divShowMessage" class="gameMessageHide"><span id="showMessage">&nbsp;&nbsp;</span></div>
+    <div id="divShowMessage" style="height: 20px; text-align: center; align-content: center;"><span id="showMessage">&nbsp;&nbsp;</span></div>
     <p />
     <div id="mainBoard" class="gameBoard">
         <div id="R8">
@@ -149,5 +149,21 @@
     <div id="checkWarning" style="text-align: center; vertical-align: central; background-color: #ff0000; width: 640px; height: 40px;">
         <span id="spanCheckWarning" style="font-weight: bolder; color: #ffffff;"></span>
     </div>
+<div id="popupPromote">
+    <div><span>Promote Pawn</span></div>
+    <input id="promoteQueen" type="radio" name="promote" value="Q" checked>Queen
+    <br>
+    <br>
+    <input id="promoteRook" type="radio" name="promote" value="R">Rook
+    <br>
+    <br>
+    <input id="promoteKnight" type="radio" name="promote" value="N">Knight
+    <br>
+    <br>
+    <input id="promoteBishop" type="radio" name="promote" value="B">Bishop
+    <br>
+    <br>
+    <input id="promoteOK" type="button" value="OK"/>
+</div>
 </body>
 </html>
