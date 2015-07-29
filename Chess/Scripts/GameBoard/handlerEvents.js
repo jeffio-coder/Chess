@@ -40,79 +40,78 @@ $(document).ready(function () {
         cache: false
     });
 
-    board.actionInitialize();
-    board.actionInitialize();
+    events.actionInitialize();
 });
 
-var board = {
+var events = {
 
     mouseDownDivId: '',
     movesResultingInCheck: {},
 
     actionInitialize: function () {
 
-        common.squareModel = SquareModel();
+        common.squares = Squares();
 
-        common.squareModel.model({});
+        common.squares.model({});
 
         possibleMoves.loadSquareMoves();
 
-        restCalls.currentPlayer = common.colors.white;
-        restCalls.currentOpponent = common.colors.black;
+        requests.currentPlayer = common.colors.white;
+        requests.currentOpponent = common.colors.black;
 
-        common.squareModel.model(restCalls.getSquaresAndPieces());
+        common.squares.model(requests.getSquaresAndPieces());
         
-        view.setUpBoardSize();
-        view.paintBoardFromModel();
+        board.setUpBoardSize();
+        board.paintBoardFromModel();
 
         common.stopWatch = common.StopWatch();
         common.stopWatch.start();
-        view.updateClock();
+        board.updateClock();
 
         setInterval(function () {
-            view.updateClock();
+            board.updateClock();
         }, 1000);
 
         $('.gameSquare').mousedown(function (event) {
-            board.actionMouseDown(event, this);
+            events.actionMouseDown(event, this);
         });
 
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
-            board.actionMouseUp(event, this);
+            events.actionMouseUp(event, this);
         });
     },
 
     actionMouseDown: function (event, div) {
 
-        if (event.which !== 1 || restCalls.gameOver)
+        if (event.which !== 1 || requests.gameOver)
             return;
 
         if (this.mouseDownDivId !== '' ||
-            !common.squareModel.squareExists(div.id) ||
-            common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
-            common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer
+            !common.squares.squareExists(div.id) ||
+            common.squares.squareStatus(div.id) === common.squares.statusOpen ||
+            common.squares.pieceColor(div.id) !== requests.currentPlayer
         )
             return;
 
 
-        view.squareMovingSetClass(div.id);
+        board.squareMovingSetClass(div.id);
         possibleMoves.squareId = div.id;
         possibleMoves.loadPossibleMoves();
 
         this.removeMovesThatWouldResultInCheck();
-        view.showPossibleMoves();
+        board.showPossibleMoves();
     },
 
     actionMouseUp: function (event, div) {
 
-        if (event.which !== 1 || restCalls.gameOver)
+        if (event.which !== 1 || requests.gameOver)
             return;
 
         if (this.mouseDownDivId === '' &&
-            (!common.squareModel.squareExists(div.id) ||
-            common.squareModel.squareStatus(div.id) === common.squareModel.statusOpen ||
-            common.squareModel.pieceColor(div.id) !== restCalls.currentPlayer)
+            (!common.squares.squareExists(div.id) ||
+            common.squares.squareStatus(div.id) === common.squares.statusOpen ||
+            common.squares.pieceColor(div.id) !== requests.currentPlayer)
         )
             return;
 
@@ -130,7 +129,7 @@ var board = {
 
     actionDragEnd: function (targetId, executeMove) {
        
-        view.clearSquaresMarkedForMove();
+        board.clearSquaresMarkedForMove();
 
         if (targetId && (possibleMoves.isPossibleMove(targetId)) && executeMove) {
 
@@ -140,7 +139,7 @@ var board = {
 
         possibleMoves.setMoves({});
         this.mouseDownDivId = '';
-        view.hideMessage();
+        board.hideMessage();
     },
     
     movePieceToNewSquare: function (sourceId, targetId) {
@@ -149,13 +148,13 @@ var board = {
 
         if (possibleMoves.getValue(targetId) === common.specialMoves.none || possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
             
-            common.squareModel.pieceId(targetId, common.squareModel.pieceId(sourceId));
-            common.squareModel.pieceId(sourceId, common.pieceIds.none);
+            common.squares.pieceId(targetId, common.squares.pieceId(sourceId));
+            common.squares.pieceId(sourceId, common.pieceIds.none);
 
-            common.squareModel.pieceHasMoved(targetId, true);
+            common.squares.pieceHasMoved(targetId, true);
 
-            common.squareModel.pieceEnPassantEligible(targetId,
-                common.squareModel.pieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+            common.squares.pieceEnPassantEligible(targetId,
+                common.squares.pieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
         }
 
         if (possibleMoves.getValue(targetId) === common.specialMoves.castleKing) {
@@ -172,8 +171,8 @@ var board = {
 
         if (possibleMoves.getValue(targetId) === common.specialMoves.none) {
 
-            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusOpen)
-                common.squareModel.pieceCaptured(targetId, true);
+            if (common.squares.squareStatus(targetId) !== common.squares.statusOpen)
+                common.squares.pieceCaptured(targetId, true);
 
             return;
         }
@@ -181,8 +180,8 @@ var board = {
         if (possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
 
             var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
-            common.squareModel.pieceCaptured(squareBehindId, true);
-            common.squareModel.pieceId(squareBehindId, common.pieceIds.none);
+            common.squares.pieceCaptured(squareBehindId, true);
+            common.squares.pieceId(squareBehindId, common.pieceIds.none);
             return;
         }
     },
@@ -200,22 +199,22 @@ var board = {
 
         if (targetId === whiteKingTargetId) {   
 
-            common.squareModel.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            common.squareModel.pieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
-            common.squareModel.pieceId(whiteKingSourceId, common.pieceIds.none);
-            common.squareModel.pieceId(whiteKingsRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(whiteKingTargetId, true);
-            common.squareModel.pieceHasMoved(whiteKingsRookTargetId, true);
+            common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            common.squares.pieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
+            common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
+            common.squares.pieceId(whiteKingsRookSourceId, common.pieceIds.none);
+            common.squares.pieceHasMoved(whiteKingTargetId, true);
+            common.squares.pieceHasMoved(whiteKingsRookTargetId, true);
         }
 
         if (targetId === blackKingTargetId) {  
 
-            common.squareModel.pieceId(blackKingTargetId, common.pieceIds.blackKing);
-            common.squareModel.pieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
-            common.squareModel.pieceId(blackKingSourceId, common.pieceIds.none);
-            common.squareModel.pieceId(blackKingsRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(blackKingTargetId, true);
-            common.squareModel.pieceHasMoved(blackKingsRookTargetId, true);
+            common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
+            common.squares.pieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
+            common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
+            common.squares.pieceId(blackKingsRookSourceId, common.pieceIds.none);
+            common.squares.pieceHasMoved(blackKingTargetId, true);
+            common.squares.pieceHasMoved(blackKingsRookTargetId, true);
         }
     },
 
@@ -232,28 +231,28 @@ var board = {
 
         if (targetId === whiteKingTargetId) {
 
-            common.squareModel.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            common.squareModel.pieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
-            common.squareModel.pieceId(whiteKingSourceId, common.pieceIds.none);
-            common.squareModel.pieceId(whiteQueensRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(whiteKingTargetId, true);
-            common.squareModel.pieceHasMoved(whiteQueensRookTargetId, true);
+            common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            common.squares.pieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
+            common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
+            common.squares.pieceId(whiteQueensRookSourceId, common.pieceIds.none);
+            common.squares.pieceHasMoved(whiteKingTargetId, true);
+            common.squares.pieceHasMoved(whiteQueensRookTargetId, true);
         }
 
         if (targetId === blackKingTargetId) {
 
-            common.squareModel.pieceId(blackKingTargetId, common.pieceIds.blackKing);
-            common.squareModel.pieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
-            common.squareModel.pieceId(blackKingSourceId, common.pieceIds.none);
-            common.squareModel.pieceId(blackQueensRookSourceId, common.pieceIds.none);
-            common.squareModel.pieceHasMoved(blackKingTargetId, true);
-            common.squareModel.pieceHasMoved(blackQueensRookTargetId, true);
+            common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
+            common.squares.pieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
+            common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
+            common.squares.pieceId(blackQueensRookSourceId, common.pieceIds.none);
+            common.squares.pieceHasMoved(blackKingTargetId, true);
+            common.squares.pieceHasMoved(blackQueensRookTargetId, true);
         }
     },
 
     removeMovesThatWouldResultInCheck: function () {
 
-        var currentSquareModel = JSON.parse(JSON.stringify(common.squareModel.model()));
+        var currentSquareModel = JSON.parse(JSON.stringify(common.squares.model()));
 
         this.movesResultingInCheck = {};
         var loopIndex = 0;
@@ -265,7 +264,7 @@ var board = {
             if (possibleMoves.checkForPlayerInCheck())
                 this.movesResultingInCheck[possibleMoves.getValue(loopIndex)] = '';
 
-            common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
+            common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
         }
 
         for (loopIndex = 0; loopIndex < Object.keys(this.movesResultingInCheck).length ; loopIndex++) {
@@ -276,37 +275,37 @@ var board = {
 
     changeCurrentPlayer: function () {
         
-        restCalls.playerMoveNumber++;
-        restCalls.currentPlayer = (restCalls.playerMoveNumber % 2) === 0 ? common.colors.white : common.colors.black;
-        restCalls.currentOpponent = (restCalls.playerMoveNumber % 2) === 0 ? common.colors.black : common.colors.white;
+        requests.playerMoveNumber++;
+        requests.currentPlayer = (requests.playerMoveNumber % 2) === 0 ? common.colors.white : common.colors.black;
+        requests.currentOpponent = (requests.playerMoveNumber % 2) === 0 ? common.colors.black : common.colors.white;
 
-        common.squareModel.changeSquareModelToOtherPlayer();
+        common.squares.changeSquareModelToOtherPlayer();
 
         if (possibleMoves.checkForPlayerInCheck()) {
 
             if (this.checkForCheckMate()) {
                 
-                view.showCheckmate();
-                view.paintBoardFromModel();
+                board.showCheckmate();
+                board.paintBoardFromModel();
                 return;
             } else {
                 common.inCheck = true;
-                view.showCheckWarning();
+                board.showCheckWarning();
             }          
         } else {
             common.inCheck = false;
-            view.hideCheckWarning();
+            board.hideCheckWarning();
         }
 
-        view.paintBoardFromModel();
+        board.paintBoardFromModel();
         common.stopWatch.start();
 
-        common.squareModel.setEnPassantIneligibleForPlayer();
+        common.squares.setEnPassantIneligibleForPlayer();
     },
      
     checkForCheckMate: function () {
 
-        var currentSquareModel = JSON.parse(JSON.stringify(common.squareModel.model()));
+        var currentSquareModel = JSON.parse(JSON.stringify(common.squares.model()));
         var squareId = '';
 
         for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
@@ -315,7 +314,7 @@ var board = {
 
                 squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
 
-                if (common.squareModel.squareStatus(squareId) === common.squareModel.statusPlayerOccupied) {
+                if (common.squares.squareStatus(squareId) === common.squares.statusPlayerOccupied) {
 
                     possibleMoves.squareId = squareId;
                     possibleMoves.loadPossibleMoves();
@@ -326,10 +325,10 @@ var board = {
 
                         if (!possibleMoves.checkForPlayerInCheck()) {
 
-                            common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
+                            common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
                             return false;
                         }
-                        common.squareModel.model(JSON.parse(JSON.stringify(currentSquareModel)));
+                        common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
                     }
                 }
             }

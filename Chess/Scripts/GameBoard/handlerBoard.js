@@ -1,4 +1,4 @@
-﻿var view = {
+﻿var board = {
 
     squareDimension: 0,
 
@@ -71,7 +71,7 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (!common.squareModel.squareStatus(squareId) !== common.squareModel.statusOpen)
+                if (!common.squares.squareStatus(squareId) !== common.squares.statusOpen)
                     this.setDraggable(squareId);
             }
         }
@@ -83,16 +83,16 @@
         var key = '';
         var color = '';
 
-        for (var loopIndex = 0; loopIndex < Object.keys(common.squareModel.getCapturedPieces()).length; loopIndex++) {
+        for (var loopIndex = 0; loopIndex < Object.keys(common.squares.getCapturedPieces()).length; loopIndex++) {
 
-            key = Object.keys(common.squareModel.getCapturedPieces())[loopIndex];
-            color = common.squareModel.getCapturedPieces()[key].color;
+            key = Object.keys(common.squares.getCapturedPieces())[loopIndex];
+            color = common.squares.getCapturedPieces()[key].color;
                 
-            if (color === restCalls.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
+            if (color === requests.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
 
-                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + common.squareModel.getCapturedPieces()[key].type);
+                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + common.squares.getCapturedPieces()[key].type);
             else
-                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + common.squareModel.getCapturedPieces()[key].type);
+                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + common.squares.getCapturedPieces()[key].type);
         }
     },
 
@@ -102,7 +102,7 @@
 
     showCheckWarning: function() {
 
-        if (restCalls.currentPlayer === common.colors.white) {
+        if (requests.currentPlayer === common.colors.white) {
 
             $('#spanCheckWarning').text('White is in Check!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -136,7 +136,7 @@
 
     showCheckmate: function () {
 
-        if (restCalls.currentPlayer === common.colors.white) {
+        if (requests.currentPlayer === common.colors.white) {
 
             $('#spanCheckWarning').text('Checkmate, Black wins!');
             $('#spanCheckWarning').attr('style', 'color:#ffffff; ' + 'font-size:' + ((this.squareDimension / 2) - 4).toString() + 'px; ');
@@ -167,10 +167,10 @@
 
         var squareId = rank.toString() + file.toString();
 
-        if (common.squareModel.squareStatus(squareId) === common.squareModel.statusOpen)
-            return common.squareModel.color(squareId) + '_Square';
+        if (common.squares.squareStatus(squareId) === common.squares.statusOpen)
+            return common.squares.color(squareId) + '_Square';
 
-        return common.squareModel.color(squareId) + '_Square ' + common.squareModel.pieceColor(squareId) + '_' + common.squareModel.pieceType(squareId);
+        return common.squares.color(squareId) + '_Square ' + common.squares.pieceColor(squareId) + '_' + common.squares.pieceType(squareId);
 
     },
 
@@ -179,9 +179,9 @@
         $('#' + id).draggable({
             revert: function (droppableObject) {
                 if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                    board.actionDragEnd(droppableObject[0].id, true);
+                    events.actionDragEnd(droppableObject[0].id, true);
                 }
-                view.clearSquaresMarkedForMove();
+                board.clearSquaresMarkedForMove();
                 return true;
             },
             revertDuration: 0,
@@ -193,8 +193,8 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_Square');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
         }
     },
 
@@ -202,8 +202,8 @@
 
         for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squareModel.color(possibleMoves.getValue(loopIndex)) + '_Square');
+            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_Square');
         }
     }
 }

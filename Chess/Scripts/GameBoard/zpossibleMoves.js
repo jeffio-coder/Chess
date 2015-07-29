@@ -190,7 +190,7 @@
 
         this.setMoves({});
 
-        switch (common.squareModel.pieceType(this.squareId)) {
+        switch (common.squares.pieceType(this.squareId)) {
 
             case common.pieces.king:
                 this.possibleMovesForKing();
@@ -221,7 +221,7 @@
 
             targetId = this.kingMoves[this.squareId][loopIndex];
 
-            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusPlayerOccupied)
+            if (common.squares.squareStatus(targetId) !== common.squares.statusPlayerOccupied)
                 this.setValue(targetId, common.specialMoves.none);
         }
 
@@ -231,7 +231,7 @@
 
         // Special code for castling.
 
-        if (restCalls.currentPlayer === common.colors.white) {
+        if (requests.currentPlayer === common.colors.white) {
             
             var whiteKing = '15';
             var whiteKingsRook = '18';
@@ -242,24 +242,24 @@
             var whiteQueensBishop = '13';
             var whiteQueen = '14';
 
-            if (this.squareId === whiteKing && !common.squareModel.pieceHasMoved(whiteKing)) {
+            if (this.squareId === whiteKing && !common.squares.pieceHasMoved(whiteKing)) {
 
-                if (!common.squareModel.pieceHasMoved(whiteKingsRook)
+                if (!common.squares.pieceHasMoved(whiteKingsRook)
                     &&
-                    common.squareModel.squareStatus(whiteKingsKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteKingsKnight)
+                    common.squares.squareStatus(whiteKingsKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteKingsKnight)
                     &&
-                    common.squareModel.squareStatus(whiteKingsBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteKingsBishop)) {
+                    common.squares.squareStatus(whiteKingsBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteKingsBishop)) {
 
                     this.setValue(whiteKingsKnight, common.specialMoves.castleKing);
                 }
 
-                if (!common.squareModel.pieceHasMoved(whiteQueensRook)
+                if (!common.squares.pieceHasMoved(whiteQueensRook)
                     &&
-                    common.squareModel.squareStatus(whiteQueensKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueensKnight)
+                    common.squares.squareStatus(whiteQueensKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueensKnight)
                     &&
-                    common.squareModel.squareStatus(whiteQueensBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueensBishop)
+                    common.squares.squareStatus(whiteQueensBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueensBishop)
                     &&
-                    common.squareModel.squareStatus(whiteQueen) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(whiteQueen)) {
+                    common.squares.squareStatus(whiteQueen) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueen)) {
 
                     this.setValue(whiteQueensBishop, common.specialMoves.castleQueen);
                 }
@@ -267,7 +267,7 @@
         }
 
 
-        if (restCalls.currentPlayer === common.colors.black) {
+        if (requests.currentPlayer === common.colors.black) {
             
             var blackKing = '14';
             var blackKingsRook = '11';
@@ -278,24 +278,24 @@
             var blackQueensBishop = '16';
             var blackQueen = '15';
 
-            if (this.squareId === blackKing && !common.squareModel.pieceHasMoved(blackKing)) {
+            if (this.squareId === blackKing && !common.squares.pieceHasMoved(blackKing)) {
 
-                if (!common.squareModel.pieceHasMoved(blackKingsRook)
+                if (!common.squares.pieceHasMoved(blackKingsRook)
                     &&
-                    common.squareModel.squareStatus(blackKingsKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackKingsKnight)
+                    common.squares.squareStatus(blackKingsKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackKingsKnight)
                     &&
-                    common.squareModel.squareStatus(blackKingsBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackKingsBishop)) {
+                    common.squares.squareStatus(blackKingsBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackKingsBishop)) {
 
                     this.setValue(blackKingsKnight, common.specialMoves.castleKing);
                 }
 
-                if (!common.squareModel.pieceHasMoved(blackQueensRook)
+                if (!common.squares.pieceHasMoved(blackQueensRook)
                     &&
-                    common.squareModel.squareStatus(blackQueensKnight) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueensKnight)
+                    common.squares.squareStatus(blackQueensKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueensKnight)
                     &&
-                    common.squareModel.squareStatus(blackQueensBishop) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueensBishop)
+                    common.squares.squareStatus(blackQueensBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueensBishop)
                     &&
-                    common.squareModel.squareStatus(blackQueen) === common.squareModel.statusOpen && !this.checkForPlayerInCheck(blackQueen)) {
+                    common.squares.squareStatus(blackQueen) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueen)) {
 
                     this.setValue(blackQueensBishop, common.specialMoves.castleQueen);
                 }
@@ -320,7 +320,7 @@
 
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
-            if (common.squareModel.squareStatus(targetId) !== common.squareModel.statusPlayerOccupied)
+            if (common.squares.squareStatus(targetId) !== common.squares.statusPlayerOccupied)
                 this.setValue(targetId, common.specialMoves.none);
         }
     },
@@ -345,18 +345,18 @@
 
             if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
 
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpen) {
+                if (common.squares.squareStatus(targetId) === common.squares.statusOpen) {
                     if (!blocked) this.setValue(targetId, common.specialMoves.none);
                 } else {
                     blocked = true;
                 }
             } else {
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
+                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                 } else {
                     squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
 
-                    if (common.squareModel.pieceEnPassantEligible(squareBehindId))
+                    if (common.squares.pieceEnPassantEligible(squareBehindId))
                         this.setValue(targetId, common.specialMoves.enPassant);
                 }
             }
@@ -380,10 +380,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusPlayerOccupied)
+                if (common.squares.squareStatus(targetId) === common.squares.statusPlayerOccupied)
                     break;
 
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
+                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                     break;
                 }
@@ -410,10 +410,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusPlayerOccupied)
+                if (common.squares.squareStatus(targetId) === common.squares.statusPlayerOccupied)
                     break;
 
-                if (common.squareModel.squareStatus(targetId) === common.squareModel.statusOpponentOccupied) {
+                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                     break;
                 }
@@ -426,7 +426,7 @@
     checkForPlayerInCheck: function (kingSquareId) {
 
         if (!kingSquareId)
-            kingSquareId = common.squareModel.getKingRankFile(restCalls.currentPlayer);   
+            kingSquareId = common.squares.getKingRankFile(requests.currentPlayer);   
 
         if (this.checkForPawnCheck(kingSquareId))
             return true;
@@ -451,7 +451,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-            if (common.squareModel.pieceType(targetSquareId) === common.pieces.pawn && common.squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
+            if (common.squares.pieceType(targetSquareId) === common.pieces.pawn && common.squares.pieceColor(targetSquareId) === requests.currentOpponent)
                 return true;
         }
 
@@ -459,7 +459,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-            if (common.squareModel.pieceType(targetSquareId) === common.pieces.pawn && common.squareModel.pieceColor(targetSquareId) === restCalls.currentOpponent)
+            if (common.squares.pieceType(targetSquareId) === common.pieces.pawn && common.squares.pieceColor(targetSquareId) === requests.currentOpponent)
                 return true;
         }
 
@@ -470,8 +470,8 @@
 
         for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
-            if (common.squareModel.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === common.squareModel.statusOpponentOccupied &&
-                common.squareModel.pieceType(this.knightMoves[kingSquareId][loopIndex]) === common.pieces.knight)
+            if (common.squares.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === common.squares.statusOpponentOccupied &&
+                common.squares.pieceType(this.knightMoves[kingSquareId][loopIndex]) === common.pieces.knight)
                 return true;
         }
 
@@ -494,15 +494,15 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusOpponentOccupied) {
+                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusOpponentOccupied) {
                     
-                    if (common.squareModel.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (common.squares.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusPlayerOccupied)
+                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusPlayerOccupied)
                     break;
             }
         }
@@ -519,15 +519,15 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusOpponentOccupied) {
+                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusOpponentOccupied) {
 
-                    if (common.squareModel.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (common.squares.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (common.squareModel.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squareModel.statusPlayerOccupied)
+                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusPlayerOccupied)
                     break;
             }
         }

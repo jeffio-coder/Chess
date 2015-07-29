@@ -1,4 +1,4 @@
-﻿function SquareModel () {
+﻿function Squares () {
 
     var squaresAndPieces =
     {
@@ -9,7 +9,6 @@
                 'pieceId': ''
             }
         },
-
         pieces: {
             'pieceId':
             {
@@ -19,7 +18,30 @@
                 'captured': false,
                 'enPassantEligible': false
             }
-        }
+        },
+        frontVector: {},
+        rearVector: {},
+        leftVector: {},
+        rightVector: {},
+        frontLeftVector: {},
+        frontRightVector: {},
+        rearLeftVector: {},
+        rearRightVector: {},
+        knightVector: {},
+        pawnVector: {},
+        kingMoves: {},
+        queenMoves: {},
+        rookMoves: {},
+        knightMoves: {},
+        bishopMoves: {},
+        pawnMoves: {},
+        whiteKingMoves: {},
+        blackKingMoves: {},
+        possibleMoves: {},
+        attacking: {},
+        attackedBy: {},
+        blockingAttack: {},
+        blockingAttackBy: {}
     };
 
     var statusOpen = 'open';
@@ -106,18 +128,18 @@
     
     var squareStatus = function (squareId) {
         return squaresAndPieces.squares[squareId].pieceId === '' ? statusOpen :
-            squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === restCalls.currentPlayer ?
+            squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === requests.currentPlayer ?
             statusPlayerOccupied : statusOpponentOccupied;
     };
 
     var squarePieceIsOppenentQueenOrRook = function (squareId) {
-        return (squaresAndPieces.squares[squareId].color === restCalls.currentOpponent) &&
+        return (squaresAndPieces.squares[squareId].color === requests.currentOpponent) &&
                 (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
                 squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.rook);
     };
 
     var squarePieceIsOppenentQueenOrBishop = function (squareId) {
-        return (squaresAndPieces.squares[squareId].color === restCalls.currentOpponent) &&
+        return (squaresAndPieces.squares[squareId].color === requests.currentOpponent) &&
                 (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
                 squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.bishop);
     };
@@ -129,7 +151,7 @@
 
             key = Object.keys(squaresAndPieces.pieces)[loopIndex];
 
-            if (squaresAndPieces.pieces[key].color === restCalls.currentPlayer && squaresAndPieces.pieces[key].type === common.pieces.pawn)
+            if (squaresAndPieces.pieces[key].color === requests.currentPlayer && squaresAndPieces.pieces[key].type === common.pieces.pawn)
                 squaresAndPieces.pieces[key].enPassantEligible = false;
         }
     };

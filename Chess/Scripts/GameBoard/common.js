@@ -1,6 +1,6 @@
 ﻿var common = {
 
-    squareModel: {},
+    squares: {},
     inCheck: false,
     stopWatch: {},
 
