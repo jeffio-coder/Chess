@@ -46,62 +46,62 @@ textarea {
 }
 
 .white_R {
-    background-image: url('/Content/Images/WhiteRook.png');
+    background-image: url('../Content/Images/WhiteRook.png');
     background-size: contain;
 }
 
 .white_N {
-    background-image: url('/Content/Images/WhiteKnight.png');
+    background-image: url('../Content/Images/WhiteKnight.png');
     background-size: contain;
 }
 
 .white_B {
-    background-image: url('/Content/Images/WhiteBishop.png');
+    background-image: url('../Content/Images/WhiteBishop.png');
     background-size: contain;
 }
 
 .white_Q {
-    background-image: url('/Content/Images/WhiteQueen.png');
+    background-image: url('../Content/Images/WhiteQueen.png');
     background-size: contain;
 }
 
 .white_K {
-    background-image: url('/Content/Images/WhiteKing.png');
+    background-image: url('../Content/Images/WhiteKing.png');
     background-size: contain;
 }
 
 .white_P {
-    background-image: url('/Content/Images/WhitePawn.png');
+    background-image: url('../Content/Images/WhitePawn.png');
     background-size: contain;
 }
 
 .black_R {
-    background-image: url('/Content/Images/BlackRook.png');
+    background-image: url('../Content/Images/BlackRook.png');
     background-size: contain;
 }
 
 .black_N {
-    background-image: url('/Content/Images/BlackKnight.png');
+    background-image: url('../Content/Images/BlackKnight.png');
     background-size: contain;
 }
 
 .black_B {
-    background-image: url('/Content/Images/BlackBishop.png');
+    background-image: url('../Content/Images/BlackBishop.png');
     background-size: contain;
 }
 
 .black_Q {
-    background-image: url('/Content/Images/BlackQueen.png');
+    background-image: url('../Content/Images/BlackQueen.png');
     background-size: contain;
 }
 
 .black_K {
-    background-image: url('/Content/Images/BlackKing.png');
+    background-image: url('../Content/Images/BlackKing.png');
     background-size: contain;
 }
 
 .black_P {
-    background-image: url('/Content/Images/BlackPawn.png');
+    background-image: url('../Content/Images/BlackPawn.png');
     background-size: contain;
 }
 

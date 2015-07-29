@@ -118,7 +118,29 @@
                 'BP6': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false },
                 'BP7': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false },
                 'BP8': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false }
-            }
-        };
+            },
+            frontVector: {},
+    rearVector: {},
+    leftVector: {},
+    rightVector: {},
+    frontLeftVector: {},
+    frontRightVector: {},
+    rearLeftVector: {},
+    rearRightVector: {},
+    knightVector: {},
+    pawnVector: {},
+    kingMoves: {},
+    queenMoves: {},
+    rookMoves: {},
+    knightMoves: {},
+    bishopMoves: {},
+    pawnMoves: {},
+    whiteKingMoves: {},
+    blackKingMoves: {},
+    possibleMoves: {},
+    attacking: {},
+    attackedBy: {},
+    blockingAttack: {},
+    blockingAttackBy: {}        };
     }
 }

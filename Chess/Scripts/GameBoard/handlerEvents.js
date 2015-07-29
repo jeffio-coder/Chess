@@ -35,12 +35,12 @@
 
 
 */
-
 $(document).ready(function () {
     $.ajaxSetup({
         cache: false
     });
 
+    board.actionInitialize();
     board.actionInitialize();
 });
 

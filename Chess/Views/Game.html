@@ -2,19 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Current Game</title>
-    <script src="/Scripts/jquery-1.10.2.js"></script>
-    <script src="/Scripts/jquery-ui.js"></script>
-    <script src="/Models/squareModel.js"></script>
-    <script src="/Scripts/common.js"></script>
-    <script src="/Scripts/controller.js"></script>
-    <script src="/Scripts/restCalls.js"></script>
-    <script src="/Scripts/view.js"></script>
-    <script src="/Scripts/possibleMoves.js"></script>
-    <link rel="stylesheet" type="text/css" href="/Content/Site.css" />
-    <link rel="stylesheet" type="text/css" href="/Content/jquery-ui.css" />
+    <script src="../Scripts/Libraries/jquery-1.10.2.js"></script>
+    <script src="../Scripts/Libraries/jquery-ui.js"></script>
+    <script src="../Scripts/GameBoard/common.js"></script>
+    <script src="../Scripts/GameBoard/dataSquares.js"></script>
+    <script src="../Scripts/GameBoard/handlerBoard.js"></script>
+    <script src="../Scripts/GameBoard/handlerEvents.js"></script>
+    <script src="../Scripts/GameBoard/handlerRequests.js"></script>
+    <script src="../Scripts/GameBoard/zpossibleMoves.js"></script>
+    <link rel="stylesheet" type="text/css" href="../Content/Site.css" />
+    <link rel="stylesheet" type="text/css" href="../Content/jquery-ui.css" />
 </head>
 <body style="align-content: center;">
-    <div id="divTimer" style="height: 40px; text-align: center;"><span id="timer" style="font-size: 56px;">0:00</span></div>
+    <div id="divTimer" style="height: 40px; text-align: center;">
+        <span id="moveMessage">Your Move</span>
+        <br>
+        <span id="timer" style="font-size: 56px;">0:00</span>
+    </div>
     <div id="captureRowTop" style="height: 40px;">
         <div id="capturePieceTop1"></div>
         <div id="capturePieceTop2"></div>
