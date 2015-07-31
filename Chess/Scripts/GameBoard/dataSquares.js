@@ -16,19 +16,10 @@
                 rearLeftVector: {},
                 rearRightVector: {},
                 knightVector: {},
-
-                whiteKingMoves: {},       // whack/special case
-                blackKingMoves: {},       // whack/special case
-                queenMoves: {},       // whack
-                rookMoves: {},       // whack
-                knightMoves: {},       // whack
-                bishopMoves: {},       // whack
-                pawnMoves: {},       // whack/special case
-
                 possibleMoves: {},
-                attacking: {},
+                attacks: {},
+                attacksButBlocked: {},
                 attackedBy: {},
-                attackingButBlocked: {},
                 attackedByButBlocked: {}
             }
         },
@@ -137,7 +128,7 @@
     var traverseStraightVectors = function (squareId, vectorType, keys) {
 
         var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
-        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
+        var squareIdContainsattacksPiece = getPieceColor(squareId) === requests.currentPlayer && 
             (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
 
         var blocked = false;
@@ -146,11 +137,11 @@
 
             if (blocked) {
 
-                squaresAndPieces.squares[squareId].attackingButBlocked[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].attacksButBlocked[keys[loopIndex]] = specialMoves.none;
             } else {
-                squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].attacks[keys[loopIndex]] = specialMoves.none;
 
-                if (squareIdContainsAttackingPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
+                if (squareIdContainsattacksPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
 
                     squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
                 }
@@ -180,7 +171,7 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
+            squaresAndPieces.squares[squareId].attacks[keys[loopIndex]] = specialMoves.none;
 
             if (getPieceColor(keys[loopIndex]) === requests.currentOpponent && getPieceType(keys[loopIndex]) === common.pieces.knight ) {
                 
@@ -208,8 +199,8 @@
                 traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
                 traverseKnightVector(squareId, Object.keys(squaresAndPieces.squares[squareId].knightVector));
 
-                //attacked/attacking by pawn
-                //attacked/attacking by king
+                //attacked/attacks by pawn
+                //attacked/attacks by king
             }
         }
     };
