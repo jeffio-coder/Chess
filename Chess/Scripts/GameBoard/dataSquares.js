@@ -6,7 +6,30 @@
             'squareId':
             {
                 'color': '',
-                'pieceId': ''
+                'pieceId': '',
+                frontVector: {},
+                rearVector: {},
+                leftVector: {},
+                rightVector: {},
+                frontLeftVector: {},
+                frontRightVector: {},
+                rearLeftVector: {},
+                rearRightVector: {},
+                knightVector: {},
+
+                whiteKingMoves: {},       // whack/special case
+                blackKingMoves: {},       // whack/special case
+                queenMoves: {},       // whack
+                rookMoves: {},       // whack
+                knightMoves: {},       // whack
+                bishopMoves: {},       // whack
+                pawnMoves: {},       // whack/special case
+
+                possibleMoves: {},
+                attacking: {},
+                attackedBy: {},
+                attackingButBlocked: {},
+                attackedByButBlocked: {}
             }
         },
         pieces: {
@@ -18,36 +41,27 @@
                 'captured': false,
                 'enPassantEligible': false
             }
-        },
-        frontVector: {},
-        rearVector: {},
-        leftVector: {},
-        rightVector: {},
-        frontLeftVector: {},
-        frontRightVector: {},
-        rearLeftVector: {},
-        rearRightVector: {},
-        knightVector: {},
-        pawnVector: {},
-        kingMoves: {},
-        queenMoves: {},
-        rookMoves: {},
-        knightMoves: {},
-        bishopMoves: {},
-        pawnMoves: {},
-        whiteKingMoves: {},
-        blackKingMoves: {},
-        possibleMoves: {},
-        attacking: {},
-        attackedBy: {},
-        blockingAttack: {},
-        blockingAttackBy: {}
+        }
     };
 
-    var statusOpen = 'open';
-    var statusPlayerOccupied = 'occupiedByPlayer';
-    var statusOpponentOccupied = 'occupiedByOpponent';
 
+    var specialMoves = {
+        none: '',
+        enPassant: 'enPassant',
+        castleKing: 'castleKing',
+        castleQueen: 'castleQueen'
+    };
+
+    var vectorTypes = {
+        rankFile: 'rankFile',
+        diagonal: 'diagonal'
+    };
+
+    var statuses = {
+        open: 'open',
+        occupiedByPlayer: 'occupiedByPlayer',
+        occupiedByOpponent: 'occupiedByOpponent'
+    };
 
     var getModel = function() {
         return squaresAndPieces;
@@ -127,21 +141,9 @@
     };
     
     var squareStatus = function (squareId) {
-        return squaresAndPieces.squares[squareId].pieceId === '' ? statusOpen :
+        return squaresAndPieces.squares[squareId].pieceId === '' ? statuses.open :
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === requests.currentPlayer ?
-            statusPlayerOccupied : statusOpponentOccupied;
-    };
-
-    var squarePieceIsOppenentQueenOrRook = function (squareId) {
-        return (squaresAndPieces.squares[squareId].color === requests.currentOpponent) &&
-                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
-                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.rook);
-    };
-
-    var squarePieceIsOppenentQueenOrBishop = function (squareId) {
-        return (squaresAndPieces.squares[squareId].color === requests.currentOpponent) &&
-                (squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.queen ||
-                squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type === common.pieces.bishop);
+            statuses.occupiedByPlayer : statuses.occupiedByOpponent;
     };
 
     var setEnPassantIneligibleForPlayer = function () {
@@ -191,6 +193,7 @@
         squaresAndPieces.squares = newSquares;
     };
 
+    //Todo: whack?
     var getKingRankFile = function (color) {
 
         var pieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
@@ -205,10 +208,79 @@
         return '';
     };
 
+    var traverseStraightVectors = function (squareId, vectorType, keys) {
+
+        var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
+        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
+            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
+
+        var blocked = false;
+        
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            if (blocked) {
+
+                squaresAndPieces.squares[squareId].attackingButBlocked[keys[loopIndex]] = specialMoves.none;
+            } else {
+                squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
+
+                if (squareIdContainsAttackingPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+                }
+            }
+
+
+            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent &&
+                (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece)) {
+                
+                if (blocked) {
+
+                    squaresAndPieces.squares[squareId].attackedByButBlocked[keys[loopIndex]] = specialMoves.none;
+                } else {
+                    squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
+                }
+            }
+
+
+            if (squareStatus(getPieceType(keys[loopIndex])) !== statuses.open) {
+
+                blocked = true;
+            }
+        }
+    };
+
+    var setVectorProperties = function() {
+
+        var squareId = '';
+
+        for (var rank = 1; rank <= 8; rank++) {
+            for (var file = 1; file <= 8; file++) {
+
+                squareId = rank.toString() + file.toString();
+
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
+
+                //knight
+                //attacked/attacking by pawn
+                //attacked/attacking by king
+            }
+        }
+    };
+
+
+
     return {
-        statusOpen: statusOpen,
-        statusPlayerOccupied: statusPlayerOccupied,
-        statusOpponentOccupied: statusOpponentOccupied,
+        statuses.open: statuses.open,
+        statuses.occupiedByPlayer: statuses.occupiedByPlayer,
+        statuses.occupiedByOpponent: statuses.occupiedByOpponent,
 
         model: function (value) { return arguments.length === 0 ? getModel() : setModel(value); },
 

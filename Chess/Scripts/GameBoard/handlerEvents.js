@@ -84,15 +84,18 @@ var events = {
 
     actionMouseDown: function (event, div) {
 
-        if (event.which !== 1 || requests.gameOver)
+        if (event.which !== 1 || requests.gameOver) {
+            
             return;
+        }
 
         if (this.mouseDownDivId !== '' ||
-            !common.squares.squareExists(div.id) ||
+            !common.squares.squareExists(div.id) || ///////////////// ToDo: Whack squareExists
             common.squares.squareStatus(div.id) === common.squares.statusOpen ||
-            common.squares.pieceColor(div.id) !== requests.currentPlayer
-        )
+            common.squares.pieceColor(div.id) !== requests.currentPlayer) {
+            
             return;
+        }
 
 
         board.squareMovingSetClass(div.id);
@@ -120,10 +123,9 @@ var events = {
             this.mouseDownDivId = div.id;
         } else {
 
-            // this.actionDragEnd's second parameter indicates whether to execute a move.
-            // this.mouseDownDivId !== div.id is true if the mouse up is in a diffent square than the mouse down.
+            var executeMove = this.mouseDownDivId !== div.id;
 
-            this.actionDragEnd(div.id, this.mouseDownDivId !== div.id);
+            this.actionDragEnd(div.id, executeMove);
         }
     },
 

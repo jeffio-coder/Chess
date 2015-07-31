@@ -9,13 +9,6 @@
         black: 'black'
     },
 
-    specialMoves: {
-        none: '',
-        enPassant: 'enPassant',
-        castleKing: 'castleKing',
-        castleQueen: 'castleQueen'
-},
-
     pieces: {
         king: 'K',
         queen: 'Q',
