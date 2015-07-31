@@ -56,25 +56,13 @@
         rankFile: 'rankFile',
         diagonal: 'diagonal'
     };
-
+    
     var statuses = {
         open: 'open',
         occupiedByPlayer: 'occupiedByPlayer',
         occupiedByOpponent: 'occupiedByOpponent'
     };
 
-    var getModel = function() {
-        return squaresAndPieces;
-    };
-
-    var setModel = function(value) {
-        squaresAndPieces = value;
-    };
-
-    var squareExists = function (squareId) {
-        return squaresAndPieces.squares[squareId];
-    };
-    
     var getColor = function (squareId) {
         return squaresAndPieces.squares[squareId].color;
     };
@@ -146,6 +134,99 @@
             statuses.occupiedByPlayer : statuses.occupiedByOpponent;
     };
 
+    var traverseStraightVectors = function (squareId, vectorType, keys) {
+
+        var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
+        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
+            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
+
+        var blocked = false;
+        
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            if (blocked) {
+
+                squaresAndPieces.squares[squareId].attackingButBlocked[keys[loopIndex]] = specialMoves.none;
+            } else {
+                squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
+
+                if (squareIdContainsAttackingPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+                }
+            }
+
+
+            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent &&
+                (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece)) {
+                
+                if (blocked) {
+
+                    squaresAndPieces.squares[squareId].attackedByButBlocked[keys[loopIndex]] = specialMoves.none;
+                } else {
+                    squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
+                }
+            }
+
+
+            if (squareStatus(getPieceType(keys[loopIndex])) !== statuses.open) {
+
+                blocked = true;
+            }
+        }
+    };
+
+    var traverseKnightVector = function(squareId, keys) {
+
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
+
+            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent && getPieceType(keys[loopIndex]) === common.pieces.knight ) {
+                
+                squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
+            }
+        }
+    };
+
+    var setVectorProperties = function() {
+
+        var squareId = '';
+
+        for (var rank = 1; rank <= 8; rank++) {
+            for (var file = 1; file <= 8; file++) {
+
+                squareId = rank.toString() + file.toString();
+
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector));
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
+                traverseKnightVector(squareId, Object.keys(squaresAndPieces.squares[squareId].knightVector));
+
+                //attacked/attacking by pawn
+                //attacked/attacking by king
+            }
+        }
+    };
+
+    var getModel = function() {
+        return squaresAndPieces;
+    };
+
+    var setModel = function(value) {
+        squaresAndPieces = value;
+        setVectorProperties();
+    };
+
+    var squareExists = function (squareId) {
+        return squaresAndPieces.squares[squareId];
+    };
+
     var setEnPassantIneligibleForPlayer = function () {
 
         var key = '';
@@ -208,79 +289,13 @@
         return '';
     };
 
-    var traverseStraightVectors = function (squareId, vectorType, keys) {
-
-        var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
-        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
-            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
-
-        var blocked = false;
-        
-        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
-
-            if (blocked) {
-
-                squaresAndPieces.squares[squareId].attackingButBlocked[keys[loopIndex]] = specialMoves.none;
-            } else {
-                squaresAndPieces.squares[squareId].attacking[keys[loopIndex]] = specialMoves.none;
-
-                if (squareIdContainsAttackingPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
-
-                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
-                }
-            }
-
-
-            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent &&
-                (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece)) {
-                
-                if (blocked) {
-
-                    squaresAndPieces.squares[squareId].attackedByButBlocked[keys[loopIndex]] = specialMoves.none;
-                } else {
-                    squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
-                }
-            }
-
-
-            if (squareStatus(getPieceType(keys[loopIndex])) !== statuses.open) {
-
-                blocked = true;
-            }
-        }
-    };
-
-    var setVectorProperties = function() {
-
-        var squareId = '';
-
-        for (var rank = 1; rank <= 8; rank++) {
-            for (var file = 1; file <= 8; file++) {
-
-                squareId = rank.toString() + file.toString();
-
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
-
-                //knight
-                //attacked/attacking by pawn
-                //attacked/attacking by king
-            }
-        }
-    };
-
 
 
     return {
-        statuses.open: statuses.open,
-        statuses.occupiedByPlayer: statuses.occupiedByPlayer,
-        statuses.occupiedByOpponent: statuses.occupiedByOpponent,
+        // ToDo: Whack
+        //statusOpen: statuses.open,
+        //statusOccupiedByPlayer: statuses.occupiedByPlayer,
+        //statusOccupiedByOpponent: statuses.occupiedByOpponent,
 
         model: function (value) { return arguments.length === 0 ? getModel() : setModel(value); },
 
