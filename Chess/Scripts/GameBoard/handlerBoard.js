@@ -71,7 +71,7 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
-                if (!common.squares.squareStatus(squareId) !== common.squares.statusOpen)
+                if (!common.squares.squareStatus(squareId) !== common.squares.statuses.open)
                     this.setDraggable(squareId);
             }
         }
@@ -96,8 +96,8 @@
         }
     },
 
-    showPossibleMoves: function () {
-        this.markSquaresAsPossibleMove();
+    showPossibleMoves: function (squareId) {
+        this.markSquaresAsPossibleMove(squareId);
     },
 
     showCheckWarning: function() {
@@ -153,13 +153,13 @@
         $('#' + divId).addClass('squareMoving');
     },
 
-    clearSquaresMarkedForMove: function () {
+    clearSquaresMarkedForMove: function (squareId) {
 
-        this.unmarkSquaresAsPossibleMove();
+        this.unmarkSquaresAsPossibleMove(squareId);
 
-        if (possibleMoves.squareId !== '') {
+        if (squareId !== '') {
 
-            $('#' + possibleMoves.squareId).removeClass('squareMoving');
+            $('#' + squareId).removeClass('squareMoving');
         }
     },
 
@@ -167,7 +167,7 @@
 
         var squareId = rank.toString() + file.toString();
 
-        if (common.squares.squareStatus(squareId) === common.squares.statusOpen)
+        if (common.squares.squareStatus(squareId) === common.squares.statuses.open)
             return common.squares.color(squareId) + '_Square';
 
         return common.squares.color(squareId) + '_Square ' + common.squares.pieceColor(squareId) + '_' + common.squares.pieceType(squareId);
@@ -179,9 +179,9 @@
         $('#' + id).draggable({
             revert: function (droppableObject) {
                 if (droppableObject && droppableObject[0] && droppableObject[0].id) {
-                    events.actionDragEnd(droppableObject[0].id, true);
+                    boardEvents.actionDragEnd(droppableObject[0].id, true);
                 }
-                board.clearSquaresMarkedForMove();
+                board.clearSquaresMarkedForMove(id);
                 return true;
             },
             revertDuration: 0,
@@ -189,21 +189,25 @@
         });
     },
 
-    markSquaresAsPossibleMove: function () {
+    markSquaresAsPossibleMove: function (squareId) {
 
-        for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
+        var keys = common.squares.possibleMoves(squareId);
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_Square');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            $('#' + keys[loopIndex]).removeClass(common.squares.color(keys[loopIndex]) + '_Square');
+            $('#' + keys[loopIndex]).addClass(common.squares.color(keys[loopIndex]) + '_PossibleMove');
         }
     },
 
-    unmarkSquaresAsPossibleMove: function () {
+    unmarkSquaresAsPossibleMove: function (squareId) {
 
-        for (var loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
+        var keys = common.squares.possibleMoves(squareId);
 
-            $('#' + possibleMoves.getValue(loopIndex)).removeClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_PossibleMove');
-            $('#' + possibleMoves.getValue(loopIndex)).addClass(common.squares.color(possibleMoves.getValue(loopIndex)) + '_Square');
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            $('#' + keys[loopIndex]).removeClass(common.squares.color(keys[loopIndex]) + '_PossibleMove');
+            $('#' + keys[loopIndex]).addClass(common.squares.color(keys[loopIndex]) + '_Square');
         }
     }
 }

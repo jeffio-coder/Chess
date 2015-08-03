@@ -16,11 +16,14 @@
                 rearLeftVector: {},
                 rearRightVector: {},
                 knightVector: {},
+                kingVector: {},
                 possibleMoves: {},
-                attacks: {},
-                attacksButBlocked: {},
-                attackedBy: {},
-                attackedByButBlocked: {}
+                squaresAttackedBySquare: {},
+                squaresAttackedBySquareButBlocked: {},
+                attackedByPlayer: {},
+                attackedByPlayerButBlocked: {},
+                attackedByOpponent: {},
+                attackedByOpponentButBlocked: {}
             }
         },
         pieces: {
@@ -34,7 +37,6 @@
             }
         }
     };
-
 
     var specialMoves = {
         none: '',
@@ -90,7 +92,7 @@
     };
 
     var getPieceHasMoved = function (squareId) {
-        if (squaresAndPieces.squares[squareId].pieceId === '') return false;
+        if (squaresAndPieces.squares[squareId].pieceId === false) return false;
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].hasMoved;
     };
 
@@ -100,7 +102,7 @@
     };
 
     var getPieceCaptured = function (squareId) {
-        if (squaresAndPieces.squares[squareId].pieceId === '') return '';
+        if (squaresAndPieces.squares[squareId].pieceId === '') return false;
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].captured;
     };
 
@@ -110,7 +112,7 @@
     };
 
     var getPieceEnPassantEligible = function (squareId) {
-        if (squaresAndPieces.squares[squareId].pieceId === '') return '';
+        if (squaresAndPieces.squares[squareId].pieceId === '') return false;
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].enPassantEligible;
     };
 
@@ -125,42 +127,54 @@
             statuses.occupiedByPlayer : statuses.occupiedByOpponent;
     };
 
+    var squareAttackedByOpponent = function (squareId) {
+
+        return Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent).length > 0;
+    };
+
     var traverseStraightVectors = function (squareId, vectorType, keys) {
 
         var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
-        var squareIdContainsattacksPiece = getPieceColor(squareId) === requests.currentPlayer && 
+        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
             (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
 
         var blocked = false;
-        
+
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
             if (blocked) {
 
-                squaresAndPieces.squares[squareId].attacksButBlocked[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].squaresAttackedBySquareButBlocked[keys[loopIndex]] = specialMoves.none;
             } else {
-                squaresAndPieces.squares[squareId].attacks[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = specialMoves.none;
 
-                if (squareIdContainsattacksPiece && squareStatus(getPieceType(keys[loopIndex])) !== statuses.occupiedByPlayer) {
+                if (squareIdContainsAttackingPiece && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer) {
 
                     squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
                 }
             }
 
+            if (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece) {
 
-            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent &&
-                (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece)) {
-                
                 if (blocked) {
 
-                    squaresAndPieces.squares[squareId].attackedByButBlocked[keys[loopIndex]] = specialMoves.none;
+                    if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
+
+                        squaresAndPieces.squares[squareId].attackedByPlayerButBlocked[keys[loopIndex]] = specialMoves.none;
+                    } else {
+                        squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[keys[loopIndex]] = specialMoves.none;
+                    }
                 } else {
-                    squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
+                    if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
+
+                        squaresAndPieces.squares[squareId].attackedByPlayer[keys[loopIndex]] = specialMoves.none;
+                    } else {
+                        squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] = specialMoves.none;
+                    }
                 }
             }
 
-
-            if (squareStatus(getPieceType(keys[loopIndex])) !== statuses.open) {
+            if (squareStatus(keys[loopIndex]) !== statuses.open) {
 
                 blocked = true;
             }
@@ -171,11 +185,187 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            squaresAndPieces.squares[squareId].attacks[keys[loopIndex]] = specialMoves.none;
+            squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = specialMoves.none;
 
-            if (getPieceColor(keys[loopIndex]) === requests.currentOpponent && getPieceType(keys[loopIndex]) === common.pieces.knight ) {
+            if (getPieceType(squareId) === common.pieces.knight && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer) {
+
+                squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+            }
+
+            if (getPieceType(keys[loopIndex]) === common.pieces.knight) {
+
+                if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
+
+                    squaresAndPieces.squares[squareId].attackedByPlayer[keys[loopIndex]] = specialMoves.none;
+                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+                } else {
+                    squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] = specialMoves.none;
+                }
+            }
+        }
+    };
+
+    var traversePawnVector = function (squareId) {
+
+        var rank = common.getRank(squareId);
+        var file = common.getFile(squareId);
+        var squareToAttack = '';
+        var enPassantSquareToAttack = '';
+
+        if (rank <= 7) {
                 
-                squaresAndPieces.squares[squareId].attackedBy[keys[loopIndex]] = specialMoves.none;
+            if (file >= 2) {
+
+                squareToAttack = (rank + 1).toString() + (file - 1).toString();
+
+                if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+                    
+                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                }
+
+                enPassantSquareToAttack = (rank).toString() + (file - 1).toString();
+
+                if (getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+                    
+                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
+                }
+
+                if (getPieceType(squareToAttack) === common.pieces.pawn) {
+
+                    if (getPieceColor(squareToAttack) === requests.currentPlayer) {
+
+                        squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
+                    } else {
+                        squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
+                    }
+                }
+            }
+
+            if (file <= 7) {
+
+                squareToAttack = (rank + 1).toString() + (file + 1).toString();
+
+                if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                }
+
+                enPassantSquareToAttack = (rank).toString() + (file + 1).toString();
+
+                if (getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
+                }
+
+                if (getPieceType(squareToAttack) === common.pieces.pawn) {
+
+                    if (getPieceColor(squareToAttack) === requests.currentPlayer) {
+
+                        squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
+                    } else {
+                        squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
+                    }
+                }
+            }
+
+            squareToAttack = (rank + 1).toString() + (file).toString();
+
+            if (squareStatus(squareToAttack) === statuses.open) {
+                
+                squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+
+                squareToAttack = (rank + 2).toString() + (file).toString();
+
+                if (rank === 2 && squareStatus(squareToAttack) === statuses.open) {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                }
+            }
+
+
+        }
+    };
+
+    var traverseKingVector = function(squareId, keys) {
+
+        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            if (getPieceType(squareId) === common.pieces.knight && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer && !squareAttackedByOpponent(keys[loopIndex])) {
+                
+                squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+            }
+        }
+
+        // Special code for castling.
+
+        if (requests.currentPlayer === common.colors.white) {
+
+            var whiteKing = '15';
+            var whiteKingsRook = '18';
+            var whiteKingsKnight = '17';
+            var whiteKingsBishop = '16';
+            var whiteQueensRook = '11';
+            var whiteQueensKnight = '12';
+            var whiteQueensBishop = '13';
+            var whiteQueen = '14';
+
+            if (this.squareId === whiteKing && !getPieceHasMoved(whiteKing)) {
+
+                if (!getPieceHasMoved(whiteKingsRook)
+                    &&
+                    squareStatus(whiteKingsKnight) === statuses.open && !squareAttackedByOpponent(whiteKingsKnight)
+                    &&
+                    squareStatus(whiteKingsBishop) === statuses.open && !squareAttackedByOpponent(whiteKingsBishop)) {
+
+                    this.setValue(whiteKingsKnight, specialMoves.castleKing);
+                }
+
+                if (!getPieceHasMoved(whiteQueensRook)
+                    &&
+                    squareStatus(whiteQueensKnight) === statuses.open && !squareAttackedByOpponent(whiteQueensKnight)
+                    &&
+                    squareStatus(whiteQueensBishop) === statuses.open && !squareAttackedByOpponent(whiteQueensBishop)
+                    &&
+                    squareStatus(whiteQueen) === statuses.open && !squareAttackedByOpponent(whiteQueen)) {
+
+                    this.setValue(whiteQueensBishop, specialMoves.castleQueen);
+                }
+            }
+        }
+
+
+        if (requests.currentPlayer === common.colors.black) {
+
+            var blackKing = '14';
+            var blackKingsRook = '11';
+            var blackKingsKnight = '12';
+            var blackKingsBishop = '13';
+            var blackQueensRook = '18';
+            var blackQueensKnight = '17';
+            var blackQueensBishop = '16';
+            var blackQueen = '15';
+
+            if (this.squareId === blackKing && !getPieceHasMoved(blackKing)) {
+
+                if (!getPieceHasMoved(blackKingsRook)
+                    &&
+                    squareStatus(blackKingsKnight) === statuses.open && !squareAttackedByOpponent(blackKingsKnight)
+                    &&
+                    squareStatus(blackKingsBishop) === statuses.open && !squareAttackedByOpponent(blackKingsBishop)) {
+
+                    this.setValue(blackKingsKnight, specialMoves.castleKing);
+                }
+
+                if (!getPieceHasMoved(blackQueensRook)
+                    &&
+                    squareStatus(blackQueensKnight) === statuses.open && !squareAttackedByOpponent(blackQueensKnight)
+                    &&
+                    squareStatus(blackQueensBishop) === statuses.open && !squareAttackedByOpponent(blackQueensBishop)
+                    &&
+                    squareStatus(blackQueen) === statuses.open && !squareAttackedByOpponent(blackQueen)) {
+
+                    this.setValue(blackQueensBishop, specialMoves.castleQueen);
+                }
             }
         }
     };
@@ -198,24 +388,24 @@
                 traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector));
                 traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
                 traverseKnightVector(squareId, Object.keys(squaresAndPieces.squares[squareId].knightVector));
+                traversePawnVector(squareId);
+                traverseKingVector(squareId, Object.keys(squaresAndPieces.squares[squareId].kingVector));
 
-                //attacked/attacks by pawn
-                //attacked/attacks by king
+                // ToDo: remove moves in check
             }
         }
     };
 
-    var getModel = function() {
+    var getVal = function() {
         return squaresAndPieces;
     };
 
-    var setModel = function(value) {
+    var setVal = function(value) {
         squaresAndPieces = value;
-        setVectorProperties();
-    };
 
-    var squareExists = function (squareId) {
-        return squaresAndPieces.squares[squareId];
+        if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
+            setVectorProperties();
+        }
     };
 
     var setEnPassantIneligibleForPlayer = function () {
@@ -246,6 +436,11 @@
         return returnPieces;
     };
 
+    var getPossibleMoves = function (squareId) {
+
+        return Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
+    };
+
     var changeSquareModelToOtherPlayer = function () {
 
         var newSquares = {};
@@ -257,12 +452,30 @@
                 newSquares[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
                 {
                     color: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].color,
-                    pieceId: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].pieceId
+                    pieceId: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].pieceId,
+                    frontVector: {},
+                    rearVector: {},
+                    leftVector: {},
+                    rightVector: {},
+                    frontLeftVector: {},
+                    frontRightVector: {},
+                    rearLeftVector: {},
+                    rearRightVector: {},
+                    knightVector: {},
+                    kingVector: {},
+                    possibleMoves: {},
+                    squaresAttackedBySquare: {},
+                    squaresAttackedBySquareButBlocked: {},
+                    attackedByPlayer: {},
+                    attackedByPlayerButBlocked: {},
+                    attackedByOpponent: {},
+                    attackedByOpponentButBlocked: {}
                 };
             }
         }
 
         squaresAndPieces.squares = newSquares;
+        setVectorProperties();
     };
 
     //Todo: whack?
@@ -279,18 +492,137 @@
         }
         return '';
     };
+    
+    var getPossibleMove = function (sourceId, targetId) {
 
+        if (targetId in squaresAndPieces.squares[sourceId].possibleMoves) {
 
+            return squaresAndPieces.squares[sourceId].possibleMoves[targetId];
+        } else {
+            return null;
+        }
+    }
 
+    var capturePieceIfApplicable = function (sourceId, targetId) {
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.none) {
+
+            if (squareStatus(targetId) !== statuses.open)
+                setPieceCaptured(targetId, true);
+
+            return;
+        }
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
+
+            var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
+            setPieceCaptured(squareBehindId, true);
+            setPieceId(squareBehindId, common.pieceIds.none);
+            return;
+        }
+    };
+
+    var castleKing = function (targetId) {
+
+        var whiteKingTargetId = '17';
+        var whiteKingsRookTargetId = '16';
+        var whiteKingSourceId = '15';
+        var whiteKingsRookSourceId = '18';
+        var blackKingTargetId = '12';
+        var blackKingsRookTargetId = '13';
+        var blackKingSourceId = '14';
+        var blackKingsRookSourceId = '11';
+
+        if (targetId === whiteKingTargetId) {   
+
+            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            setPieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
+            setPieceId(whiteKingSourceId, common.pieceIds.none);
+            setPieceId(whiteKingsRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(whiteKingTargetId, true);
+            setPieceHasMoved(whiteKingsRookTargetId, true);
+        }
+
+        if (targetId === blackKingTargetId) {  
+
+            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
+            setPieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
+            setPieceId(blackKingSourceId, common.pieceIds.none);
+            setPieceId(blackKingsRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(blackKingTargetId, true);
+            setPieceHasMoved(blackKingsRookTargetId, true);
+        }
+    };
+
+    var castleQueen = function (targetId) {
+
+        var whiteKingTargetId = '13';
+        var whiteQueensRookTargetId = '14';
+        var whiteKingSourceId = '15';
+        var whiteQueensRookSourceId = '11';
+        var blackKingTargetId = '16';
+        var blackQueensRookTargetId = '15';
+        var blackKingSourceId = '14';
+        var blackQueensRookSourceId = '18';
+
+        if (targetId === whiteKingTargetId) {
+
+            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            setPieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
+            setPieceId(whiteKingSourceId, common.pieceIds.none);
+            setPieceId(whiteQueensRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(whiteKingTargetId, true);
+            setPieceHasMoved(whiteQueensRookTargetId, true);
+        }
+
+        if (targetId === blackKingTargetId) {
+
+            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
+            setPieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
+            setPieceId(blackKingSourceId, common.pieceIds.none);
+            setPieceId(blackQueensRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(blackKingTargetId, true);
+            setPieceHasMoved(blackQueensRookTargetId, true);
+        }
+    };
+
+    var movePieceToNewSquare = function(sourceId, targetId) {
+
+        if (!getPossibleMove(sourceId, targetId)) {
+
+            return;
+        }
+
+        capturePieceIfApplicable(sourceId, targetId);
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.none || getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
+
+            setPieceId(targetId, getPieceId(sourceId));
+            setPieceId(sourceId, common.pieceIds.none);
+
+            setPieceHasMoved(targetId, true);
+
+            setPieceEnPassantEligible(targetId,
+                getPieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+        }
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.castleKing) {
+
+            castleKing(targetId);
+            return;
+        }
+
+        if (getPossibleMove(sourceId, targetId) === common.specialMoves.castleQueen) {
+            
+            castleQueen(targetId);
+        }
+        
+    };
+    
     return {
-        // ToDo: Whack
-        //statusOpen: statuses.open,
-        //statusOccupiedByPlayer: statuses.occupiedByPlayer,
-        //statusOccupiedByOpponent: statuses.occupiedByOpponent,
+        statuses: statuses,
 
-        model: function (value) { return arguments.length === 0 ? getModel() : setModel(value); },
-
-        squareExists: function (squareId) { return squareExists(squareId); },
+        val: function (value) { return arguments.length === 0 ? getVal() : setVal(value); },
 
         color: function (squareId) { return getColor(squareId); },
 
@@ -300,24 +632,16 @@
 
         pieceColor: function (squareId) { return getPieceColor(squareId); },
 
-        pieceHasMoved: function (squareId, value) { return arguments.length === 1 ? getPieceHasMoved(squareId) : setPieceHasMoved(squareId, value); },
-
-        pieceCaptured: function (squareId, value) { return arguments.length === 1 ? getPieceCaptured(squareId) : setPieceCaptured(squareId, value); },
-
-        pieceEnPassantEligible: function (squareId, value) { return arguments.length === 1 ? getPieceEnPassantEligible(squareId) : setPieceEnPassantEligible(squareId, value); },
-
         squareStatus: function (squareId) { return squareStatus(squareId); },
-
-        squarePieceIsOppenentQueenOrRook: function (squareId) { return squarePieceIsOppenentQueenOrRook(squareId); },
-
-        squarePieceIsOppenentQueenOrBishop: function (squareId) { return squarePieceIsOppenentQueenOrBishop(squareId); },
-
-        setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 
         getCapturedPieces: function () { return getCapturedPieces(); },
 
+        possibleMoves: function (squareId) { return getPossibleMoves(squareId); },
+
+        setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
+
         changeSquareModelToOtherPlayer: function () { return changeSquareModelToOtherPlayer(); },
 
-        getKingRankFile: function (color) { return getKingRankFile(color); }
+        movePieceToNewSquare: function (sourceId, targetId) { return movePieceToNewSquare(sourceId, targetId); }
     };
 }

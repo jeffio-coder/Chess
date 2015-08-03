@@ -336,7 +336,7 @@
     <Content Include="Scripts\GameBoard\zpossibleMoves.js" />
     <Content Include="Scripts\Libraries\respond.js" />
     <Content Include="Scripts\Libraries\respond.min.js" />
-    <Content Include="Scripts\GameBoard\common.js" />
+    <Content Include="Scripts\common.js" />
     <Content Include="Scripts\GameBoard\handlerRequests.js" />
     <Content Include="Scripts\GameBoard\handlerBoard.js" />
     <Content Include="Web.config" />

@@ -40,26 +40,25 @@ $(document).ready(function () {
         cache: false
     });
 
-    events.actionInitialize();
+    boardEvents.actionInitialize();
 });
 
-var events = {
+var boardEvents = {
 
-    mouseDownDivId: '',
-    movesResultingInCheck: {},
+    mouseUpDivId: '',
+    activeSquareId: '',
+    //movesResultingInCheck: {},
 
     actionInitialize: function () {
 
         common.squares = Squares();
 
-        common.squares.model({});
-
-        possibleMoves.loadSquareMoves();
+        common.squares.val({});
 
         requests.currentPlayer = common.colors.white;
         requests.currentOpponent = common.colors.black;
 
-        common.squares.model(requests.getSquaresAndPieces());
+        common.squares.val(requests.getSquaresAndPieces());
         
         board.setUpBoardSize();
         board.paintBoardFromModel();
@@ -73,12 +72,12 @@ var events = {
         }, 1000);
 
         $('.gameSquare').mousedown(function (event) {
-            events.actionMouseDown(event, this);
+            boardEvents.actionMouseDown(event, this);
         });
 
         // This will only fire if there is no drag event.
         $('.gameSquare').mouseup(function(event) {
-            events.actionMouseUp(event, this);
+            boardEvents.actionMouseUp(event, this);
         });
     },
 
@@ -89,41 +88,39 @@ var events = {
             return;
         }
 
-        if (this.mouseDownDivId !== '' ||
-            !common.squares.squareExists(div.id) || ///////////////// ToDo: Whack squareExists
-            common.squares.squareStatus(div.id) === common.squares.statusOpen ||
+        if (this.mouseUpDivId !== '' ||
+            common.squares.squareStatus(div.id) === common.squares.statuses.open ||
             common.squares.pieceColor(div.id) !== requests.currentPlayer) {
             
             return;
         }
 
 
+        this.activeSquareId = div.id;
         board.squareMovingSetClass(div.id);
-        possibleMoves.squareId = div.id;
-        possibleMoves.loadPossibleMoves();
-
-        this.removeMovesThatWouldResultInCheck();
-        board.showPossibleMoves();
+        board.showPossibleMoves(div.id);
     },
 
     actionMouseUp: function (event, div) {
 
-        if (event.which !== 1 || requests.gameOver)
+        if (event.which !== 1 || requests.gameOver) {
+            
             return;
+        }
 
-        if (this.mouseDownDivId === '' &&
-            (!common.squares.squareExists(div.id) ||
-            common.squares.squareStatus(div.id) === common.squares.statusOpen ||
-            common.squares.pieceColor(div.id) !== requests.currentPlayer)
-        )
+        if (this.mouseUpDivId === '' &&
+           (common.squares.squareStatus(div.id) === common.squares.statuses.open ||
+            common.squares.pieceColor(div.id) !== requests.currentPlayer)) {
+
             return;
+        }
 
-        if (this.mouseDownDivId === '') {
+        if (this.mouseUpDivId === '') {
 
-            this.mouseDownDivId = div.id;
+            this.mouseUpDivId = div.id;
         } else {
 
-            var executeMove = this.mouseDownDivId !== div.id;
+            var executeMove = this.mouseUpDivId !== div.id;
 
             this.actionDragEnd(div.id, executeMove);
         }
@@ -131,149 +128,150 @@ var events = {
 
     actionDragEnd: function (targetId, executeMove) {
        
-        board.clearSquaresMarkedForMove();
+        board.clearSquaresMarkedForMove(this.activeSquareId);
 
-        if (targetId && (possibleMoves.isPossibleMove(targetId)) && executeMove) {
+        if (targetId && executeMove) {
 
-            this.movePieceToNewSquare(possibleMoves.squareId, targetId);
+            common.squares.movePieceToNewSquare(this.activeSquareId, targetId);
+
+            // ToDo
             this.changeCurrentPlayer();
         }
 
-        possibleMoves.setMoves({});
-        this.mouseDownDivId = '';
-        board.hideMessage();
+        this.activeSquareId = '';
+        this.mouseUpDivId = '';
     },
     
-    movePieceToNewSquare: function (sourceId, targetId) {
+    //movePieceToNewSquare: function (sourceId, targetId) {
 
-        this.capturePieceIfApplicable(sourceId, targetId);
+    //    this.capturePieceIfApplicable(sourceId, targetId);
 
-        if (possibleMoves.getValue(targetId) === common.specialMoves.none || possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
+    //    if (possibleMoves.getValue(targetId) === common.specialMoves.none || possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
             
-            common.squares.pieceId(targetId, common.squares.pieceId(sourceId));
-            common.squares.pieceId(sourceId, common.pieceIds.none);
+    //        common.squares.pieceId(targetId, common.squares.pieceId(sourceId));
+    //        common.squares.pieceId(sourceId, common.pieceIds.none);
 
-            common.squares.pieceHasMoved(targetId, true);
+    //        common.squares.pieceHasMoved(targetId, true);
 
-            common.squares.pieceEnPassantEligible(targetId,
-                common.squares.pieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
-        }
+    //        common.squares.pieceEnPassantEligible(targetId,
+    //            common.squares.pieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+    //    }
 
-        if (possibleMoves.getValue(targetId) === common.specialMoves.castleKing) {
+    //    if (possibleMoves.getValue(targetId) === common.specialMoves.castleKing) {
 
-            this.castleKing(targetId);
-            return;
-        }
+    //        this.castleKing(targetId);
+    //        return;
+    //    }
 
-        if (possibleMoves.getValue(targetId) === common.specialMoves.castleQueen)
-            this.castleQueen(targetId);
-    },
+    //    if (possibleMoves.getValue(targetId) === common.specialMoves.castleQueen)
+    //        this.castleQueen(targetId);
+    //},
 
-    capturePieceIfApplicable: function (sourceId, targetId) {
+    //capturePieceIfApplicable: function (sourceId, targetId) {
 
-        if (possibleMoves.getValue(targetId) === common.specialMoves.none) {
+    //    if (possibleMoves.getValue(targetId) === common.specialMoves.none) {
 
-            if (common.squares.squareStatus(targetId) !== common.squares.statusOpen)
-                common.squares.pieceCaptured(targetId, true);
+    //        if (common.squares.squareStatus(targetId) !== common.squares.statusOpen)
+    //            common.squares.pieceCaptured(targetId, true);
 
-            return;
-        }
+    //        return;
+    //    }
 
-        if (possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
+    //    if (possibleMoves.getValue(targetId) === common.specialMoves.enPassant) {
 
-            var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
-            common.squares.pieceCaptured(squareBehindId, true);
-            common.squares.pieceId(squareBehindId, common.pieceIds.none);
-            return;
-        }
-    },
+    //        var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
+    //        common.squares.pieceCaptured(squareBehindId, true);
+    //        common.squares.pieceId(squareBehindId, common.pieceIds.none);
+    //        return;
+    //    }
+    //},
 
-    castleKing: function (targetId) {
+    //castleKing: function (targetId) {
 
-        var whiteKingTargetId = '17';
-        var whiteKingsRookTargetId = '16';
-        var whiteKingSourceId = '15';
-        var whiteKingsRookSourceId = '18';
-        var blackKingTargetId = '12';
-        var blackKingsRookTargetId = '13';
-        var blackKingSourceId = '14';
-        var blackKingsRookSourceId = '11';
+    //    var whiteKingTargetId = '17';
+    //    var whiteKingsRookTargetId = '16';
+    //    var whiteKingSourceId = '15';
+    //    var whiteKingsRookSourceId = '18';
+    //    var blackKingTargetId = '12';
+    //    var blackKingsRookTargetId = '13';
+    //    var blackKingSourceId = '14';
+    //    var blackKingsRookSourceId = '11';
 
-        if (targetId === whiteKingTargetId) {   
+    //    if (targetId === whiteKingTargetId) {   
 
-            common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            common.squares.pieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
-            common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
-            common.squares.pieceId(whiteKingsRookSourceId, common.pieceIds.none);
-            common.squares.pieceHasMoved(whiteKingTargetId, true);
-            common.squares.pieceHasMoved(whiteKingsRookTargetId, true);
-        }
+    //        common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+    //        common.squares.pieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
+    //        common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
+    //        common.squares.pieceId(whiteKingsRookSourceId, common.pieceIds.none);
+    //        common.squares.pieceHasMoved(whiteKingTargetId, true);
+    //        common.squares.pieceHasMoved(whiteKingsRookTargetId, true);
+    //    }
 
-        if (targetId === blackKingTargetId) {  
+    //    if (targetId === blackKingTargetId) {  
 
-            common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
-            common.squares.pieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
-            common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
-            common.squares.pieceId(blackKingsRookSourceId, common.pieceIds.none);
-            common.squares.pieceHasMoved(blackKingTargetId, true);
-            common.squares.pieceHasMoved(blackKingsRookTargetId, true);
-        }
-    },
+    //        common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
+    //        common.squares.pieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
+    //        common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
+    //        common.squares.pieceId(blackKingsRookSourceId, common.pieceIds.none);
+    //        common.squares.pieceHasMoved(blackKingTargetId, true);
+    //        common.squares.pieceHasMoved(blackKingsRookTargetId, true);
+    //    }
+    //},
 
-    castleQueen: function (targetId) {
+    //castleQueen: function (targetId) {
 
-        var whiteKingTargetId = '13';
-        var whiteQueensRookTargetId = '14';
-        var whiteKingSourceId = '15';
-        var whiteQueensRookSourceId = '11';
-        var blackKingTargetId = '16';
-        var blackQueensRookTargetId = '15';
-        var blackKingSourceId = '14';
-        var blackQueensRookSourceId = '18';
+    //    var whiteKingTargetId = '13';
+    //    var whiteQueensRookTargetId = '14';
+    //    var whiteKingSourceId = '15';
+    //    var whiteQueensRookSourceId = '11';
+    //    var blackKingTargetId = '16';
+    //    var blackQueensRookTargetId = '15';
+    //    var blackKingSourceId = '14';
+    //    var blackQueensRookSourceId = '18';
 
-        if (targetId === whiteKingTargetId) {
+    //    if (targetId === whiteKingTargetId) {
 
-            common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            common.squares.pieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
-            common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
-            common.squares.pieceId(whiteQueensRookSourceId, common.pieceIds.none);
-            common.squares.pieceHasMoved(whiteKingTargetId, true);
-            common.squares.pieceHasMoved(whiteQueensRookTargetId, true);
-        }
+    //        common.squares.pieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+    //        common.squares.pieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
+    //        common.squares.pieceId(whiteKingSourceId, common.pieceIds.none);
+    //        common.squares.pieceId(whiteQueensRookSourceId, common.pieceIds.none);
+    //        common.squares.pieceHasMoved(whiteKingTargetId, true);
+    //        common.squares.pieceHasMoved(whiteQueensRookTargetId, true);
+    //    }
 
-        if (targetId === blackKingTargetId) {
+    //    if (targetId === blackKingTargetId) {
 
-            common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
-            common.squares.pieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
-            common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
-            common.squares.pieceId(blackQueensRookSourceId, common.pieceIds.none);
-            common.squares.pieceHasMoved(blackKingTargetId, true);
-            common.squares.pieceHasMoved(blackQueensRookTargetId, true);
-        }
-    },
+    //        common.squares.pieceId(blackKingTargetId, common.pieceIds.blackKing);
+    //        common.squares.pieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
+    //        common.squares.pieceId(blackKingSourceId, common.pieceIds.none);
+    //        common.squares.pieceId(blackQueensRookSourceId, common.pieceIds.none);
+    //        common.squares.pieceHasMoved(blackKingTargetId, true);
+    //        common.squares.pieceHasMoved(blackQueensRookTargetId, true);
+    //    }
+    //},
 
-    removeMovesThatWouldResultInCheck: function () {
+    //removeMovesThatWouldResultInCheck: function () {
 
-        var currentSquareModel = JSON.parse(JSON.stringify(common.squares.model()));
+    //    var currentSquareModel = JSON.parse(JSON.stringify(common.squares.model()));
 
-        this.movesResultingInCheck = {};
-        var loopIndex = 0;
+    //    this.movesResultingInCheck = {};
+    //    var loopIndex = 0;
 
-        for (loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
+    //    for (loopIndex = 0; loopIndex < possibleMoves.getKeys().length; loopIndex++) {
 
-            this.movePieceToNewSquare(possibleMoves.squareId, possibleMoves.getValue(loopIndex));
+    //        this.movePieceToNewSquare(possibleMoves.squareId, possibleMoves.getValue(loopIndex));
 
-            if (possibleMoves.checkForPlayerInCheck())
-                this.movesResultingInCheck[possibleMoves.getValue(loopIndex)] = '';
+    //        if (possibleMoves.checkForPlayerInCheck())
+    //            this.movesResultingInCheck[possibleMoves.getValue(loopIndex)] = '';
 
-            common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
-        }
+    //        common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
+    //    }
 
-        for (loopIndex = 0; loopIndex < Object.keys(this.movesResultingInCheck).length ; loopIndex++) {
+    //    for (loopIndex = 0; loopIndex < Object.keys(this.movesResultingInCheck).length ; loopIndex++) {
 
-            possibleMoves.deleteElement(Object.keys(this.movesResultingInCheck)[loopIndex]);
-        }
-    },
+    //        possibleMoves.deleteElement(Object.keys(this.movesResultingInCheck)[loopIndex]);
+    //    }
+    //},
 
     changeCurrentPlayer: function () {
         
@@ -283,21 +281,23 @@ var events = {
 
         common.squares.changeSquareModelToOtherPlayer();
 
-        if (possibleMoves.checkForPlayerInCheck()) {
 
-            if (this.checkForCheckMate()) {
+        // ToDo
+        //if (possibleMoves.checkForPlayerInCheck()) {
+
+        //    if (this.checkForCheckMate()) {
                 
-                board.showCheckmate();
-                board.paintBoardFromModel();
-                return;
-            } else {
-                common.inCheck = true;
-                board.showCheckWarning();
-            }          
-        } else {
-            common.inCheck = false;
-            board.hideCheckWarning();
-        }
+        //        board.showCheckmate();
+        //        board.paintBoardFromModel();
+        //        return;
+        //    } else {
+        //        common.inCheck = true;
+        //        board.showCheckWarning();
+        //    }          
+        //} else {
+        //    common.inCheck = false;
+        //    board.hideCheckWarning();
+        //}
 
         board.paintBoardFromModel();
         common.stopWatch.start();
