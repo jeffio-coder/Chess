@@ -10,7 +10,7 @@
     },
 
     getSquaresAndPieces: function() {
-        var squaresAndPieces = {
+        return {
             squares: {
                 '81': { 'color': 'white', 'pieceId': 'BQR', frontVector: {}, rearVector: {}, leftVector: {}, rightVector: {}, frontLeftVector: {}, frontRightVector: {}, rearLeftVector: {}, rearRightVector: {}, knightVector: {}, kingVector: {}, possibleMoves: {}, squaresAttackedBySquare: {}, squaresAttackedBySquareButBlocked: {}, attackedByPlayer: {}, attackedByPlayerButBlocked: {}, attackedByOpponent: {}, attackedByOpponentButBlocked: {} },
                 '82': { 'color': 'black', 'pieceId': 'BQN', frontVector: {}, rearVector: {}, leftVector: {}, rightVector: {}, frontLeftVector: {}, frontRightVector: {}, rearLeftVector: {}, rearRightVector: {}, knightVector: {}, kingVector: {}, possibleMoves: {}, squaresAttackedBySquare: {}, squaresAttackedBySquareButBlocked: {}, attackedByPlayer: {}, attackedByPlayerButBlocked: {}, attackedByOpponent: {}, attackedByOpponentButBlocked: {} },
@@ -120,87 +120,5 @@
                 'BP8': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false }
             }
         };
-
-        var rank = 0, file = 0, outerSquareId = '';
-
-        for (var rankOuter = 1; rankOuter <= 8; rankOuter++) {
-            for (var fileOuter = 1; fileOuter <= 8; fileOuter++) {
-
-                outerSquareId = rankOuter.toString() + fileOuter.toString();
-
-                for (rank = rankOuter + 1; rank <= 8; rank++) { squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = ''; }
-
-                for (rank = rankOuter - 1; rank >= 1; rank--) { squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = ''; }
-
-                for (file = fileOuter - 1; file >= 1; file--) { squaresAndPieces.squares[outerSquareId].leftVector[rankOuter.toString() + file.toString()] = ''; }
-
-                for (file = fileOuter + 1; file <= 8; file++) { squaresAndPieces.squares[outerSquareId].rightVector[rankOuter.toString() + file.toString()] = ''; }
-
-                rank = rankOuter + 1, file = fileOuter - 1;
-                while (rank <= 8 && file >= 1) {
-                    
-                    squaresAndPieces.squares[outerSquareId].frontLeftVector[rank.toString() + file.toString()] = '';
-                    rank++, file--;
-                }
-
-                rank = rankOuter + 1, file = fileOuter + 1;
-                while (rank <= 8 && file <= 8) {
-
-                    squaresAndPieces.squares[outerSquareId].frontRightVector[rank.toString() + file.toString()] = '';
-                    rank++, file++;
-                }
-
-                rank = rankOuter - 1, file = fileOuter - 1;
-                while (rank >= 1 && file >= 1) {
-
-                    squaresAndPieces.squares[outerSquareId].rearLeftVector[rank.toString() + file.toString()] = '';
-                    rank--, file--;
-                }
-
-                rank = rankOuter - 1, file = fileOuter + 1;
-                while (rank >= 1 && file <= 8) {
-
-                    squaresAndPieces.squares[outerSquareId].rearRightVector[rank.toString() + file.toString()] = '';
-                    rank--, file++;
-                }
-
-
-                if (rankOuter + 1 <= 8) {
-
-                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter - 2).toString()] = '';
-                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter + 2).toString()] = '';
-
-                    if (rankOuter + 2 <= 8) {
-
-                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter - 1).toString()] = '';
-                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter + 1).toString()] = '';
-                    }
-                }
-
-                if (rankOuter - 1 >= 1) {
-
-                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter - 2).toString()] = '';
-                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter + 2).toString()] = '';
-
-                    if (rankOuter - 2 >= 1) {
-
-                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter - 1).toString()] = '';
-                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter + 1).toString()] = '';
-                    }
-                }
-
-                if (rankOuter <= 7 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter - 1).toString()] = '';
-                if (rankOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + fileOuter.toString()] = '';
-                if (rankOuter <= 7 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter + 1).toString()] = '';
-
-                if (fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter - 1).toString()] = '';
-                if (fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter + 1).toString()] = '';
-
-                if (rankOuter >= 2 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter - 1).toString()] = '';
-                if (rankOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + fileOuter.toString()] = '';
-                if (rankOuter >= 2 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter + 1).toString()] = '';
-            }
-        }
-        return squaresAndPieces;
     }
 }

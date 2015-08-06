@@ -56,6 +56,100 @@
         occupiedByOpponent: 'occupiedByOpponent'
     };
 
+    var loadVectors = function () {
+
+        var rank = 0;
+        var file = 0;
+        var outerSquareId = '';
+
+        for (var rankOuter = 1; rankOuter <= 8; rankOuter++) {
+            for (var fileOuter = 1; fileOuter <= 8; fileOuter++) {
+
+                outerSquareId = rankOuter.toString() + fileOuter.toString();
+
+                for (rank = rankOuter + 1; rank <= 8; rank++) {
+                    squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = '';
+                }
+
+                for (rank = rankOuter - 1; rank >= 1; rank--) {
+                    squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = '';
+                }
+
+                for (file = fileOuter - 1; file >= 1; file--) {
+                    squaresAndPieces.squares[outerSquareId].leftVector[rankOuter.toString() + file.toString()] = '';
+                }
+
+                for (file = fileOuter + 1; file <= 8; file++) {
+                    squaresAndPieces.squares[outerSquareId].rightVector[rankOuter.toString() + file.toString()] = '';
+                }
+
+                rank = rankOuter + 1, file = fileOuter - 1;
+                while (rank <= 8 && file >= 1) {
+
+                    squaresAndPieces.squares[outerSquareId].frontLeftVector[rank.toString() + file.toString()] = '';
+                    rank++, file--;
+                }
+
+                rank = rankOuter + 1, file = fileOuter + 1;
+                while (rank <= 8 && file <= 8) {
+
+                    squaresAndPieces.squares[outerSquareId].frontRightVector[rank.toString() + file.toString()] = '';
+                    rank++, file++;
+                }
+
+                rank = rankOuter - 1, file = fileOuter - 1;
+                while (rank >= 1 && file >= 1) {
+
+                    squaresAndPieces.squares[outerSquareId].rearLeftVector[rank.toString() + file.toString()] = '';
+                    rank--, file--;
+                }
+
+                rank = rankOuter - 1, file = fileOuter + 1;
+                while (rank >= 1 && file <= 8) {
+
+                    squaresAndPieces.squares[outerSquareId].rearRightVector[rank.toString() + file.toString()] = '';
+                    rank--, file++;
+                }
+
+
+                if (rankOuter + 1 <= 8) {
+
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter - 2).toString()] = '';
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter + 2).toString()] = '';
+
+                    if (rankOuter + 2 <= 8) {
+
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter - 1).toString()] = '';
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter + 1).toString()] = '';
+                    }
+                }
+
+                if (rankOuter - 1 >= 1) {
+
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter - 2).toString()] = '';
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter + 2).toString()] = '';
+
+                    if (rankOuter - 2 >= 1) {
+
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter - 1).toString()] = '';
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter + 1).toString()] = '';
+                    }
+                }
+
+                if (rankOuter <= 7 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter - 1).toString()] = '';
+                if (rankOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + fileOuter.toString()] = '';
+                if (rankOuter <= 7 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter + 1).toString()] = '';
+
+                if (fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter - 1).toString()] = '';
+                if (fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter + 1).toString()] = '';
+
+                if (rankOuter >= 2 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter - 1).toString()] = '';
+                if (rankOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + fileOuter.toString()] = '';
+                if (rankOuter >= 2 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter + 1).toString()] = '';
+            }
+        }
+    };
+
     var getColor = function (squareId) {
         return squaresAndPieces.squares[squareId].color;
     };
@@ -212,30 +306,30 @@
         var squareToAttack = '';
         var enPassantSquareToAttack = '';
 
-        if (rank <= 7) {
+        if (rank >= 2 && rank <= 7 && getPieceType(squareId) === common.pieces.pawn) {
                 
             if (file >= 2) {
 
                 squareToAttack = (rank + 1).toString() + (file - 1).toString();
 
-                if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceColor(squareId) === common.currentOpponent) {
                     
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
                 }
 
                 enPassantSquareToAttack = (rank).toString() + (file - 1).toString();
 
-                if (getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
                     
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
+                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.enPassant;
                 }
 
                 if (getPieceType(squareToAttack) === common.pieces.pawn) {
 
-                    if (getPieceColor(squareToAttack) === requests.currentPlayer) {
+                    if (getPieceColor(squareToAttack) === requests.currentOpponent) {
 
-                        squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
-                    } else {
                         squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
                     }
                 }
@@ -245,24 +339,24 @@
 
                 squareToAttack = (rank + 1).toString() + (file + 1).toString();
 
-                if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceColor(squareId) === common.currentOpponent) {
 
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
                 }
 
                 enPassantSquareToAttack = (rank).toString() + (file + 1).toString();
 
-                if (getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
 
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
+                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.enPassant;
                 }
 
                 if (getPieceType(squareToAttack) === common.pieces.pawn) {
 
-                    if (getPieceColor(squareToAttack) === requests.currentPlayer) {
+                    if (getPieceColor(squareToAttack) === requests.currentOpponent) {
 
-                        squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
-                    } else {
                         squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
                     }
                 }
@@ -281,8 +375,6 @@
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
                 }
             }
-
-
         }
     };
 
@@ -290,7 +382,7 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            if (getPieceType(squareId) === common.pieces.knight && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer && !squareAttackedByOpponent(keys[loopIndex])) {
+            if (getPieceType(squareId) === common.pieces.king && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer && !squareAttackedByOpponent(keys[loopIndex])) {
                 
                 squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
             }
@@ -298,7 +390,7 @@
 
         // Special code for castling.
 
-        if (requests.currentPlayer === common.colors.white) {
+        if (getPieceId(squareId) === common.pieceIds.whiteKing && requests.currentPlayer === common.colors.white) {
 
             var whiteKing = '15';
             var whiteKingsRook = '18';
@@ -309,7 +401,7 @@
             var whiteQueensBishop = '13';
             var whiteQueen = '14';
 
-            if (this.squareId === whiteKing && !getPieceHasMoved(whiteKing)) {
+            if (squareId === whiteKing && !getPieceHasMoved(whiteKing)) {
 
                 if (!getPieceHasMoved(whiteKingsRook)
                     &&
@@ -317,7 +409,7 @@
                     &&
                     squareStatus(whiteKingsBishop) === statuses.open && !squareAttackedByOpponent(whiteKingsBishop)) {
 
-                    this.setValue(whiteKingsKnight, specialMoves.castleKing);
+                    squaresAndPieces.squares[squareId].possibleMoves[whiteKingsKnight] = specialMoves.castleKing;
                 }
 
                 if (!getPieceHasMoved(whiteQueensRook)
@@ -328,13 +420,13 @@
                     &&
                     squareStatus(whiteQueen) === statuses.open && !squareAttackedByOpponent(whiteQueen)) {
 
-                    this.setValue(whiteQueensBishop, specialMoves.castleQueen);
+                    squaresAndPieces.squares[squareId].possibleMoves[whiteQueensBishop] = specialMoves.castleQueen;
                 }
             }
         }
 
 
-        if (requests.currentPlayer === common.colors.black) {
+        if (getPieceId(squareId) === common.pieceIds.blackKing && requests.currentPlayer === common.colors.black) {
 
             var blackKing = '14';
             var blackKingsRook = '11';
@@ -345,7 +437,7 @@
             var blackQueensBishop = '16';
             var blackQueen = '15';
 
-            if (this.squareId === blackKing && !getPieceHasMoved(blackKing)) {
+            if (squareId === blackKing && !getPieceHasMoved(blackKing)) {
 
                 if (!getPieceHasMoved(blackKingsRook)
                     &&
@@ -353,7 +445,7 @@
                     &&
                     squareStatus(blackKingsBishop) === statuses.open && !squareAttackedByOpponent(blackKingsBishop)) {
 
-                    this.setValue(blackKingsKnight, specialMoves.castleKing);
+                    squaresAndPieces.squares[squareId].possibleMoves[blackKingsKnight] = specialMoves.castleKing;
                 }
 
                 if (!getPieceHasMoved(blackQueensRook)
@@ -364,7 +456,7 @@
                     &&
                     squareStatus(blackQueen) === statuses.open && !squareAttackedByOpponent(blackQueen)) {
 
-                    this.setValue(blackQueensBishop, specialMoves.castleQueen);
+                    squaresAndPieces.squares[squareId].possibleMoves[blackKingsBishop] = specialMoves.castleQueen;
                 }
             }
         }
@@ -404,6 +496,7 @@
         squaresAndPieces = value;
 
         if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
+            loadVectors();
             setVectorProperties();
         }
     };
@@ -475,6 +568,7 @@
         }
 
         squaresAndPieces.squares = newSquares;
+        loadVectors();
         setVectorProperties();
     };
 
@@ -588,7 +682,9 @@
 
     var movePieceToNewSquare = function(sourceId, targetId) {
 
-        if (!getPossibleMove(sourceId, targetId)) {
+        var possibleMove = getPossibleMove(sourceId, targetId);
+
+        if (possibleMove === null) {
 
             return;
         }
@@ -612,13 +708,105 @@
             return;
         }
 
-        if (getPossibleMove(sourceId, targetId) === common.specialMoves.castleQueen) {
+        if (getPossibleMove(sourceId, targetId) === specialMoves.castleQueen) {
             
             castleQueen(targetId);
         }
         
     };
     
+    var zzz = function(squareId) {
+        var sb = '';
+        var i = 0;
+        var keys = [];
+
+        sb = 'frontVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].frontVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanfrontVector').text(sb);
+
+        sb = 'rearVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].rearVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanrearVector').text(sb);
+
+        sb = 'leftVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].leftVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanleftVector').text(sb);
+
+        sb = 'rightVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].rightVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanrightVector').text(sb);
+
+        sb = 'frontLeftVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].frontLeftVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanfrontLeftVector').text(sb);
+
+        sb = 'frontRightVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].frontRightVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanfrontRightVector').text(sb);
+
+        sb = 'rearLeftVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].rearLeftVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanrearLeftVector').text(sb);
+
+        sb = 'rearRightVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].rearRightVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanrearRightVector').text(sb);
+
+        sb = 'knightVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].knightVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanknightVector').text(sb);
+
+        sb = 'kingVector: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].kingVector);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spankingVector').text(sb);
+
+        sb = 'possibleMoves: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanpossibleMoves').text(sb);
+
+        sb = 'squaresAttackedBySquare: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].squaresAttackedBySquare);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spansquaresAttackedBySquare').text(sb);
+
+        sb = 'squaresAttackedBySquareButBlocked: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].squaresAttackedBySquareButBlocked);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spansquaresAttackedBySquareButBlocked').text(sb);
+
+        sb = 'attackedByPlayer: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].attackedByPlayer);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanattackedByPlayer').text(sb);
+
+        sb = 'attackedByPlayerButBlocked: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].attackedByPlayerButBlocked);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanattackedByPlayerButBlocked').text(sb);
+
+        sb = 'attackedByOpponent: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanattackedByOpponent').text(sb);
+
+        sb = 'attackedByOpponentButBlocked: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponentButBlocked);
+        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        $('#spanattackedByOpponentButBlocked').text(sb);
+
+    }
+
     return {
         statuses: statuses,
 
@@ -641,6 +829,8 @@
         setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 
         changeSquareModelToOtherPlayer: function () { return changeSquareModelToOtherPlayer(); },
+
+        zzz: function (squareId) { return zzz(squareId); },
 
         movePieceToNewSquare: function (sourceId, targetId) { return movePieceToNewSquare(sourceId, targetId); }
     };

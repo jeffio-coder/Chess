@@ -83,6 +83,8 @@ var boardEvents = {
 
     actionMouseDown: function (event, div) {
 
+        common.squares.zzz(div.id);
+
         if (event.which !== 1 || requests.gameOver) {
             
             return;
