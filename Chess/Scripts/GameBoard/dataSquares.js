@@ -226,46 +226,68 @@
         return Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent).length > 0;
     };
 
-    var traverseStraightVectors = function (squareId, vectorType, keys) {
+    var compare = function(value1, value2, direction) {
 
-        var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
-        var squareIdContainsAttackingPiece = getPieceColor(squareId) === requests.currentPlayer && 
-            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece);
+        if (direction > 0) {
 
-        var blocked = false;
+            return value1 <= value2;
+        } else {
+            return value1 >= value2;
+        }
 
-        for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+    };
+
+    var setAttackedByPlayer = function (squareId, targetId, blocked, otherPiece) {
+
+        if (getPieceColor(squareId) === requests.currentPlayer &&
+            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece)) {
 
             if (blocked) {
 
-                squaresAndPieces.squares[squareId].squaresAttackedBySquareButBlocked[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].attackedByPlayerButBlocked[targetId] = '';
             } else {
-                squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = specialMoves.none;
+                squaresAndPieces.squares[squareId].attackedByPlayer[targetId] = '';
 
-                if (squareIdContainsAttackingPiece && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer) {
+                if (squareStatus(targetId) !== statuses.occupiedByPlayer) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
+                    squaresAndPieces.squares[squareId].possibleMoves[targetId] = specialMoves.none;
                 }
             }
+        }
+    };
 
-            if (getPieceType(keys[loopIndex]) === common.pieces.queen || getPieceType(keys[loopIndex]) === otherPiece) {
+    var setAttackedByOpponent = function (squareId, targetId, blocked, otherPiece) {
 
-                if (blocked) {
+        if (getPieceColor(squareId) === requests.currentOpponent &&
+            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece)) {
 
-                    if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
+            if (blocked) {
 
-                        squaresAndPieces.squares[squareId].attackedByPlayerButBlocked[keys[loopIndex]] = specialMoves.none;
-                    } else {
-                        squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[keys[loopIndex]] = specialMoves.none;
-                    }
-                } else {
-                    if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
+                squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[targetId] = '';
+            } else {
+                squaresAndPieces.squares[squareId].attackedByOpponent[targetId] = '';
+            }
+        }
+    };
 
-                        squaresAndPieces.squares[squareId].attackedByPlayer[keys[loopIndex]] = specialMoves.none;
-                    } else {
-                        squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] = specialMoves.none;
-                    }
-                }
+    var traverseStraightVectors = function (squareId, vectorType, keys, direction) {
+
+        var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
+
+        var start = direction > 0 ? 0 : keys.length - 1;
+        var end = direction > 0 ? keys.length - 1 : 0;
+        var blocked = false;
+
+        for (var loopIndex = start; compare(loopIndex, end, direction) ; loopIndex += direction) {
+
+            setAttackedByPlayer(squareId, keys[loopIndex], blocked, otherPiece);
+            setAttackedByOpponent(squareId, keys[loopIndex], blocked, otherPiece);
+
+            if (blocked) {
+
+                squaresAndPieces.squares[squareId].squaresAttackedBySquareButBlocked[keys[loopIndex]] = '';
+            } else {
+                squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = '';
             }
 
             if (squareStatus(keys[loopIndex]) !== statuses.open) {
@@ -470,14 +492,14 @@
 
                 squareId = rank.toString() + file.toString();
 
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector));
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector));
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector));
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector), 1);
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector), -1);
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector), -1);
+                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector), 1);
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector), 1);
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector), 1);
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector), -1);
+                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector), -1);
                 traverseKnightVector(squareId, Object.keys(squaresAndPieces.squares[squareId].knightVector));
                 traversePawnVector(squareId);
                 traverseKingVector(squareId, Object.keys(squaresAndPieces.squares[squareId].kingVector));
