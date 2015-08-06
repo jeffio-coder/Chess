@@ -291,7 +291,6 @@
                 if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
 
                     squaresAndPieces.squares[squareId].attackedByPlayer[keys[loopIndex]] = specialMoves.none;
-                    squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
                 } else {
                     squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] = specialMoves.none;
                 }
