@@ -15,8 +15,9 @@
         rook: 'R',
         knight: 'N',
         bishop: 'B',
-        pawn: 'P'
-    },
+        pawn: 'P',
+        none: ''
+},
 
     pieceIds: {
         none: '',

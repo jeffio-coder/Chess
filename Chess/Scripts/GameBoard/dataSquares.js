@@ -20,6 +20,10 @@
                 possibleMoves: {},
                 squaresAttackedBySquare: {},
                 squaresAttackedBySquareButBlocked: {},
+                playerAttacks: {},
+                playerAttacksButBlocked: {},
+                opponentAttacks: {},
+                opponentAttacksButBlocked: {},
                 attackedByPlayer: {},
                 attackedByPlayerButBlocked: {},
                 attackedByOpponent: {},
@@ -195,11 +199,6 @@
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].hasMoved = value;
     };
 
-    var getPieceCaptured = function (squareId) {
-        if (squaresAndPieces.squares[squareId].pieceId === '') return false;
-        return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].captured;
-    };
-
     var setPieceCaptured = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '')
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].captured = value;
@@ -237,16 +236,17 @@
 
     };
 
-    var setAttackedByPlayer = function (squareId, targetId, blocked, otherPiece) {
+    var setPlayerAttacks = function (squareId, targetId, blocked, validPieces) {
 
-        if (getPieceColor(squareId) === requests.currentPlayer &&
-            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece)) {
+        if (getPieceType(squareId) === common.pieces.none) return;
+
+        if (getPieceColor(squareId) === requests.currentPlayer && validPieces.indexOf(getPieceType(squareId)) > -1) {
 
             if (blocked) {
 
-                squaresAndPieces.squares[squareId].attackedByPlayerButBlocked[targetId] = '';
+                squaresAndPieces.squares[squareId].playerAttacksButBlocked[targetId] = getPieceId(squareId);
             } else {
-                squaresAndPieces.squares[squareId].attackedByPlayer[targetId] = '';
+                squaresAndPieces.squares[squareId].playerAttacks[targetId] = getPieceId(squareId);
 
                 if (squareStatus(targetId) !== statuses.occupiedByPlayer) {
 
@@ -256,16 +256,47 @@
         }
     };
 
-    var setAttackedByOpponent = function (squareId, targetId, blocked, otherPiece) {
+    var setOpponentAttacks = function (squareId, targetId, blocked, validPieces) {
 
-        if (getPieceColor(squareId) === requests.currentOpponent &&
-            (getPieceType(squareId) === common.pieces.queen || getPieceType(squareId) === otherPiece)) {
+        if (getPieceType(squareId) === common.pieces.none) return;
+
+        if (getPieceColor(squareId) === requests.currentOpponent && validPieces.indexOf(getPieceType(squareId)) > -1) {
 
             if (blocked) {
 
-                squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[targetId] = '';
+                squaresAndPieces.squares[squareId].opponentAttacksButBlocked[targetId] = getPieceId(squareId);
             } else {
-                squaresAndPieces.squares[squareId].attackedByOpponent[targetId] = '';
+                squaresAndPieces.squares[squareId].opponentAttacks[targetId] = getPieceId(squareId);
+            }
+        }
+    };
+
+    var setAttackedByPlayer = function (squareId, targetId, blocked, validPieces) {
+
+        if (getPieceType(targetId) === common.pieces.none) return;
+
+        if (getPieceColor(targetId) === requests.currentPlayer && validPieces.indexOf(getPieceType(targetId)) > -1) {
+
+            if (blocked) {
+
+                squaresAndPieces.squares[squareId].attackedByPlayerButBlocked[targetId] = getPieceId(targetId);
+            } else {
+                squaresAndPieces.squares[squareId].attackedByPlayer[targetId] = getPieceId(targetId);
+            }
+        }
+    };
+
+    var setAttackedByOpponent = function (squareId, targetId, blocked, validPieces) {
+
+        if (getPieceType(targetId) === common.pieces.none) return;
+
+        if (getPieceColor(targetId) === requests.currentOpponent && validPieces.indexOf(getPieceType(targetId)) > -1) {
+
+            if (blocked) {
+
+                squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[targetId] = getPieceId(targetId);
+            } else {
+                squaresAndPieces.squares[squareId].attackedByOpponent[targetId] = getPieceId(targetId);
             }
         }
     };
@@ -280,8 +311,10 @@
 
         for (var loopIndex = start; compare(loopIndex, end, direction) ; loopIndex += direction) {
 
-            setAttackedByPlayer(squareId, keys[loopIndex], blocked, otherPiece);
-            setAttackedByOpponent(squareId, keys[loopIndex], blocked, otherPiece);
+            setPlayerAttacks(squareId, keys[loopIndex], blocked, common.pieces.queen + otherPiece);
+            setOpponentAttacks(squareId, keys[loopIndex], blocked, common.pieces.queen + otherPiece);
+            setAttackedByPlayer(squareId, keys[loopIndex], blocked, common.pieces.queen + otherPiece);
+            setAttackedByOpponent(squareId, keys[loopIndex], blocked, common.pieces.queen + otherPiece);
 
             if (blocked) {
 
@@ -301,22 +334,12 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = specialMoves.none;
+            setPlayerAttacks(squareId, keys[loopIndex], false, common.pieces.knight);
+            setOpponentAttacks(squareId, keys[loopIndex], false, common.pieces.knight);
+            setAttackedByPlayer(squareId, keys[loopIndex], false, common.pieces.knight);
+            setAttackedByOpponent(squareId, keys[loopIndex], false, common.pieces.knight);
 
-            if (getPieceType(squareId) === common.pieces.knight && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer) {
-
-                squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
-            }
-
-            if (getPieceType(keys[loopIndex]) === common.pieces.knight) {
-
-                if (getPieceColor(keys[loopIndex]) === requests.currentPlayer) {
-
-                    squaresAndPieces.squares[squareId].attackedByPlayer[keys[loopIndex]] = specialMoves.none;
-                } else {
-                    squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] = specialMoves.none;
-                }
-            }
+            squaresAndPieces.squares[squareId].squaresAttackedBySquare[keys[loopIndex]] = '';
         }
     };
 
@@ -333,26 +356,24 @@
 
                 squareToAttack = (rank + 1).toString() + (file - 1).toString();
 
-                if (getPieceColor(squareId) === requests.currentPlayer && getPieceColor(squareId) === common.currentOpponent) {
-                    
-                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
-                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceType(squareId) === common.pieces.pawn) {
+
+                    squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
+
+                    if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+
+                        squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                    }
                 }
+
+                setAttackedByOpponent(squareId, squareToAttack, false, common.pieces.pawn);
 
                 enPassantSquareToAttack = (rank).toString() + (file - 1).toString();
 
-                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === requests.currentOpponent) {
                     
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
-                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.enPassant;
-                }
-
-                if (getPieceType(squareToAttack) === common.pieces.pawn) {
-
-                    if (getPieceColor(squareToAttack) === requests.currentOpponent) {
-
-                        squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
-                    }
+                    squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
                 }
             }
 
@@ -360,26 +381,24 @@
 
                 squareToAttack = (rank + 1).toString() + (file + 1).toString();
 
-                if (getPieceColor(squareId) === requests.currentPlayer && getPieceColor(squareId) === common.currentOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceType(squareId) === common.pieces.pawn) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
-                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.none;
+                    squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
+
+                    if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
+
+                        squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
+                    }
                 }
+
+                setAttackedByOpponent(squareId, squareToAttack, false, common.pieces.pawn);
 
                 enPassantSquareToAttack = (rank).toString() + (file + 1).toString();
 
-                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === common.currentOpponent) {
+                if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === requests.currentOpponent) {
 
                     squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
-                    squaresAndPieces.squares[squareId].attackedByPlayer[squareToAttack] = specialMoves.enPassant;
-                }
-
-                if (getPieceType(squareToAttack) === common.pieces.pawn) {
-
-                    if (getPieceColor(squareToAttack) === requests.currentOpponent) {
-
-                        squaresAndPieces.squares[squareId].attackedByOpponent[squareToAttack] = specialMoves.none;
-                    }
+                    squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
                 }
             }
 
@@ -403,10 +422,10 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            if (getPieceType(squareId) === common.pieces.king && squareStatus(keys[loopIndex]) !== statuses.occupiedByPlayer && !squareAttackedByOpponent(keys[loopIndex])) {
-                
-                squaresAndPieces.squares[squareId].possibleMoves[keys[loopIndex]] = specialMoves.none;
-            }
+            if (!squareAttackedByOpponent(keys[loopIndex])) setPlayerAttacks(squareId, keys[loopIndex], false, common.pieces.king);
+            if (!squareAttackedByOpponent(keys[loopIndex])) setOpponentAttacks(squareId, keys[loopIndex], false, common.pieces.king);
+            if (!squareAttackedByOpponent(keys[loopIndex])) setAttackedByPlayer(squareId, keys[loopIndex], false, common.pieces.king);
+            if (!squareAttackedByOpponent(keys[loopIndex])) setAttackedByOpponent(squareId, keys[loopIndex], false, common.pieces.king);
         }
 
         // Special code for castling.
@@ -477,7 +496,7 @@
                     &&
                     squareStatus(blackQueen) === statuses.open && !squareAttackedByOpponent(blackQueen)) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[blackKingsBishop] = specialMoves.castleQueen;
+                    squaresAndPieces.squares[squareId].possibleMoves[blackQueensBishop] = specialMoves.castleQueen;
                 }
             }
         }
@@ -509,11 +528,11 @@
         }
     };
 
-    var getVal = function() {
+    var getVal = function () {
         return squaresAndPieces;
     };
 
-    var setVal = function(value) {
+    var setVal = function (value) {
         squaresAndPieces = value;
 
         if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
@@ -580,6 +599,10 @@
                     possibleMoves: {},
                     squaresAttackedBySquare: {},
                     squaresAttackedBySquareButBlocked: {},
+                    playerAttacks: {},
+                    playerAttacksButBlocked: {},
+                    opponentAttacks: {},
+                    opponentAttacksButBlocked: {},
                     attackedByPlayer: {},
                     attackedByPlayerButBlocked: {},
                     attackedByOpponent: {},
@@ -707,7 +730,7 @@
 
         if (possibleMove === null) {
 
-            return;
+            return false;
         }
 
         capturePieceIfApplicable(sourceId, targetId);
@@ -721,12 +744,15 @@
 
             setPieceEnPassantEligible(targetId,
                 getPieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+
+            return true;
         }
 
         if (getPossibleMove(sourceId, targetId) === specialMoves.castleKing) {
 
             castleKing(targetId);
-            return;
+
+            return true;
         }
 
         if (getPossibleMove(sourceId, targetId) === specialMoves.castleQueen) {
@@ -734,98 +760,121 @@
             castleQueen(targetId);
         }
         
+        return true;
     };
     
-    var zzz = function(squareId) {
+    var showTestData = function (squareId) {
+
+        if (!requests.showTestData) return;
+
         var sb = '';
-        var i = 0;
+        var loopIndex = 0;
         var keys = [];
 
         sb = 'frontVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanfrontVector').text(sb);
 
         sb = 'rearVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanrearVector').text(sb);
 
         sb = 'leftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].leftVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanleftVector').text(sb);
 
         sb = 'rightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rightVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanrightVector').text(sb);
 
         sb = 'frontLeftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontLeftVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanfrontLeftVector').text(sb);
 
         sb = 'frontRightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontRightVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanfrontRightVector').text(sb);
 
         sb = 'rearLeftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearLeftVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanrearLeftVector').text(sb);
 
         sb = 'rearRightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearRightVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanrearRightVector').text(sb);
 
         sb = 'knightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].knightVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanknightVector').text(sb);
 
         sb = 'kingVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].kingVector);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spankingVector').text(sb);
 
         sb = 'possibleMoves: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanpossibleMoves').text(sb);
 
         sb = 'squaresAttackedBySquare: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].squaresAttackedBySquare);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spansquaresAttackedBySquare').text(sb);
 
         sb = 'squaresAttackedBySquareButBlocked: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].squaresAttackedBySquareButBlocked);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spansquaresAttackedBySquareButBlocked').text(sb);
+
+        sb = 'playerAttacks: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].playerAttacks);
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        $('#spanplayerAttacks').text(sb);
+
+        sb = 'playerAttacksButBlocked: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].playerAttacksButBlocked);
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        $('#spanplayerAttacksButBlocked').text(sb);
+
+        sb = 'opponentAttacks: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].opponentAttacks);
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        $('#spanopponentAttacks').text(sb);
+
+        sb = 'opponentAttacksButBlocked: ';
+        keys = Object.keys(squaresAndPieces.squares[squareId].opponentAttacksButBlocked);
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + ': ' + '; ' }
+        $('#spanopponentAttacksButBlocked').text(sb);
 
         sb = 'attackedByPlayer: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByPlayer);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanattackedByPlayer').text(sb);
 
         sb = 'attackedByPlayerButBlocked: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByPlayerButBlocked);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanattackedByPlayerButBlocked').text(sb);
 
         sb = 'attackedByOpponent: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanattackedByOpponent').text(sb);
 
         sb = 'attackedByOpponentButBlocked: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponentButBlocked);
-        for (i = 0; i < keys.length; i++) { sb += keys[i] + '; ' }
+        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
         $('#spanattackedByOpponentButBlocked').text(sb);
-
     }
 
     return {
@@ -851,7 +900,7 @@
 
         changeSquareModelToOtherPlayer: function () { return changeSquareModelToOtherPlayer(); },
 
-        zzz: function (squareId) { return zzz(squareId); },
+        showTestData: function (squareId) { return showTestData(squareId); },
 
         movePieceToNewSquare: function (sourceId, targetId) { return movePieceToNewSquare(sourceId, targetId); }
     };

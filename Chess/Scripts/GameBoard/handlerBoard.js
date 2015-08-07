@@ -71,6 +71,11 @@
                 $('#' + squareId).addClass('gameSquare ' + this.getClassNameFromSquareModel(rankIndex, fileIndex));
                 $('#' + squareId).droppable();
 
+                if (requests.showTestData) {
+
+                    $('#' + squareId).text(squareId);
+                }
+
                 if (!common.squares.squareStatus(squareId) !== common.squares.statuses.open)
                     this.setDraggable(squareId);
             }
