@@ -1,8 +1,6 @@
 ﻿// ToDo
 //
 // Promote; change piece ID's?
-// Ckeckmate issues (queen covered by bishop)
-// IIS  http://www.iis.net/learn/get-started/planning-for-security/how-to-use-locking-in-iis-configuration
 // Rename and move scripts.
 // convert to rest calls - possible moves; change script names; move Game.html
 // End game
@@ -47,7 +45,6 @@ var boardEvents = {
 
     mouseUpDivId: '',
     activeSquareId: '',
-    //movesResultingInCheck: {},
 
     actionInitialize: function () {
 
@@ -59,7 +56,9 @@ var boardEvents = {
         requests.currentOpponent = common.colors.black;
 
         common.squares.val(requests.getSquaresAndPieces());
-        
+        common.squares.setVectorProperties();
+        //removeMovesThatWouldResultInCheck();
+
         board.setUpBoardSize();
         board.paintBoardFromModel();
 

@@ -154,6 +154,19 @@
         }
     };
 
+    var getVal = function () {
+        return squaresAndPieces;
+    };
+
+    var setVal = function (value) {
+        squaresAndPieces = value;
+
+        if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
+            loadVectors();
+            /////////setVectorProperties(); ToDo
+        }
+    };
+
     var getColor = function (squareId) {
         return squaresAndPieces.squares[squareId].color;
     };
@@ -225,6 +238,43 @@
         return Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent).length > 0;
     };
 
+    var possibleMoves = function (squareId) {
+
+        return Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
+    };
+
+    var getPossibleMove = function (sourceId, targetId) {
+
+        if (targetId in squaresAndPieces.squares[sourceId].possibleMoves) {
+
+            return squaresAndPieces.squares[sourceId].possibleMoves[targetId];
+        } else {
+            return null;
+        }
+    };
+
+    var inCheck = function (color) {
+
+        var kingPieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
+        var rank = 0;
+        var file = 0;
+        var squareId = '';
+
+        for (rank = 1; rank <= 8; rank++) {
+            for (file = 1; rank <= 8; rank++) {
+
+                squareId = rank.toString() + file.toString();
+
+                if (getPieceId(squareId) === kingPieceId) {
+
+                    break;
+                }
+            }
+        }
+
+        return squareAttackedByOpponent(squareId);
+    };
+
     var compare = function(value1, value2, direction) {
 
         if (direction > 0) {
@@ -234,6 +284,128 @@
             return value1 >= value2;
         }
 
+    };
+
+    var capturePieceIfApplicable = function (sourceId, targetId) {
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.none) {
+
+            if (squareStatus(targetId) !== statuses.open)
+                setPieceCaptured(targetId, true);
+
+            return;
+        }
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
+
+            var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
+            setPieceCaptured(squareBehindId, true);
+            setPieceId(squareBehindId, common.pieceIds.none);
+            return;
+        }
+    };
+
+    var castleKing = function (targetId) {
+
+        var whiteKingTargetId = '17';
+        var whiteKingsRookTargetId = '16';
+        var whiteKingSourceId = '15';
+        var whiteKingsRookSourceId = '18';
+        var blackKingTargetId = '12';
+        var blackKingsRookTargetId = '13';
+        var blackKingSourceId = '14';
+        var blackKingsRookSourceId = '11';
+
+        if (targetId === whiteKingTargetId) {
+
+            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            setPieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
+            setPieceId(whiteKingSourceId, common.pieceIds.none);
+            setPieceId(whiteKingsRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(whiteKingTargetId, true);
+            setPieceHasMoved(whiteKingsRookTargetId, true);
+        }
+
+        if (targetId === blackKingTargetId) {
+
+            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
+            setPieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
+            setPieceId(blackKingSourceId, common.pieceIds.none);
+            setPieceId(blackKingsRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(blackKingTargetId, true);
+            setPieceHasMoved(blackKingsRookTargetId, true);
+        }
+    };
+
+    var castleQueen = function (targetId) {
+
+        var whiteKingTargetId = '13';
+        var whiteQueensRookTargetId = '14';
+        var whiteKingSourceId = '15';
+        var whiteQueensRookSourceId = '11';
+        var blackKingTargetId = '16';
+        var blackQueensRookTargetId = '15';
+        var blackKingSourceId = '14';
+        var blackQueensRookSourceId = '18';
+
+        if (targetId === whiteKingTargetId) {
+
+            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
+            setPieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
+            setPieceId(whiteKingSourceId, common.pieceIds.none);
+            setPieceId(whiteQueensRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(whiteKingTargetId, true);
+            setPieceHasMoved(whiteQueensRookTargetId, true);
+        }
+
+        if (targetId === blackKingTargetId) {
+
+            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
+            setPieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
+            setPieceId(blackKingSourceId, common.pieceIds.none);
+            setPieceId(blackQueensRookSourceId, common.pieceIds.none);
+            setPieceHasMoved(blackKingTargetId, true);
+            setPieceHasMoved(blackQueensRookTargetId, true);
+        }
+    };
+
+    var movePieceToNewSquare = function (sourceId, targetId) {
+
+        var possibleMove = getPossibleMove(sourceId, targetId);
+
+        if (possibleMove === null) {
+
+            return false;
+        }
+
+        capturePieceIfApplicable(sourceId, targetId);
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.none || getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
+
+            setPieceId(targetId, getPieceId(sourceId));
+            setPieceId(sourceId, common.pieceIds.none);
+
+            setPieceHasMoved(targetId, true);
+
+            setPieceEnPassantEligible(targetId,
+                getPieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
+
+            return true;
+        }
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.castleKing) {
+
+            castleKing(targetId);
+
+            return true;
+        }
+
+        if (getPossibleMove(sourceId, targetId) === specialMoves.castleQueen) {
+
+            castleQueen(targetId);
+        }
+
+        return true;
     };
 
     var setPlayerAttacks = function (squareId, targetId, blocked, validPieces) {
@@ -502,7 +674,7 @@
         }
     };
 
-    var setVectorProperties = function() {
+    var setVectorProperties = function () {
 
         var squareId = '';
 
@@ -528,17 +700,40 @@
         }
     };
 
-    var getVal = function () {
-        return squaresAndPieces;
-    };
+    var removeMovesThatWouldResultInCheck = function (squareId) {
 
-    var setVal = function (value) {
-        squaresAndPieces = value;
+        var keys = possibleMoves(squareId);
 
-        if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
-            loadVectors();
+        if (keys.length === 0) return;
+
+        var loopIndex = 0;
+        var movesResultingInCheck = [];
+        var currentSquareModel = JSON.parse(JSON.stringify(getVal()));
+        var targetId = '';
+
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) {
+
+            targetId = squaresAndPieces.squares.possibleMoves[keys[loopIndex]];
+
+            movePieceToNewSquare(squareId, targetId);
+
+            if (inCheck(requests.currentPlayer)) {
+
+                movesResultingInCheck.push(targetId);
+            }
+
+            setVal(JSON.parse(JSON.stringify(currentSquareModel)));
             setVectorProperties();
         }
+
+
+        //for (loopIndex = 0; loopIndex < movesResultingInCheck.length ; loopIndex++) {
+
+        //    delete
+        //    //        delete this.moves[movesKey];
+
+        //    possibleMoves.deleteElement(Object.keys(this.movesResultingInCheck)[loopIndex]);
+        //}
     };
 
     var setEnPassantIneligibleForPlayer = function () {
@@ -567,11 +762,6 @@
         }
 
         return returnPieces;
-    };
-
-    var getPossibleMoves = function (squareId) {
-
-        return Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
     };
 
     var changeSquareModelToOtherPlayer = function () {
@@ -614,155 +804,9 @@
         squaresAndPieces.squares = newSquares;
         loadVectors();
         setVectorProperties();
+        //removeMovesThatWouldResultInCheck();
     };
 
-    //Todo: whack?
-    var getKingRankFile = function (color) {
-
-        var pieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
-
-        for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares).length; loopIndex++) {
-
-            if (squaresAndPieces.squares[Object.keys(squaresAndPieces.squares)[loopIndex]].pieceId === pieceId) {
-
-                return Object.keys(squaresAndPieces.squares)[loopIndex];
-            }
-        }
-        return '';
-    };
-    
-    var getPossibleMove = function (sourceId, targetId) {
-
-        if (targetId in squaresAndPieces.squares[sourceId].possibleMoves) {
-
-            return squaresAndPieces.squares[sourceId].possibleMoves[targetId];
-        } else {
-            return null;
-        }
-    }
-
-    var capturePieceIfApplicable = function (sourceId, targetId) {
-
-        if (getPossibleMove(sourceId, targetId) === specialMoves.none) {
-
-            if (squareStatus(targetId) !== statuses.open)
-                setPieceCaptured(targetId, true);
-
-            return;
-        }
-
-        if (getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
-
-            var squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
-            setPieceCaptured(squareBehindId, true);
-            setPieceId(squareBehindId, common.pieceIds.none);
-            return;
-        }
-    };
-
-    var castleKing = function (targetId) {
-
-        var whiteKingTargetId = '17';
-        var whiteKingsRookTargetId = '16';
-        var whiteKingSourceId = '15';
-        var whiteKingsRookSourceId = '18';
-        var blackKingTargetId = '12';
-        var blackKingsRookTargetId = '13';
-        var blackKingSourceId = '14';
-        var blackKingsRookSourceId = '11';
-
-        if (targetId === whiteKingTargetId) {   
-
-            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            setPieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
-            setPieceId(whiteKingSourceId, common.pieceIds.none);
-            setPieceId(whiteKingsRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(whiteKingTargetId, true);
-            setPieceHasMoved(whiteKingsRookTargetId, true);
-        }
-
-        if (targetId === blackKingTargetId) {  
-
-            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
-            setPieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
-            setPieceId(blackKingSourceId, common.pieceIds.none);
-            setPieceId(blackKingsRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(blackKingTargetId, true);
-            setPieceHasMoved(blackKingsRookTargetId, true);
-        }
-    };
-
-    var castleQueen = function (targetId) {
-
-        var whiteKingTargetId = '13';
-        var whiteQueensRookTargetId = '14';
-        var whiteKingSourceId = '15';
-        var whiteQueensRookSourceId = '11';
-        var blackKingTargetId = '16';
-        var blackQueensRookTargetId = '15';
-        var blackKingSourceId = '14';
-        var blackQueensRookSourceId = '18';
-
-        if (targetId === whiteKingTargetId) {
-
-            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            setPieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
-            setPieceId(whiteKingSourceId, common.pieceIds.none);
-            setPieceId(whiteQueensRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(whiteKingTargetId, true);
-            setPieceHasMoved(whiteQueensRookTargetId, true);
-        }
-
-        if (targetId === blackKingTargetId) {
-
-            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
-            setPieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
-            setPieceId(blackKingSourceId, common.pieceIds.none);
-            setPieceId(blackQueensRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(blackKingTargetId, true);
-            setPieceHasMoved(blackQueensRookTargetId, true);
-        }
-    };
-
-    var movePieceToNewSquare = function(sourceId, targetId) {
-
-        var possibleMove = getPossibleMove(sourceId, targetId);
-
-        if (possibleMove === null) {
-
-            return false;
-        }
-
-        capturePieceIfApplicable(sourceId, targetId);
-
-        if (getPossibleMove(sourceId, targetId) === specialMoves.none || getPossibleMove(sourceId, targetId) === specialMoves.enPassant) {
-
-            setPieceId(targetId, getPieceId(sourceId));
-            setPieceId(sourceId, common.pieceIds.none);
-
-            setPieceHasMoved(targetId, true);
-
-            setPieceEnPassantEligible(targetId,
-                getPieceType(targetId) === common.pieces.pawn && common.getRank(targetId) - common.getRank(sourceId) === 2);
-
-            return true;
-        }
-
-        if (getPossibleMove(sourceId, targetId) === specialMoves.castleKing) {
-
-            castleKing(targetId);
-
-            return true;
-        }
-
-        if (getPossibleMove(sourceId, targetId) === specialMoves.castleQueen) {
-            
-            castleQueen(targetId);
-        }
-        
-        return true;
-    };
-    
     var showTestData = function (squareId) {
 
         if (!requests.showTestData) return;
@@ -868,12 +912,12 @@
 
         sb = 'attackedByOpponent: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + ': ' + squaresAndPieces.squares[squareId].attackedByOpponent[keys[loopIndex]] + '; ' }
         $('#spanattackedByOpponent').text(sb);
 
         sb = 'attackedByOpponentButBlocked: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponentButBlocked);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + ': ' + squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[keys[loopIndex]] + '; ' }
         $('#spanattackedByOpponentButBlocked').text(sb);
     }
 
@@ -881,6 +925,8 @@
         statuses: statuses,
 
         val: function (value) { return arguments.length === 0 ? getVal() : setVal(value); },
+
+        setVectorProperties: function () { return setVectorProperties(); },
 
         color: function (squareId) { return getColor(squareId); },
 
@@ -894,7 +940,7 @@
 
         getCapturedPieces: function () { return getCapturedPieces(); },
 
-        possibleMoves: function (squareId) { return getPossibleMoves(squareId); },
+        possibleMoves: function (squareId) { return possibleMoves(squareId); },
 
         setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 
