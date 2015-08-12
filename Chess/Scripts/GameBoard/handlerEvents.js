@@ -56,8 +56,6 @@ var boardEvents = {
         requests.currentOpponent = common.colors.black;
 
         common.squares.val(requests.getSquaresAndPieces());
-        common.squares.setVectorProperties();
-        //removeMovesThatWouldResultInCheck();
 
         board.setUpBoardSize();
         board.paintBoardFromModel();

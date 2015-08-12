@@ -158,13 +158,9 @@
         return squaresAndPieces;
     };
 
-    var setVal = function (value) {
-        squaresAndPieces = value;
+    var getSquareIds = function (squareId) {
 
-        if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
-            loadVectors();
-            /////////setVectorProperties(); ToDo
-        }
+        return Object.keys(squaresAndPieces.squares);
     };
 
     var getColor = function (squareId) {
@@ -256,23 +252,16 @@
     var inCheck = function (color) {
 
         var kingPieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
-        var rank = 0;
-        var file = 0;
-        var squareId = '';
+        var squareIds = getSquareIds();
+        var loopIndex = 0;
 
-        for (rank = 1; rank <= 8; rank++) {
-            for (file = 1; rank <= 8; rank++) {
+        for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
-                squareId = rank.toString() + file.toString();
+            if (getPieceId(squareIds[loopIndex]) === kingPieceId) {
 
-                if (getPieceId(squareId) === kingPieceId) {
-
-                    break;
-                }
+                return squareAttackedByOpponent(squareIds[loopIndex]);
             }
         }
-
-        return squareAttackedByOpponent(squareId);
     };
 
     var compare = function(value1, value2, direction) {
@@ -676,64 +665,33 @@
 
     var setVectorProperties = function () {
 
-        var squareId = '';
+        var squareIds = getSquareIds();
 
-        for (var rank = 1; rank <= 8; rank++) {
-            for (var file = 1; file <= 8; file++) {
+        for (var loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
-                squareId = rank.toString() + file.toString();
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].frontVector), 1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].rearVector), -1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].leftVector), -1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].rightVector), 1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].frontLeftVector), 1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].frontRightVector), 1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].rearLeftVector), -1);
+            traverseStraightVectors(squareIds[loopIndex], vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].rearRightVector), -1);
+            traverseKnightVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].knightVector));
+            traversePawnVector(squareIds[loopIndex]);
+            traverseKingVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].kingVector));
 
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].frontVector), 1);
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rearVector), -1);
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].leftVector), -1);
-                traverseStraightVectors(squareId, vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareId].rightVector), 1);
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontLeftVector), 1);
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].frontRightVector), 1);
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearLeftVector), -1);
-                traverseStraightVectors(squareId, vectorTypes.diagonal, Object.keys(squaresAndPieces.squares[squareId].rearRightVector), -1);
-                traverseKnightVector(squareId, Object.keys(squaresAndPieces.squares[squareId].knightVector));
-                traversePawnVector(squareId);
-                traverseKingVector(squareId, Object.keys(squaresAndPieces.squares[squareId].kingVector));
-
-                // ToDo: remove moves in check
-            }
+            // ToDo: remove moves in check
         }
     };
 
-    var removeMovesThatWouldResultInCheck = function (squareId) {
+    var setVal = function (value) {
+        squaresAndPieces = value;
 
-        var keys = possibleMoves(squareId);
-
-        if (keys.length === 0) return;
-
-        var loopIndex = 0;
-        var movesResultingInCheck = [];
-        var currentSquareModel = JSON.parse(JSON.stringify(getVal()));
-        var targetId = '';
-
-        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) {
-
-            targetId = squaresAndPieces.squares.possibleMoves[keys[loopIndex]];
-
-            movePieceToNewSquare(squareId, targetId);
-
-            if (inCheck(requests.currentPlayer)) {
-
-                movesResultingInCheck.push(targetId);
-            }
-
-            setVal(JSON.parse(JSON.stringify(currentSquareModel)));
+        if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
+            loadVectors();
             setVectorProperties();
         }
-
-
-        //for (loopIndex = 0; loopIndex < movesResultingInCheck.length ; loopIndex++) {
-
-        //    delete
-        //    //        delete this.moves[movesKey];
-
-        //    possibleMoves.deleteElement(Object.keys(this.movesResultingInCheck)[loopIndex]);
-        //}
     };
 
     var setEnPassantIneligibleForPlayer = function () {
@@ -801,10 +759,7 @@
             }
         }
 
-        squaresAndPieces.squares = newSquares;
-        loadVectors();
-        setVectorProperties();
-        //removeMovesThatWouldResultInCheck();
+        setVal(newSquares);
     };
 
     var showTestData = function (squareId) {
