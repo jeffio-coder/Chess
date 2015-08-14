@@ -151,7 +151,7 @@ var boardEvents = {
 
 
         // ToDo
-        //if (possibleMoves.checkForPlayerInCheck()) {
+        //if (getPossibleMoves.checkForPlayerInCheck()) {
 
         //    if (this.checkForCheckMate()) {
                 
@@ -186,14 +186,14 @@ var boardEvents = {
 
                 if (common.squares.squareStatus(squareId) === common.squares.statusPlayerOccupied) {
 
-                    possibleMoves.squareId = squareId;
-                    possibleMoves.loadPossibleMoves();
+                    getPossibleMoves.squareId = squareId;
+                    getPossibleMoves.loadPossibleMoves();
 
-                    for (var innerLoopIndex = 0; innerLoopIndex < possibleMoves.getKeys().length; innerLoopIndex++) {
+                    for (var innerLoopIndex = 0; innerLoopIndex < getPossibleMoves.getKeys().length; innerLoopIndex++) {
 
-                        this.movePieceToNewSquare(squareId, possibleMoves.getValue(innerLoopIndex));
+                        this.movePieceToNewSquare(squareId, getPossibleMoves.getValue(innerLoopIndex));
 
-                        if (!possibleMoves.checkForPlayerInCheck()) {
+                        if (!getPossibleMoves.checkForPlayerInCheck()) {
 
                             common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
                             return false;

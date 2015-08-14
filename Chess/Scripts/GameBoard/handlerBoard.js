@@ -196,7 +196,7 @@
 
     markSquaresAsPossibleMove: function (squareId) {
 
-        var keys = common.squares.possibleMoves(squareId);
+        var keys = common.squares.getPossibleMoves(squareId);
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
@@ -207,7 +207,7 @@
 
     unmarkSquaresAsPossibleMove: function (squareId) {
 
-        var keys = common.squares.possibleMoves(squareId);
+        var keys = common.squares.getPossibleMoves(squareId);
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 

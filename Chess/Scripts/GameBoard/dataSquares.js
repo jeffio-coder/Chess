@@ -39,7 +39,9 @@
                 'captured': false,
                 'enPassantEligible': false
             }
-        }
+        },
+        playerKingSquare: '',
+        opponentKingSquare: ''
     };
 
     var specialMoves = {
@@ -70,6 +72,26 @@
             for (var fileOuter = 1; fileOuter <= 8; fileOuter++) {
 
                 outerSquareId = rankOuter.toString() + fileOuter.toString();
+
+                if (squaresAndPieces.squares[outerSquareId].pieceId === common.pieceIds.whiteKing) {
+                    
+                    if (requests.currentPlayer === common.colors.white) {
+
+                        squaresAndPieces.playerKingSquare = outerSquareId;
+                    } else {
+                        squaresAndPieces.opponentKingSquare = outerSquareId;
+                    }
+                }
+
+                if (squaresAndPieces.squares[outerSquareId].pieceId === common.pieceIds.blackKing) {
+
+                    if (requests.currentPlayer === common.colors.black) {
+
+                        squaresAndPieces.playerKingSquare = outerSquareId;
+                    } else {
+                        squaresAndPieces.opponentKingSquare = outerSquareId;
+                    }
+                }
 
                 for (rank = rankOuter + 1; rank <= 8; rank++) {
                     squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = '';
@@ -234,7 +256,7 @@
         return Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent).length > 0;
     };
 
-    var possibleMoves = function (squareId) {
+    var getPossibleMoves = function (squareId) {
 
         return Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
     };
@@ -246,21 +268,6 @@
             return squaresAndPieces.squares[sourceId].possibleMoves[targetId];
         } else {
             return null;
-        }
-    };
-
-    var inCheck = function (color) {
-
-        var kingPieceId = color === common.colors.white ? common.pieceIds.whiteKing : common.pieceIds.blackKing;
-        var squareIds = getSquareIds();
-        var loopIndex = 0;
-
-        for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
-
-            if (getPieceId(squareIds[loopIndex]) === kingPieceId) {
-
-                return squareAttackedByOpponent(squareIds[loopIndex]);
-            }
         }
     };
 
@@ -666,8 +673,9 @@
     var setVectorProperties = function () {
 
         var squareIds = getSquareIds();
+        var loopIndex = 0;
 
-        for (var loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
+        for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
             traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].frontVector), 1);
             traverseStraightVectors(squareIds[loopIndex], vectorTypes.rankFile, Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].rearVector), -1);
@@ -680,8 +688,14 @@
             traverseKnightVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].knightVector));
             traversePawnVector(squareIds[loopIndex]);
             traverseKingVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].kingVector));
+        }
 
-            // ToDo: remove moves in check
+        // Remove moves in check
+        for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
+
+            if (getPossibleMoves(squareIds[loopIndex]).length > 0) {
+
+            }
         }
     };
 
@@ -759,7 +773,9 @@
             }
         }
 
-        setVal(newSquares);
+        squaresAndPieces.squares = newSquares;
+        loadVectors();
+        setVectorProperties();
     };
 
     var showTestData = function (squareId) {
@@ -895,7 +911,7 @@
 
         getCapturedPieces: function () { return getCapturedPieces(); },
 
-        possibleMoves: function (squareId) { return possibleMoves(squareId); },
+        getPossibleMoves: function (squareId) { return getPossibleMoves(squareId); },
 
         setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 

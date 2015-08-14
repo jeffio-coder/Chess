@@ -119,7 +119,9 @@
                 'BP6': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false },
                 'BP7': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false },
                 'BP8': { 'type': 'P', 'color': 'black', 'hasMoved': false, 'captured': false, 'enPassantEligible': false }
-            }
+            },
+            playerKingSquare: '',
+            opponentKingSquare: ''
         };
     }
 }
