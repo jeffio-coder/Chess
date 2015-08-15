@@ -94,84 +94,84 @@
                 }
 
                 for (rank = rankOuter + 1; rank <= 8; rank++) {
-                    squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = squaresAndPieces.squares[rank.toString() + fileOuter.toString()].pieceId;
                 }
 
                 for (rank = rankOuter - 1; rank >= 1; rank--) {
-                    squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = squaresAndPieces.squares[rank.toString() + fileOuter.toString()].pieceId;
                 }
 
                 for (file = fileOuter - 1; file >= 1; file--) {
-                    squaresAndPieces.squares[outerSquareId].leftVector[rankOuter.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].leftVector[rankOuter.toString() + file.toString()] = squaresAndPieces.squares[rankOuter.toString() + file.toString()].pieceId;
                 }
 
                 for (file = fileOuter + 1; file <= 8; file++) {
-                    squaresAndPieces.squares[outerSquareId].rightVector[rankOuter.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].rightVector[rankOuter.toString() + file.toString()] = squaresAndPieces.squares[rankOuter.toString() + file.toString()].pieceId;
                 }
 
                 rank = rankOuter + 1, file = fileOuter - 1;
                 while (rank <= 8 && file >= 1) {
 
-                    squaresAndPieces.squares[outerSquareId].frontLeftVector[rank.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].frontLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
                     rank++, file--;
                 }
 
                 rank = rankOuter + 1, file = fileOuter + 1;
                 while (rank <= 8 && file <= 8) {
 
-                    squaresAndPieces.squares[outerSquareId].frontRightVector[rank.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].frontRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
                     rank++, file++;
                 }
 
                 rank = rankOuter - 1, file = fileOuter - 1;
                 while (rank >= 1 && file >= 1) {
 
-                    squaresAndPieces.squares[outerSquareId].rearLeftVector[rank.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].rearLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
                     rank--, file--;
                 }
 
                 rank = rankOuter - 1, file = fileOuter + 1;
                 while (rank >= 1 && file <= 8) {
 
-                    squaresAndPieces.squares[outerSquareId].rearRightVector[rank.toString() + file.toString()] = '';
+                    squaresAndPieces.squares[outerSquareId].rearRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
                     rank--, file++;
                 }
 
 
                 if (rankOuter + 1 <= 8) {
 
-                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter - 2).toString()] = '';
-                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter + 2).toString()] = '';
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter - 2).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter - 2).toString()].pieceId;
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter + 2).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter + 2).toString()].pieceId;
 
                     if (rankOuter + 2 <= 8) {
 
-                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter - 1).toString()] = '';
-                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter + 1).toString()] = '';
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter + 2).toString() + (fileOuter - 1).toString()].pieceId;
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter + 2).toString() + (fileOuter + 1).toString()].pieceId;
                     }
                 }
 
                 if (rankOuter - 1 >= 1) {
 
-                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter - 2).toString()] = '';
-                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter + 2).toString()] = '';
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter - 2).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter - 2).toString()].pieceId;
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter + 2).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter + 2).toString()].pieceId;
 
                     if (rankOuter - 2 >= 1) {
 
-                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter - 1).toString()] = '';
-                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter + 1).toString()] = '';
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter - 2).toString() + (fileOuter - 1).toString()].pieceId;
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter - 2).toString() + (fileOuter + 1).toString()].pieceId;
                     }
                 }
 
-                if (rankOuter <= 7 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter - 1).toString()] = '';
-                if (rankOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + fileOuter.toString()] = '';
-                if (rankOuter <= 7 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter + 1).toString()] = '';
+                if (rankOuter <= 7 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter - 1).toString()].pieceId;
+                if (rankOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + fileOuter.toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + fileOuter.toString()].pieceId;
+                if (rankOuter <= 7 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter + 1).toString()].pieceId;
 
-                if (fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter - 1).toString()] = '';
-                if (fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter + 1).toString()] = '';
+                if (fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[rankOuter.toString() + (fileOuter - 1).toString()].pieceId;
+                if (fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[rankOuter.toString() + (fileOuter + 1).toString()].pieceId;
 
-                if (rankOuter >= 2 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter - 1).toString()] = '';
-                if (rankOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + fileOuter.toString()] = '';
-                if (rankOuter >= 2 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter + 1).toString()] = '';
+                if (rankOuter >= 2 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter - 1).toString()].pieceId;
+                if (rankOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + fileOuter.toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + fileOuter.toString()].pieceId;
+                if (rankOuter >= 2 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter + 1).toString()].pieceId;
             }
         }
     };
@@ -415,11 +415,6 @@
                 squaresAndPieces.squares[squareId].playerAttacksButBlocked[targetId] = getPieceId(squareId);
             } else {
                 squaresAndPieces.squares[squareId].playerAttacks[targetId] = getPieceId(squareId);
-
-                if (squareStatus(targetId) !== statuses.occupiedByPlayer) {
-
-                    squaresAndPieces.squares[squareId].possibleMoves[targetId] = specialMoves.none;
-                }
             }
         }
     };
@@ -527,11 +522,6 @@
                 if (getPieceColor(squareId) === requests.currentPlayer && getPieceType(squareId) === common.pieces.pawn) {
 
                     squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
-
-                    if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
-
-                        squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
-                    }
                 }
 
                 setAttackedByOpponent(squareId, squareToAttack, false, common.pieces.pawn);
@@ -540,7 +530,6 @@
 
                 if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === requests.currentOpponent) {
                     
-                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
                     squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
                 }
             }
@@ -552,11 +541,6 @@
                 if (getPieceColor(squareId) === requests.currentPlayer && getPieceType(squareId) === common.pieces.pawn) {
 
                     squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
-
-                    if (squareStatus(squareToAttack) === statuses.occupiedByOpponent) {
-
-                        squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
-                    }
                 }
 
                 setAttackedByOpponent(squareId, squareToAttack, false, common.pieces.pawn);
@@ -565,7 +549,6 @@
 
                 if (getPieceColor(squareId) === requests.currentPlayer && getPieceEnPassantEligible(enPassantSquareToAttack) && getPieceColor(enPassantSquareToAttack) === requests.currentOpponent) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.enPassant;
                     squaresAndPieces.squares[squareId].playerAttacks[squareToAttack] = getPieceId(squareId);
                 }
             }
@@ -573,15 +556,8 @@
             squareToAttack = (rank + 1).toString() + (file).toString();
 
             if (squareStatus(squareToAttack) === statuses.open) {
-                
-                squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
 
                 squareToAttack = (rank + 2).toString() + (file).toString();
-
-                if (rank === 2 && squareStatus(squareToAttack) === statuses.open) {
-
-                    squaresAndPieces.squares[squareId].possibleMoves[squareToAttack] = specialMoves.none;
-                }
             }
         }
     };
@@ -598,76 +574,75 @@
 
         // Special code for castling.
 
-        if (getPieceId(squareId) === common.pieceIds.whiteKing && requests.currentPlayer === common.colors.white) {
+        //if (getPieceId(squareId) === common.pieceIds.whiteKing && requests.currentPlayer === common.colors.white) {
 
-            var whiteKing = '15';
-            var whiteKingsRook = '18';
-            var whiteKingsKnight = '17';
-            var whiteKingsBishop = '16';
-            var whiteQueensRook = '11';
-            var whiteQueensKnight = '12';
-            var whiteQueensBishop = '13';
-            var whiteQueen = '14';
+        //    var whiteKing = '15';
+        //    var whiteKingsRook = '18';
+        //    var whiteKingsKnight = '17';
+        //    var whiteKingsBishop = '16';
+        //    var whiteQueensRook = '11';
+        //    var whiteQueensKnight = '12';
+        //    var whiteQueensBishop = '13';
+        //    var whiteQueen = '14';
 
-            if (squareId === whiteKing && !getPieceHasMoved(whiteKing)) {
+        //    if (squareId === whiteKing && !getPieceHasMoved(whiteKing)) {
 
-                if (!getPieceHasMoved(whiteKingsRook)
-                    &&
-                    squareStatus(whiteKingsKnight) === statuses.open && !squareAttackedByOpponent(whiteKingsKnight)
-                    &&
-                    squareStatus(whiteKingsBishop) === statuses.open && !squareAttackedByOpponent(whiteKingsBishop)) {
+        //        if (!getPieceHasMoved(whiteKingsRook)
+        //            &&
+        //            squareStatus(whiteKingsKnight) === statuses.open && !squareAttackedByOpponent(whiteKingsKnight)
+        //            &&
+        //            squareStatus(whiteKingsBishop) === statuses.open && !squareAttackedByOpponent(whiteKingsBishop)) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[whiteKingsKnight] = specialMoves.castleKing;
-                }
+        //            squaresAndPieces.squares[squareId].possibleMoves[whiteKingsKnight] = specialMoves.castleKing;
+        //        }
 
-                if (!getPieceHasMoved(whiteQueensRook)
-                    &&
-                    squareStatus(whiteQueensKnight) === statuses.open && !squareAttackedByOpponent(whiteQueensKnight)
-                    &&
-                    squareStatus(whiteQueensBishop) === statuses.open && !squareAttackedByOpponent(whiteQueensBishop)
-                    &&
-                    squareStatus(whiteQueen) === statuses.open && !squareAttackedByOpponent(whiteQueen)) {
+        //        if (!getPieceHasMoved(whiteQueensRook)
+        //            &&
+        //            squareStatus(whiteQueensKnight) === statuses.open && !squareAttackedByOpponent(whiteQueensKnight)
+        //            &&
+        //            squareStatus(whiteQueensBishop) === statuses.open && !squareAttackedByOpponent(whiteQueensBishop)
+        //            &&
+        //            squareStatus(whiteQueen) === statuses.open && !squareAttackedByOpponent(whiteQueen)) {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[whiteQueensBishop] = specialMoves.castleQueen;
-                }
-            }
-        }
+        //            squaresAndPieces.squares[squareId].possibleMoves[whiteQueensBishop] = specialMoves.castleQueen;
+        //        }
+        //    }
+        //}
 
+        //if (getPieceId(squareId) === common.pieceIds.blackKing && requests.currentPlayer === common.colors.black) {
 
-        if (getPieceId(squareId) === common.pieceIds.blackKing && requests.currentPlayer === common.colors.black) {
+        //    var blackKing = '14';
+        //    var blackKingsRook = '11';
+        //    var blackKingsKnight = '12';
+        //    var blackKingsBishop = '13';
+        //    var blackQueensRook = '18';
+        //    var blackQueensKnight = '17';
+        //    var blackQueensBishop = '16';
+        //    var blackQueen = '15';
 
-            var blackKing = '14';
-            var blackKingsRook = '11';
-            var blackKingsKnight = '12';
-            var blackKingsBishop = '13';
-            var blackQueensRook = '18';
-            var blackQueensKnight = '17';
-            var blackQueensBishop = '16';
-            var blackQueen = '15';
+        //    if (squareId === blackKing && !getPieceHasMoved(blackKing)) {
 
-            if (squareId === blackKing && !getPieceHasMoved(blackKing)) {
+        //        if (!getPieceHasMoved(blackKingsRook)
+        //            &&
+        //            squareStatus(blackKingsKnight) === statuses.open && !squareAttackedByOpponent(blackKingsKnight)
+        //            &&
+        //            squareStatus(blackKingsBishop) === statuses.open && !squareAttackedByOpponent(blackKingsBishop)) {
 
-                if (!getPieceHasMoved(blackKingsRook)
-                    &&
-                    squareStatus(blackKingsKnight) === statuses.open && !squareAttackedByOpponent(blackKingsKnight)
-                    &&
-                    squareStatus(blackKingsBishop) === statuses.open && !squareAttackedByOpponent(blackKingsBishop)) {
+        //            squaresAndPieces.squares[squareId].possibleMoves[blackKingsKnight] = specialMoves.castleKing;
+        //        }
 
-                    squaresAndPieces.squares[squareId].possibleMoves[blackKingsKnight] = specialMoves.castleKing;
-                }
+        //        if (!getPieceHasMoved(blackQueensRook)
+        //            &&
+        //            squareStatus(blackQueensKnight) === statuses.open && !squareAttackedByOpponent(blackQueensKnight)
+        //            &&
+        //            squareStatus(blackQueensBishop) === statuses.open && !squareAttackedByOpponent(blackQueensBishop)
+        //            &&
+        //            squareStatus(blackQueen) === statuses.open && !squareAttackedByOpponent(blackQueen)) {
 
-                if (!getPieceHasMoved(blackQueensRook)
-                    &&
-                    squareStatus(blackQueensKnight) === statuses.open && !squareAttackedByOpponent(blackQueensKnight)
-                    &&
-                    squareStatus(blackQueensBishop) === statuses.open && !squareAttackedByOpponent(blackQueensBishop)
-                    &&
-                    squareStatus(blackQueen) === statuses.open && !squareAttackedByOpponent(blackQueen)) {
-
-                    squaresAndPieces.squares[squareId].possibleMoves[blackQueensBishop] = specialMoves.castleQueen;
-                }
-            }
-        }
+        //            squaresAndPieces.squares[squareId].possibleMoves[blackQueensBishop] = specialMoves.castleQueen;
+        //        }
+        //    }
+        //}
     };
 
     var setVectorProperties = function () {
@@ -788,52 +763,52 @@
 
         sb = 'frontVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].frontVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].frontVector[keys[loopIndex]]) + '; ' }
         $('#spanfrontVector').text(sb);
 
         sb = 'rearVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].rearVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].rearVector[keys[loopIndex]]) + '; ' }
         $('#spanrearVector').text(sb);
 
         sb = 'leftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].leftVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].leftVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].leftVector[keys[loopIndex]]) + '; ' }
         $('#spanleftVector').text(sb);
 
         sb = 'rightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rightVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].rightVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].rightVector[keys[loopIndex]]) + '; ' }
         $('#spanrightVector').text(sb);
 
         sb = 'frontLeftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontLeftVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].frontLeftVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].frontLeftVector[keys[loopIndex]]) + '; ' }
         $('#spanfrontLeftVector').text(sb);
 
         sb = 'frontRightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].frontRightVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].frontRightVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].frontRightVector[keys[loopIndex]]) + '; ' }
         $('#spanfrontRightVector').text(sb);
 
         sb = 'rearLeftVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearLeftVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].rearLeftVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].rearLeftVector[keys[loopIndex]]) + '; ' }
         $('#spanrearLeftVector').text(sb);
 
         sb = 'rearRightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].rearRightVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].rearRightVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].rearRightVector[keys[loopIndex]]) + '; ' }
         $('#spanrearRightVector').text(sb);
 
         sb = 'knightVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].knightVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].knightVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].knightVector[keys[loopIndex]]) + '; ' }
         $('#spanknightVector').text(sb);
 
         sb = 'kingVector: ';
         keys = Object.keys(squaresAndPieces.squares[squareId].kingVector);
-        for (loopIndex = 0; loopIndex  < keys.length; loopIndex++) { sb += keys[loopIndex] + '; ' }
+        for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + (squaresAndPieces.squares[squareId].kingVector[keys[loopIndex]] === '' ? '' : ': ' + squaresAndPieces.squares[squareId].kingVector[keys[loopIndex]]) + '; ' }
         $('#spankingVector').text(sb);
 
         sb = 'possibleMoves: ';
