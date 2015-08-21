@@ -668,7 +668,7 @@
         // Remove moves in check
         for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
-            if (getPossibleMoves(squareIds[loopIndex]).length > 0) {
+            if (getPieceColor(squareIds[loopIndex]) === requests.currentPlayer && true) {
 
             }
         }
