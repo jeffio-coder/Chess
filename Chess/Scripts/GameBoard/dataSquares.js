@@ -73,29 +73,8 @@
 
                 outerSquareId = rankOuter.toString() + fileOuter.toString();
 
-                if (squaresAndPieces.squares[outerSquareId].pieceId === common.pieceIds.whiteKing) {
-                    
-                    if (requests.currentPlayer === common.colors.white) {
-
-                        squaresAndPieces.playerKingSquare = outerSquareId;
-                    } else {
-                        squaresAndPieces.opponentKingSquare = outerSquareId;
-                    }
-                }
-
-                if (squaresAndPieces.squares[outerSquareId].pieceId === common.pieceIds.blackKing) {
-
-                    if (requests.currentPlayer === common.colors.black) {
-
-                        squaresAndPieces.playerKingSquare = outerSquareId;
-                    } else {
-                        squaresAndPieces.opponentKingSquare = outerSquareId;
-                    }
-                }
-
-                for (rank = rankOuter + 1; rank <= 8; rank++) {
-                    squaresAndPieces.squares[outerSquareId].frontVector[rank.toString() + fileOuter.toString()] = squaresAndPieces.squares[rank.toString() + fileOuter.toString()].pieceId;
-                }
+                this.setKingSquares(outerSquareId);
+                this.setFrontVector(outerSquareId, rankOuter);
 
                 for (rank = rankOuter - 1; rank >= 1; rank--) {
                     squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = squaresAndPieces.squares[rank.toString() + fileOuter.toString()].pieceId;
@@ -175,6 +154,36 @@
             }
         }
     };
+
+    function setKingSquares(squareId) {
+        
+        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.whiteKing) {
+
+            if (requests.currentPlayer === common.colors.white) {
+
+                squaresAndPieces.playerKingSquare = squareId;
+            } else {
+                squaresAndPieces.opponentKingSquare = squareId;
+            }
+        }
+
+        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.blackKing) {
+
+            if (requests.currentPlayer === common.colors.black) {
+
+                squaresAndPieces.playerKingSquare = squareId;
+            } else {
+                squaresAndPieces.opponentKingSquare = squareId;
+            }
+        }
+    };
+
+    function setFrontVector(squareId, rankStart, file) {
+
+        for (var rank = rankStart + 1; rank <= 8; rank++) {
+            squaresAndPieces.squares[squareId].frontVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+        }
+    }
 
     var getVal = function () {
         return squaresAndPieces;
@@ -865,6 +874,9 @@
         keys = Object.keys(squaresAndPieces.squares[squareId].attackedByOpponentButBlocked);
         for (loopIndex = 0; loopIndex < keys.length; loopIndex++) { sb += keys[loopIndex] + ': ' + squaresAndPieces.squares[squareId].attackedByOpponentButBlocked[keys[loopIndex]] + '; ' }
         $('#spanattackedByOpponentButBlocked').text(sb);
+
+        $('#spanplayerKingSquare').text('playerKingSquare: ' + squaresAndPieces.playerKingSquare);
+        $('#spanopponentKingSquare').text('opponentKingSquare: ' + squaresAndPieces.opponentKingSquare);
     }
 
     return {
