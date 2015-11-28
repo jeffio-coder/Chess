@@ -190,7 +190,7 @@
 
         this.setMoves({});
 
-        switch (common.squares.pieceType(this.squareId)) {
+        switch (pieceType(this.squareId)) {
 
             case common.pieces.king:
                 this.possibleMovesForKing();
@@ -221,7 +221,7 @@
 
             targetId = this.kingMoves[this.squareId][loopIndex];
 
-            if (common.squares.squareStatus(targetId) !== common.squares.statusPlayerOccupied)
+            if (squareStatus(targetId) !== statusPlayerOccupied)
                 this.setValue(targetId, common.specialMoves.none);
         }
 
@@ -242,24 +242,24 @@
             var whiteQueensBishop = '13';
             var whiteQueen = '14';
 
-            if (this.squareId === whiteKing && !common.squares.pieceHasMoved(whiteKing)) {
+            if (this.squareId === whiteKing && !Squares().pieceHasMoved(whiteKing)) {
 
-                if (!common.squares.pieceHasMoved(whiteKingsRook)
+                if (!Squares().pieceHasMoved(whiteKingsRook)
                     &&
-                    common.squares.squareStatus(whiteKingsKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteKingsKnight)
+                    Squares().squareStatus(whiteKingsKnight) === Squares().statusOpen && !this.checkForPlayerInCheck(whiteKingsKnight)
                     &&
-                    common.squares.squareStatus(whiteKingsBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteKingsBishop)) {
+                    Squares().squareStatus(whiteKingsBishop) === Squares().statusOpen && !this.checkForPlayerInCheck(whiteKingsBishop)) {
 
                     this.setValue(whiteKingsKnight, common.specialMoves.castleKing);
                 }
 
-                if (!common.squares.pieceHasMoved(whiteQueensRook)
+                if (!Squares().pieceHasMoved(whiteQueensRook)
                     &&
-                    common.squares.squareStatus(whiteQueensKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueensKnight)
+                    Squares().squareStatus(whiteQueensKnight) === Squares().statusOpen && !this.checkForPlayerInCheck(whiteQueensKnight)
                     &&
-                    common.squares.squareStatus(whiteQueensBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueensBishop)
+                    Squares().squareStatus(whiteQueensBishop) === Squares().statusOpen && !this.checkForPlayerInCheck(whiteQueensBishop)
                     &&
-                    common.squares.squareStatus(whiteQueen) === common.squares.statusOpen && !this.checkForPlayerInCheck(whiteQueen)) {
+                    Squares().squareStatus(whiteQueen) === Squares().statusOpen && !this.checkForPlayerInCheck(whiteQueen)) {
 
                     this.setValue(whiteQueensBishop, common.specialMoves.castleQueen);
                 }
@@ -278,24 +278,24 @@
             var blackQueensBishop = '16';
             var blackQueen = '15';
 
-            if (this.squareId === blackKing && !common.squares.pieceHasMoved(blackKing)) {
+            if (this.squareId === blackKing && !Squares().pieceHasMoved(blackKing)) {
 
-                if (!common.squares.pieceHasMoved(blackKingsRook)
+                if (!Squares().pieceHasMoved(blackKingsRook)
                     &&
-                    common.squares.squareStatus(blackKingsKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackKingsKnight)
+                    Squares().squareStatus(blackKingsKnight) === Squares().statusOpen && !this.checkForPlayerInCheck(blackKingsKnight)
                     &&
-                    common.squares.squareStatus(blackKingsBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackKingsBishop)) {
+                    Squares().squareStatus(blackKingsBishop) === Squares().statusOpen && !this.checkForPlayerInCheck(blackKingsBishop)) {
 
                     this.setValue(blackKingsKnight, common.specialMoves.castleKing);
                 }
 
-                if (!common.squares.pieceHasMoved(blackQueensRook)
+                if (!Squares().pieceHasMoved(blackQueensRook)
                     &&
-                    common.squares.squareStatus(blackQueensKnight) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueensKnight)
+                    Squares().squareStatus(blackQueensKnight) === Squares().statusOpen && !this.checkForPlayerInCheck(blackQueensKnight)
                     &&
-                    common.squares.squareStatus(blackQueensBishop) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueensBishop)
+                    Squares().squareStatus(blackQueensBishop) === Squares().statusOpen && !this.checkForPlayerInCheck(blackQueensBishop)
                     &&
-                    common.squares.squareStatus(blackQueen) === common.squares.statusOpen && !this.checkForPlayerInCheck(blackQueen)) {
+                    Squares().squareStatus(blackQueen) === Squares().statusOpen && !this.checkForPlayerInCheck(blackQueen)) {
 
                     this.setValue(blackQueensBishop, common.specialMoves.castleQueen);
                 }
@@ -320,7 +320,7 @@
 
             var targetId = this.knightMoves[this.squareId][loopIndex];
 
-            if (common.squares.squareStatus(targetId) !== common.squares.statusPlayerOccupied)
+            if (Squares().squareStatus(targetId) !== Squares().statusPlayerOccupied)
                 this.setValue(targetId, common.specialMoves.none);
         }
     },
@@ -345,18 +345,18 @@
 
             if (!this.pawnMoves[this.squareId][loopIndex].capture) {  // Move forward.
 
-                if (common.squares.squareStatus(targetId) === common.squares.statusOpen) {
+                if (Squares().squareStatus(targetId) === Squares().statusOpen) {
                     if (!blocked) this.setValue(targetId, common.specialMoves.none);
                 } else {
                     blocked = true;
                 }
             } else {
-                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
+                if (Squares().squareStatus(targetId) === Squares().statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                 } else {
                     squareBehindId = (common.getRank(targetId) - 1).toString() + common.getFile(targetId).toString();
 
-                    if (common.squares.pieceEnPassantEligible(squareBehindId))
+                    if (Squares().pieceEnPassantEligible(squareBehindId))
                         this.setValue(targetId, common.specialMoves.enPassant);
                 }
             }
@@ -380,10 +380,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (common.squares.squareStatus(targetId) === common.squares.statusPlayerOccupied)
+                if (Squares().squareStatus(targetId) === Squares().statusPlayerOccupied)
                     break;
 
-                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
+                if (Squares().squareStatus(targetId) === Squares().statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                     break;
                 }
@@ -410,10 +410,10 @@
 
                 targetId = moveArrays[outerLoopIndex][innerLoopIndex];
 
-                if (common.squares.squareStatus(targetId) === common.squares.statusPlayerOccupied)
+                if (Squares().squareStatus(targetId) === Squares().statusPlayerOccupied)
                     break;
 
-                if (common.squares.squareStatus(targetId) === common.squares.statusOpponentOccupied) {
+                if (Squares().squareStatus(targetId) === Squares().statusOpponentOccupied) {
                     this.setValue(targetId, common.specialMoves.none);
                     break;
                 }
@@ -426,7 +426,7 @@
     checkForPlayerInCheck: function (kingSquareId) {
 
         if (!kingSquareId)
-            kingSquareId = common.squares.getKingRankFile(requests.currentPlayer);   
+            kingSquareId = Squares().getKingRankFile(requests.currentPlayer);
 
         if (this.checkForPawnCheck(kingSquareId))
             return true;
@@ -451,7 +451,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) - 1).toString();
 
-            if (common.squares.pieceType(targetSquareId) === common.pieces.pawn && common.squares.pieceColor(targetSquareId) === requests.currentOpponent)
+            if (Squares().pieceType(targetSquareId) === common.pieces.pawn && Squares().pieceColor(targetSquareId) === requests.currentOpponent)
                 return true;
         }
 
@@ -459,7 +459,7 @@
 
             targetSquareId = (common.getRank(kingSquareId) + 1).toString() + (common.getFile(kingSquareId) + 1).toString();
 
-            if (common.squares.pieceType(targetSquareId) === common.pieces.pawn && common.squares.pieceColor(targetSquareId) === requests.currentOpponent)
+            if (Squares().pieceType(targetSquareId) === common.pieces.pawn && Squares().pieceColor(targetSquareId) === requests.currentOpponent)
                 return true;
         }
 
@@ -470,8 +470,8 @@
 
         for (var loopIndex = 0; loopIndex < this.knightMoves[kingSquareId].length; loopIndex++) {
 
-            if (common.squares.squareStatus(this.knightMoves[kingSquareId][loopIndex]) === common.squares.statusOpponentOccupied &&
-                common.squares.pieceType(this.knightMoves[kingSquareId][loopIndex]) === common.pieces.knight)
+            if (Squares().squareStatus(this.knightMoves[kingSquareId][loopIndex]) === Squares().statusOpponentOccupied &&
+                Squares().pieceType(this.knightMoves[kingSquareId][loopIndex]) === common.pieces.knight)
                 return true;
         }
 
@@ -494,15 +494,15 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusOpponentOccupied) {
+                if (Squares().squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === Squares().statusOpponentOccupied) {
                     
-                    if (common.squares.squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (Squares().squarePieceIsOppenentQueenOrRook(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusPlayerOccupied)
+                if (Squares().squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === Squares().statusPlayerOccupied)
                     break;
             }
         }
@@ -519,15 +519,15 @@
 
             for (innerLoopIndex = 0; innerLoopIndex < moveArrays[outerLoopIndex].length; innerLoopIndex++) {
 
-                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusOpponentOccupied) {
+                if (Squares().squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === Squares().statusOpponentOccupied) {
 
-                    if (common.squares.squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
+                    if (Squares().squarePieceIsOppenentQueenOrBishop(moveArrays[outerLoopIndex][innerLoopIndex]))
                         return true;
                     else
                         break;
                 }
 
-                if (common.squares.squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === common.squares.statusPlayerOccupied)
+                if (Squares().squareStatus(moveArrays[outerLoopIndex][innerLoopIndex]) === Squares().statusPlayerOccupied)
                     break;
             }
         }

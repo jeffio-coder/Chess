@@ -1,38 +1,12 @@
 ﻿// ToDo
 //
 // Promote; change piece ID's?
-// Rename and move scripts.
 // convert to rest calls - possible moves; change script names; move Game.html
 // End game
-// web workers on check for check/checkmate -- http://keithwhor.github.io/multithread.js/  http://codersblock.com/blog/multi-threaded-javascript-with-web-workers/
 // Error Handling; logging
 // Unit tests; QUnit, Jasmine
 //
 // Document
-/*
-
-      <script src="scripts/jquery.easyModal.js" type="text/javascript"></script>
-
-    <div id="popup-census-info" style="width: 800px; background-color:white;background-color: rgb(204, 204, 204);">
-
-            $('#popup-census-info').easyModal();
-
-            $('#btnPopupYes').click(function () {
-
-                $('#popup-census-info').trigger('closeModal');
-
-                // Saves the proposal
-                $('#ctl00_ctl00_mainContentPlaceholder_stepContentPlaceholder_topSaveProposalButton').click();
-            });
-
-
-            $('#btnPopupNo').click(function () {
-
-                $('#popup-census-info').trigger('closeModal');
-            });
-
-
-*/
 $(document).ready(function () {
     $.ajaxSetup({
         cache: false
@@ -48,14 +22,14 @@ var boardEvents = {
 
     actionInitialize: function () {
 
-        common.squares = Squares();
+        common.squaresObj = Squares();
 
-        common.squares.val({});
+        common.squaresObj.val({});
 
         requests.currentPlayer = common.colors.white;
         requests.currentOpponent = common.colors.black;
 
-        common.squares.val(requests.getSquaresAndPieces());
+        common.squaresObj.val(requests.getSquaresAndPieces());
 
         board.setUpBoardSize();
         board.paintBoardFromModel();
@@ -80,7 +54,7 @@ var boardEvents = {
 
     actionMouseDown: function (event, div) {
 
-        common.squares.showTestData(div.id);
+        common.squaresObj.showTestData(div.id);
 
         if (event.which !== 1 || requests.gameOver) {
             
@@ -88,8 +62,8 @@ var boardEvents = {
         }
 
         if (this.mouseUpDivId !== '' ||
-            common.squares.squareStatus(div.id) === common.squares.statuses.open ||
-            common.squares.pieceColor(div.id) !== requests.currentPlayer) {
+            common.squaresObj.squareStatus(div.id) === common.squaresObj.statuses.open ||
+            common.squaresObj.pieceColor(div.id) !== requests.currentPlayer) {
             
             return;
         }
@@ -108,8 +82,8 @@ var boardEvents = {
         }
 
         if (this.mouseUpDivId === '' &&
-           (common.squares.squareStatus(div.id) === common.squares.statuses.open ||
-            common.squares.pieceColor(div.id) !== requests.currentPlayer)) {
+           (common.squaresObj.squareStatus(div.id) === common.squaresObj.statuses.open ||
+            common.squaresObj.pieceColor(div.id) !== requests.currentPlayer)) {
 
             return;
         }
@@ -131,7 +105,7 @@ var boardEvents = {
 
         if (targetId && executeMove) {
 
-            if (common.squares.movePieceToNewSquare(this.activeSquareId, targetId)) {
+            if (common.squaresObj.movePieceToNewSquare(this.activeSquareId, targetId)) {
                 
                 this.changeCurrentPlayer();
             }
@@ -147,7 +121,7 @@ var boardEvents = {
         requests.currentPlayer = (requests.playerMoveNumber % 2) === 0 ? common.colors.white : common.colors.black;
         requests.currentOpponent = (requests.playerMoveNumber % 2) === 0 ? common.colors.black : common.colors.white;
 
-        common.squares.changeSquareModelToOtherPlayer();
+        changeSquareModelToOtherPlayer();
 
 
         // ToDo
@@ -170,12 +144,12 @@ var boardEvents = {
         board.paintBoardFromModel();
         common.stopWatch.start();
 
-        common.squares.setEnPassantIneligibleForPlayer();
+        setEnPassantIneligibleForPlayer();
     },
      
     checkForCheckMate: function () {
 
-        var currentSquareModel = JSON.parse(JSON.stringify(common.squares.model()));
+        var currentSquareModel = JSON.parse(JSON.stringify(model()));
         var squareId = '';
 
         for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
@@ -184,21 +158,21 @@ var boardEvents = {
 
                 squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
 
-                if (common.squares.squareStatus(squareId) === common.squares.statusPlayerOccupied) {
+                if (common.squaresObj.squareStatus(squareId) === common.squaresObj.statuses.occupiedByPlayer) {
 
-                    getPossibleMoves.squareId = squareId;
-                    getPossibleMoves.loadPossibleMoves();
+                    common.squaresObj.possibleMoves.squareId = squareId;
+                    common.squaresObj.possibleMoves.loadPossibleMoves();
 
-                    for (var innerLoopIndex = 0; innerLoopIndex < getPossibleMoves.getKeys().length; innerLoopIndex++) {
+                    for (var innerLoopIndex = 0; innerLoopIndex < common.squaresObj.possibleMoves.getKeys().length; innerLoopIndex++) {
 
-                        this.movePieceToNewSquare(squareId, getPossibleMoves.getValue(innerLoopIndex));
+                        this.movePieceToNewSquare(squareId, common.squaresObj.possibleMoves.getValue(innerLoopIndex));
 
                         if (!getPossibleMoves.checkForPlayerInCheck()) {
 
-                            common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
+                            model(JSON.parse(JSON.stringify(currentSquareModel)));
                             return false;
                         }
-                        common.squares.model(JSON.parse(JSON.stringify(currentSquareModel)));
+                        model(JSON.parse(JSON.stringify(currentSquareModel)));
                     }
                 }
             }

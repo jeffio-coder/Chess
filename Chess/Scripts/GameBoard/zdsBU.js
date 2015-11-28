@@ -62,33 +62,156 @@
         occupiedByOpponent: 'occupiedByOpponent'
     };
 
-    function getVal() {
+    var setKingSquares = function (squareId) {
+
+        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.whiteKing) {
+
+            if (requests.currentPlayer === common.colors.white) {
+
+                squaresAndPieces.playerKingSquare = squareId;
+            } else {
+                squaresAndPieces.opponentKingSquare = squareId;
+            }
+        }
+
+        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.blackKing) {
+
+            if (requests.currentPlayer === common.colors.black) {
+
+                squaresAndPieces.playerKingSquare = squareId;
+            } else {
+                squaresAndPieces.opponentKingSquare = squareId;
+            }
+        }
+    };
+
+    var loadVectors = function () {
+
+        var rank = 0;
+        var file = 0;
+        var outerSquareId = '';
+
+        for (var rankOuter = 1; rankOuter <= 8; rankOuter++) {
+            for (var fileOuter = 1; fileOuter <= 8; fileOuter++) {
+
+                outerSquareId = rankOuter.toString() + fileOuter.toString();
+
+                setKingSquares(outerSquareId);
+                Squares.setFrontVector(outerSquareId, rankOuter);
+
+                for (rank = rankOuter - 1; rank >= 1; rank--) {
+                    squaresAndPieces.squares[outerSquareId].rearVector[rank.toString() + fileOuter.toString()] = squaresAndPieces.squares[rank.toString() + fileOuter.toString()].pieceId;
+                }
+
+                for (file = fileOuter - 1; file >= 1; file--) {
+                    squaresAndPieces.squares[outerSquareId].leftVector[rankOuter.toString() + file.toString()] = squaresAndPieces.squares[rankOuter.toString() + file.toString()].pieceId;
+                }
+
+                for (file = fileOuter + 1; file <= 8; file++) {
+                    squaresAndPieces.squares[outerSquareId].rightVector[rankOuter.toString() + file.toString()] = squaresAndPieces.squares[rankOuter.toString() + file.toString()].pieceId;
+                }
+
+                rank = rankOuter + 1, file = fileOuter - 1;
+                while (rank <= 8 && file >= 1) {
+
+                    squaresAndPieces.squares[outerSquareId].frontLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+                    rank++, file--;
+                }
+
+                rank = rankOuter + 1, file = fileOuter + 1;
+                while (rank <= 8 && file <= 8) {
+
+                    squaresAndPieces.squares[outerSquareId].frontRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+                    rank++, file++;
+                }
+
+                rank = rankOuter - 1, file = fileOuter - 1;
+                while (rank >= 1 && file >= 1) {
+
+                    squaresAndPieces.squares[outerSquareId].rearLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+                    rank--, file--;
+                }
+
+                rank = rankOuter - 1, file = fileOuter + 1;
+                while (rank >= 1 && file <= 8) {
+
+                    squaresAndPieces.squares[outerSquareId].rearRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+                    rank--, file++;
+                }
+
+
+                if (rankOuter + 1 <= 8) {
+
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter - 2).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter - 2).toString()].pieceId;
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 1).toString() + (fileOuter + 2).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter + 2).toString()].pieceId;
+
+                    if (rankOuter + 2 <= 8) {
+
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter + 2).toString() + (fileOuter - 1).toString()].pieceId;
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter + 2).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter + 2).toString() + (fileOuter + 1).toString()].pieceId;
+                    }
+                }
+
+                if (rankOuter - 1 >= 1) {
+
+                    if (fileOuter - 2 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter - 2).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter - 2).toString()].pieceId;
+                    if (fileOuter + 2 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 1).toString() + (fileOuter + 2).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter + 2).toString()].pieceId;
+
+                    if (rankOuter - 2 >= 1) {
+
+                        if (fileOuter - 1 >= 1) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter - 2).toString() + (fileOuter - 1).toString()].pieceId;
+                        if (fileOuter + 1 <= 8) squaresAndPieces.squares[outerSquareId].knightVector[(rankOuter - 2).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter - 2).toString() + (fileOuter + 1).toString()].pieceId;
+                    }
+                }
+
+                if (rankOuter <= 7 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter - 1).toString()].pieceId;
+                if (rankOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + fileOuter.toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + fileOuter.toString()].pieceId;
+                if (rankOuter <= 7 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter + 1).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter + 1).toString() + (fileOuter + 1).toString()].pieceId;
+
+                if (fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[rankOuter.toString() + (fileOuter - 1).toString()].pieceId;
+                if (fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[rankOuter.toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[rankOuter.toString() + (fileOuter + 1).toString()].pieceId;
+
+                if (rankOuter >= 2 && fileOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter - 1).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter - 1).toString()].pieceId;
+                if (rankOuter >= 2) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + fileOuter.toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + fileOuter.toString()].pieceId;
+                if (rankOuter >= 2 && fileOuter <= 7) squaresAndPieces.squares[outerSquareId].kingVector[(rankOuter - 1).toString() + (fileOuter + 1).toString()] = squaresAndPieces.squares[(rankOuter - 1).toString() + (fileOuter + 1).toString()].pieceId;
+            }
+        }
+    };
+
+    function setFrontVector(squareId, rankStart, file) {
+
+        for (var rank = rankStart + 1; rank <= 8; rank++) {
+            squaresAndPieces.squares[squareId].frontVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
+        }
+    }
+
+    var getVal = function () {
         return squaresAndPieces;
     };
 
-    function getSquareIds() {
+    var getSquareIds = function (squareId) {
 
         return Object.keys(squaresAndPieces.squares);
     };
 
-    function getColor(squareId) {
+    var getColor = function (squareId) {
         return squaresAndPieces.squares[squareId].color;
     };
 
-    function getPieceId (squareId) {
+    var getPieceId = function (squareId) {
         return squaresAndPieces.squares[squareId].pieceId;
     };
 
-    function setPieceId (squareId, value) {
+    var setPieceId = function (squareId, value) {
         squaresAndPieces.squares[squareId].pieceId = value;
     };
 
-    function getPieceType (squareId) {
+    var getPieceType = function (squareId) {
         if (squaresAndPieces.squares[squareId].pieceId === '') return '';
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type;
     };
 
-    function setPieceType (squareId, value) {
+    var setPieceType = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '' &&
             (value === '' ||
             value === common.pieces.king ||
@@ -101,53 +224,53 @@
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].type = value;
     };
 
-    function getPieceColor (squareId) {
+    var getPieceColor = function (squareId) {
         if (squaresAndPieces.squares[squareId].pieceId === '') return '';
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color;
     };
 
-    function getPieceHasMoved (squareId) {
+    var getPieceHasMoved = function (squareId) {
         if (squaresAndPieces.squares[squareId].pieceId === false) return false;
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].hasMoved;
     };
 
-    function setPieceHasMoved (squareId, value) {
+    var setPieceHasMoved = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '')
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].hasMoved = value;
     };
 
-    function setPieceCaptured (squareId, value) {
+    var setPieceCaptured = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '')
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].captured = value;
     };
 
-    function getPieceEnPassantEligible(squareId) {
+    var getPieceEnPassantEligible = function (squareId) {
         if (squaresAndPieces.squares[squareId].pieceId === '') return false;
         return squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].enPassantEligible;
     };
 
-    function setPieceEnPassantEligible (squareId, value) {
+    var setPieceEnPassantEligible = function (squareId, value) {
         if (squaresAndPieces.squares[squareId].pieceId !== '')
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].enPassantEligible = value;
     };
 
-    function squareStatus (squareId) {
+    var squareStatus = function (squareId) {
         return squaresAndPieces.squares[squareId].pieceId === '' ? statuses.open :
             squaresAndPieces.pieces[squaresAndPieces.squares[squareId].pieceId].color === requests.currentPlayer ?
             statuses.occupiedByPlayer : statuses.occupiedByOpponent;
     };
 
-    function squareAttackedByOpponent (squareId) {
+    var squareAttackedByOpponent = function (squareId) {
 
         return Object.keys(squaresAndPieces.squares[squareId].attackedByOpponent).length > 0;
     };
 
-    function getPossibleMoves (squareId) {
+    var getPossibleMoves = function (squareId) {
 
         return Object.keys(squaresAndPieces.squares[squareId].possibleMoves);
     };
 
-    function getPossibleMove (sourceId, targetId) {
+    var getPossibleMove = function (sourceId, targetId) {
 
         if (targetId in squaresAndPieces.squares[sourceId].possibleMoves) {
 
@@ -157,7 +280,7 @@
         }
     };
 
-    function compare(value1, value2, direction) {
+    var compare = function (value1, value2, direction) {
 
         if (direction > 0) {
 
@@ -168,7 +291,7 @@
 
     };
 
-    function capturePieceIfApplicable (sourceId, targetId) {
+    var capturePieceIfApplicable = function (sourceId, targetId) {
 
         if (getPossibleMove(sourceId, targetId) === specialMoves.none) {
 
@@ -187,7 +310,7 @@
         }
     };
 
-    function castleKing(targetId) {
+    var castleKing = function (targetId) {
 
         var whiteKingTargetId = '17';
         var whiteKingsRookTargetId = '16';
@@ -219,7 +342,7 @@
         }
     };
 
-    function castleQueen (targetId) {
+    var castleQueen = function (targetId) {
 
         var whiteKingTargetId = '13';
         var whiteQueensRookTargetId = '14';
@@ -251,7 +374,7 @@
         }
     };
 
-    function movePieceToNewSquare (sourceId, targetId) {
+    var movePieceToNewSquare = function (sourceId, targetId) {
 
         var possibleMove = getPossibleMove(sourceId, targetId);
 
@@ -290,7 +413,7 @@
         return true;
     };
 
-    function setPlayerAttacks (squareId, targetId, blocked, validPieces) {
+    var setPlayerAttacks = function (squareId, targetId, blocked, validPieces) {
 
         if (getPieceType(squareId) === common.pieces.none) return;
 
@@ -305,7 +428,7 @@
         }
     };
 
-    function setOpponentAttacks(squareId, targetId, blocked, validPieces) {
+    var setOpponentAttacks = function (squareId, targetId, blocked, validPieces) {
 
         if (getPieceType(squareId) === common.pieces.none) return;
 
@@ -320,7 +443,7 @@
         }
     };
 
-    function setAttackedByPlayer (squareId, targetId, blocked, validPieces) {
+    var setAttackedByPlayer = function (squareId, targetId, blocked, validPieces) {
 
         if (getPieceType(targetId) === common.pieces.none) return;
 
@@ -335,7 +458,7 @@
         }
     };
 
-    function setAttackedByOpponent(squareId, targetId, blocked, validPieces) {
+    var setAttackedByOpponent = function (squareId, targetId, blocked, validPieces) {
 
         if (getPieceType(targetId) === common.pieces.none) return;
 
@@ -350,7 +473,7 @@
         }
     };
 
-    function traverseStraightVectors (squareId, vectorType, keys, direction) {
+    var traverseStraightVectors = function (squareId, vectorType, keys, direction) {
 
         var otherPiece = vectorType === vectorTypes.rankFile ? common.pieces.rook : common.pieces.bishop;
 
@@ -379,7 +502,7 @@
         }
     };
 
-    function traverseKnightVector(squareId, keys) {
+    var traverseKnightVector = function (squareId, keys) {
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
@@ -392,7 +515,7 @@
         }
     };
 
-    function traversePawnVector (squareId) {
+    var traversePawnVector = function (squareId) {
 
         var rank = common.getRank(squareId);
         var file = common.getFile(squareId);
@@ -448,7 +571,7 @@
         }
     };
 
-    function traverseKingVector (squareId, keys) {
+    var traverseKingVector = function (squareId, keys) {
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
@@ -531,47 +654,7 @@
         //}
     };
 
-    function setPossibleMovesStandard(squareId) {
-
-        var key = '';
-
-        for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares[squareId].playerAttacks).length; loopIndex++) {
-
-            key = Object.keys(squaresAndPieces.squares[squareId].playerAttacks)[loopIndex];
-
-            if (getPieceColor(key) !== requests.currentPlayer) {
-                squaresAndPieces.squares[key].possibleMoves[key] = '';
-            }
-        }
-    };
-
-    function setPossibleMovesPawn(squareId) {
-
-    };
-
-    function setPossibleMoves(squareId) {
-
-        var pieceType = getPieceType(squareId);
-
-        if (pieceType !== '') {
-
-            if (pieceType !== common.pieces.pawn) {
-
-                setPossibleMovesStandard(squareId);
-            } else {
-                setPossibleMovesPawn(squareId);
-            }
-
-            if (pieceType === common.pieces.king) {
-                //en passant
-            }
-        }
-
-        // Remove moves in check
-
-    };
-
-    function setVectorProperties () {
+    var setVectorProperties = function () {
 
         var squareIds = getSquareIds();
         var loopIndex = 0;
@@ -589,188 +672,18 @@
             traverseKnightVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].knightVector));
             traversePawnVector(squareIds[loopIndex]);
             traverseKingVector(squareIds[loopIndex], Object.keys(squaresAndPieces.squares[squareIds[loopIndex]].kingVector));
-            setPossibleMoves(squareIds[loopIndex]);
-        }
-    };
-
-    function setKingSquares(squareId) {
-
-        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.whiteKing) {
-
-            if (requests.currentPlayer === common.colors.white) {
-
-                squaresAndPieces.playerKingSquare = squareId;
-            } else {
-                squaresAndPieces.opponentKingSquare = squareId;
-            }
         }
 
-        if (squaresAndPieces.squares[squareId].pieceId === common.pieceIds.blackKing) {
+        // Remove moves in check
+        for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
-            if (requests.currentPlayer === common.colors.black) {
+            if (getPossibleMoves(squareIds[loopIndex]).length > 0) {
 
-                squaresAndPieces.playerKingSquare = squareId;
-            } else {
-                squaresAndPieces.opponentKingSquare = squareId;
             }
         }
     };
 
-    function setFrontVector(squareId, startRank, file) {
-
-        for (var rank = startRank + 1; rank <= 8; rank++) {
-            squaresAndPieces.squares[squareId].frontVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-        }
-    };
-
-    function setRearVector(squareId, startRank, file) {
-
-        for (var rank = startRank - 1; rank >= 1; rank--) {
-            squaresAndPieces.squares[squareId].rearVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-        }
-    };
-
-    function setLeftVector (squareId, rank, startFile) {
-
-        for (var file = startFile - 1; file >= 1; file--) {
-            squaresAndPieces.squares[squareId].leftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-        }
-    };
-
-    function setRightVector (squareId, rank, startFile) {
-
-        for (var file = startFile + 1; file <= 8; file++) {
-            squaresAndPieces.squares[squareId].rightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-        }
-    };
-
-    function setFrontLeftVector (squareId, startRank, startFile) {
-
-        var rank = startRank + 1, file = startFile - 1;
-        while (rank <= 8 && file >= 1) {
-
-            squaresAndPieces.squares[squareId].frontLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-            rank++, file--;
-        }
-    };
-
-    function setFrontRightVector (squareId, startRank, startFile) {
-
-        var rank = startRank + 1, file = startFile + 1;
-        while (rank <= 8 && file <= 8) {
-
-            squaresAndPieces.squares[squareId].frontRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-            rank++, file++;
-        }
-    };
-
-    function setRearLeftVector (squareId, startRank, startFile) {
-
-        var rank = startRank - 1, file = startFile - 1;
-        while (rank >= 1 && file >= 1) {
-
-            squaresAndPieces.squares[squareId].rearLeftVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-            rank--, file--;
-        }
-    };
-
-    function setRearRightVector (squareId, startRank, startFile) {
-
-        var rank = startRank - 1, file = startFile + 1;
-        while (rank >= 1 && file <= 8) {
-
-            squaresAndPieces.squares[squareId].rearRightVector[rank.toString() + file.toString()] = squaresAndPieces.squares[rank.toString() + file.toString()].pieceId;
-            rank--, file++;
-        }
-    };
-
-    function setKnightVector (squareId, rank, file) {
-
-        if (rank + 1 <= 8) {
-
-            if (file - 2 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank + 1).toString() + (file - 2).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file - 2).toString()].pieceId;
-            if (file + 2 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank + 1).toString() + (file + 2).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file + 2).toString()].pieceId;
-
-            if (rank + 2 <= 8) {
-
-                if (file - 1 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank + 2).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank + 2).toString() + (file - 1).toString()].pieceId;
-                if (file + 1 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank + 2).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank + 2).toString() + (file + 1).toString()].pieceId;
-            }
-        }
-
-        if (rank - 1 >= 1) {
-
-            if (file - 2 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank - 1).toString() + (file - 2).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file - 2).toString()].pieceId;
-            if (file + 2 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank - 1).toString() + (file + 2).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file + 2).toString()].pieceId;
-
-            if (rank - 2 >= 1) {
-
-                if (file - 1 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank - 2).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank - 2).toString() + (file - 1).toString()].pieceId;
-                if (file + 1 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank - 2).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank - 2).toString() + (file + 1).toString()].pieceId;
-            }
-        }
-
-        if (rank + 1 <= 8) {
-
-            if (file - 2 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank + 1).toString() + (file - 2).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file - 2).toString()].pieceId;
-            if (file + 2 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank + 1).toString() + (file + 2).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file + 2).toString()].pieceId;
-
-            if (rank + 2 <= 8) {
-
-                if (file - 1 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank + 2).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank + 2).toString() + (file - 1).toString()].pieceId;
-                if (file + 1 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank + 2).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank + 2).toString() + (file + 1).toString()].pieceId;
-            }
-        }
-
-        if (rank - 1 >= 1) {
-
-            if (file - 2 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank - 1).toString() + (file - 2).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file - 2).toString()].pieceId;
-            if (file + 2 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank - 1).toString() + (file + 2).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file + 2).toString()].pieceId;
-
-            if (rank - 2 >= 1) {
-
-                if (file - 1 >= 1) squaresAndPieces.squares[squareId].knightVector[(rank - 2).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank - 2).toString() + (file - 1).toString()].pieceId;
-                if (file + 1 <= 8) squaresAndPieces.squares[squareId].knightVector[(rank - 2).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank - 2).toString() + (file + 1).toString()].pieceId;
-            }
-        }
-    };
-
-    function setKingVector (squareId, rank, file) {
-
-        if (rank <= 7 && file >= 2) squaresAndPieces.squares[squareId].kingVector[(rank + 1).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file - 1).toString()].pieceId;
-        if (rank <= 7) squaresAndPieces.squares[squareId].kingVector[(rank + 1).toString() + file.toString()] = squaresAndPieces.squares[(rank + 1).toString() + file.toString()].pieceId;
-        if (rank <= 7 && file <= 7) squaresAndPieces.squares[squareId].kingVector[(rank + 1).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank + 1).toString() + (file + 1).toString()].pieceId;
-
-        if (file >= 2) squaresAndPieces.squares[squareId].kingVector[rank.toString() + (file - 1).toString()] = squaresAndPieces.squares[rank.toString() + (file - 1).toString()].pieceId;
-        if (file <= 7) squaresAndPieces.squares[squareId].kingVector[rank.toString() + (file + 1).toString()] = squaresAndPieces.squares[rank.toString() + (file + 1).toString()].pieceId;
-
-        if (rank >= 2 && file >= 2) squaresAndPieces.squares[squareId].kingVector[(rank - 1).toString() + (file - 1).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file - 1).toString()].pieceId;
-        if (rank >= 2) squaresAndPieces.squares[squareId].kingVector[(rank - 1).toString() + file.toString()] = squaresAndPieces.squares[(rank - 1).toString() + file.toString()].pieceId;
-        if (rank >= 2 && file <= 7) squaresAndPieces.squares[squareId].kingVector[(rank - 1).toString() + (file + 1).toString()] = squaresAndPieces.squares[(rank - 1).toString() + (file + 1).toString()].pieceId;
-    };
-
-    function loadVectors () {
-
-        for (var rank = 1; rank <= 8; rank++) {
-            for (var file = 1; file <= 8; file++) {
-
-                setKingSquares(rank.toString() + file.toString());
-                setFrontVector(rank.toString() + file.toString(), rank, file);
-                setRearVector(rank.toString() + file.toString(), rank, file);
-                setLeftVector(rank.toString() + file.toString(), rank, file);
-                setRightVector(rank.toString() + file.toString(), rank, file);
-                setFrontLeftVector(rank.toString() + file.toString(), rank, file);
-                setFrontRightVector(rank.toString() + file.toString(), rank, file);
-                setRearLeftVector(rank.toString() + file.toString(), rank, file);
-                setRearRightVector(rank.toString() + file.toString(), rank, file);
-                setKnightVector(rank.toString() + file.toString(), rank, file);
-                setKingVector(rank.toString() + file.toString(), rank, file);
-            }
-        }
-    };
-
-    function setVal (value) {
-
+    var setVal = function (value) {
         squaresAndPieces = value;
 
         if (squaresAndPieces && Object.keys(squaresAndPieces).length > 0) {
@@ -779,7 +692,7 @@
         }
     };
 
-    function setEnPassantIneligibleForPlayer () {
+    var setEnPassantIneligibleForPlayer = function () {
 
         var key = '';
         for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.pieces).length; loopIndex++) {
@@ -791,7 +704,7 @@
         }
     };
 
-    function getCapturedPieces () {
+    var getCapturedPieces = function () {
 
         var key = '';
         var returnPieces = {};
@@ -807,7 +720,7 @@
         return returnPieces;
     };
 
-    function changeSquareModelToOtherPlayer () {
+    var changeSquareModelToOtherPlayer = function () {
 
         var newSquares = {};
 
@@ -849,7 +762,7 @@
         setVectorProperties();
     };
 
-    function showTestData (squareId) {
+    var showTestData = function (squareId) {
 
         if (!requests.showTestData) return;
 
@@ -985,7 +898,7 @@
 
         getCapturedPieces: function () { return getCapturedPieces(); },
 
-        possibleMoves: function (squareId) { return getPossibleMoves(squareId); },
+        getPossibleMoves: function (squareId) { return getPossibleMoves(squareId); },
 
         setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 

@@ -1,9 +1,8 @@
 ﻿var common = {
 
-    squares: {},
+    squaresObj: {},
     inCheck: false,
     stopWatch: {},
-
     colors: {
         white: 'white',
         black: 'black'
