@@ -18,6 +18,7 @@
         <br>
         <span id="timer" style="font-size: 56px;">0:00</span>
     </div>
+    <br />
     <div id="captureRowTop" style="height: 40px;">
         <div id="capturePieceTop1"></div>
         <div id="capturePieceTop2"></div>
@@ -40,123 +41,131 @@
     <div id="divShowMessage" style="height: 20px; text-align: center; align-content: center;"><span id="showMessage">&nbsp;&nbsp;</span></div>
     <p/>
     <div>
-        <div id="mainBoard" class="gameBoard" style="float: left;">
-            <div id="R8">
-                <div id="81"></div>
-                <div id="82"></div>
-                <div id="83"></div>
-                <div id="84"></div>
-                <div id="85"></div>
-                <div id="86"></div>
-                <div id="87"></div>
-                <div id="88"></div>
-                <br>
-            </div>
-            <div id="R7">
-                <div id="71"></div>
-                <div id="72"></div>
-                <div id="73"></div>
-                <div id="74"></div>
-                <div id="75"></div>
-                <div id="76"></div>
-                <div id="77"></div>
-                <div id="78"></div>
-                <br>
-            </div>
-            <div id="R6">
-                <div id="61"></div>
-                <div id="62"></div>
-                <div id="63"></div>
-                <div id="64"></div>
-                <div id="65"></div>
-                <div id="66"></div>
-                <div id="67"></div>
-                <div id="68"></div>
-                <br>
-            </div>
-            <div id="R5">
-                <div id="51"></div>
-                <div id="52"></div>
-                <div id="53"></div>
-                <div id="54"></div>
-                <div id="55"></div>
-                <div id="56"></div>
-                <div id="57"></div>
-                <div id="58"></div>
-                <br>
-            </div>
-            <div id="R4">
-                <div id="41"></div>
-                <div id="42"></div>
-                <div id="43"></div>
-                <div id="44"></div>
-                <div id="45"></div>
-                <div id="46"></div>
-                <div id="47"></div>
-                <div id="48"></div>
-                <br>
-            </div>
-            <div id="R3">
-                <div id="31"></div>
-                <div id="32"></div>
-                <div id="33"></div>
-                <div id="34"></div>
-                <div id="35"></div>
-                <div id="36"></div>
-                <div id="37"></div>
-                <div id="38"></div>
-                <br>
-            </div>
-            <div id="R2">
-                <div id="21"></div>
-                <div id="22"></div>
-                <div id="23"></div>
-                <div id="24"></div>
-                <div id="25"></div>
-                <div id="26"></div>
-                <div id="27"></div>
-                <div id="28"></div>
-                <br>
-            </div>
-            <div id="R1">
-                <div id="11"></div>
-                <div id="12"></div>
-                <div id="13"></div>
-                <div id="14"></div>
-                <div id="15"></div>
-                <div id="16"></div>
-                <div id="17"></div>
-                <div id="18"></div>
-                <br>
-            </div>
-        </div>
-        <div id="testData" style="float: left; margin-left: 20px;">
-            <div id="frontVector"><span id="spanfrontVector"></span></div><br />
-            <div id="rearVector"><span id="spanrearVector"></span></div><br />
-            <div id="leftVector"><span id="spanleftVector"></span></div><br />
-            <div id="rightVector"><span id="spanrightVector"></span></div><br />
-            <div id="frontLeftVector"><span id="spanfrontLeftVector"></span></div><br />
-            <div id="frontRightVector"><span id="spanfrontRightVector"></span></div><br />
-            <div id="rearLeftVector"><span id="spanrearLeftVector"></span></div><br />
-            <div id="rearRightVector"><span id="spanrearRightVector"></span></div><br />
-            <div id="knightVector"><span id="spanknightVector"></span></div><br />
-            <div id="kingVector"><span id="spankingVector"></span></div><br />
-            <div id="possibleMoves"><span id="spanpossibleMoves"></span></div><br />
-            <div id="squaresAttackedBySquare"><span id="spansquaresAttackedBySquare"></span></div><br />
-            <div id="squaresAttackedBySquareButBlocked"><span id="spansquaresAttackedBySquareButBlocked"></span></div><br />
-            <div id="playerAttacks"><span id="spanplayerAttacks"></span></div><br />
-            <div id="playerAttacksButBlocked"><span id="spanplayerAttacksButBlocked"></span></div><br />
-            <div id="opponentAttacks"><span id="spanopponentAttacks"></span></div><br />
-            <div id="opponentAttacksButBlocked"><span id="spanopponentAttacksButBlocked"></span></div><br />
-            <div id="attackedByPlayer"><span id="spanattackedByPlayer"></span></div><br />
-            <div id="attackedByPlayerButBlocked"><span id="spanattackedByPlayerButBlocked"></span></div><br />
-            <div id="attackedByOpponent"><span id="spanattackedByOpponent"></span></div><br />
-            <div id="attackedByOpponentButBlocked"><span id="spanattackedByOpponentButBlocked"></span></div><br />
-            <div id="playerKingSquare"><span id="spanplayerKingSquare"></span></div><br />
-            <div id="opponentKingSquare"><span id="spanopponentKingSquare"></span></div><br />
-        </div>
+        <table>
+            <tr>
+                <td style="vertical-align: top;">
+                    <div id="mainBoard" class="gameBoard">
+                        <div id="R8">
+                            <div id="81"></div>
+                            <div id="82"></div>
+                            <div id="83"></div>
+                            <div id="84"></div>
+                            <div id="85"></div>
+                            <div id="86"></div>
+                            <div id="87"></div>
+                            <div id="88"></div>
+                            <br>
+                        </div>
+                        <div id="R7">
+                            <div id="71"></div>
+                            <div id="72"></div>
+                            <div id="73"></div>
+                            <div id="74"></div>
+                            <div id="75"></div>
+                            <div id="76"></div>
+                            <div id="77"></div>
+                            <div id="78"></div>
+                            <br>
+                        </div>
+                        <div id="R6">
+                            <div id="61"></div>
+                            <div id="62"></div>
+                            <div id="63"></div>
+                            <div id="64"></div>
+                            <div id="65"></div>
+                            <div id="66"></div>
+                            <div id="67"></div>
+                            <div id="68"></div>
+                            <br>
+                        </div>
+                        <div id="R5">
+                            <div id="51"></div>
+                            <div id="52"></div>
+                            <div id="53"></div>
+                            <div id="54"></div>
+                            <div id="55"></div>
+                            <div id="56"></div>
+                            <div id="57"></div>
+                            <div id="58"></div>
+                            <br>
+                        </div>
+                        <div id="R4">
+                            <div id="41"></div>
+                            <div id="42"></div>
+                            <div id="43"></div>
+                            <div id="44"></div>
+                            <div id="45"></div>
+                            <div id="46"></div>
+                            <div id="47"></div>
+                            <div id="48"></div>
+                            <br>
+                        </div>
+                        <div id="R3">
+                            <div id="31"></div>
+                            <div id="32"></div>
+                            <div id="33"></div>
+                            <div id="34"></div>
+                            <div id="35"></div>
+                            <div id="36"></div>
+                            <div id="37"></div>
+                            <div id="38"></div>
+                            <br>
+                        </div>
+                        <div id="R2">
+                            <div id="21"></div>
+                            <div id="22"></div>
+                            <div id="23"></div>
+                            <div id="24"></div>
+                            <div id="25"></div>
+                            <div id="26"></div>
+                            <div id="27"></div>
+                            <div id="28"></div>
+                            <br>
+                        </div>
+                        <div id="R1">
+                            <div id="11"></div>
+                            <div id="12"></div>
+                            <div id="13"></div>
+                            <div id="14"></div>
+                            <div id="15"></div>
+                            <div id="16"></div>
+                            <div id="17"></div>
+                            <div id="18"></div>
+                            <br>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div id="testData" style="float: left; margin-left: 20px;">
+                        <div id="frontVector"><span id="spanfrontVector"></span></div><br/>
+                        <div id="rearVector"><span id="spanrearVector"></span></div><br/>
+                        <div id="leftVector"><span id="spanleftVector"></span></div><br/>
+                        <div id="rightVector"><span id="spanrightVector"></span></div><br/>
+                        <div id="frontLeftVector"><span id="spanfrontLeftVector"></span></div><br/>
+                        <div id="frontRightVector"><span id="spanfrontRightVector"></span></div><br/>
+                        <div id="rearLeftVector"><span id="spanrearLeftVector"></span></div><br/>
+                        <div id="rearRightVector"><span id="spanrearRightVector"></span></div><br/>
+                        <div id="knightVector"><span id="spanknightVector"></span></div><br/>
+                        <div id="kingVector"><span id="spankingVector"></span></div><br/>
+                        <div id="possibleMoves"><span id="spanpossibleMoves"></span></div><br/>
+                        <div id="squaresAttackedBySquare"><span id="spansquaresAttackedBySquare"></span></div><br/>
+                        <div id="squaresAttackedBySquareButBlocked"><span id="spansquaresAttackedBySquareButBlocked"></span></div><br/>
+                        <div id="playerAttacks"><span id="spanplayerAttacks"></span></div><br/>
+                        <div id="playerAttacksButBlocked"><span id="spanplayerAttacksButBlocked"></span></div><br/>
+                        <div id="opponentAttacks"><span id="spanopponentAttacks"></span></div><br/>
+                        <div id="opponentAttacksButBlocked"><span id="spanopponentAttacksButBlocked"></span></div><br/>
+                        <div id="attackedByPlayer"><span id="spanattackedByPlayer"></span></div><br/>
+                        <div id="attackedByPlayerButBlocked"><span id="spanattackedByPlayerButBlocked"></span></div><br/>
+                        <div id="attackedByOpponent"><span id="spanattackedByOpponent"></span></div><br/>
+                        <div id="attackedByOpponentButBlocked"><span id="spanattackedByOpponentButBlocked"></span></div><br/>
+                        <div id="playerKingSquare"><span id="spanplayerKingSquare"></span></div><br/>
+                        <div id="opponentKingSquare"><span id="spanopponentKingSquare"></span></div><br/>
+                    </div>
+            </td>
+            </tr>
+        </table>
     </div>
-    <br/>
+    <br />
     <div id="captureRowBottom">
         <div id="capturePieceBottom1"></div>
         <div id="capturePieceBottom2"></div>

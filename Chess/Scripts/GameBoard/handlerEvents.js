@@ -121,7 +121,7 @@ var boardEvents = {
         requests.currentPlayer = (requests.playerMoveNumber % 2) === 0 ? common.colors.white : common.colors.black;
         requests.currentOpponent = (requests.playerMoveNumber % 2) === 0 ? common.colors.black : common.colors.white;
 
-        changeSquareModelToOtherPlayer();
+        common.squaresObj.changeSquareModelToOtherPlayer();
 
 
         // ToDo
@@ -144,39 +144,41 @@ var boardEvents = {
         board.paintBoardFromModel();
         common.stopWatch.start();
 
-        setEnPassantIneligibleForPlayer();
+        common.squaresObj.setEnPassantIneligibleForPlayer();
     },
      
     checkForCheckMate: function () {
 
-        var currentSquareModel = JSON.parse(JSON.stringify(model()));
-        var squareId = '';
+        // todo
 
-        for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
+        //var currentSquareModel = JSON.parse(JSON.stringify(model()));
+        //var squareId = '';
 
-            for (var middleLoopIndex = 1; middleLoopIndex <= 8; middleLoopIndex++) {
+        //for (var outerLoopIndex = 1; outerLoopIndex <=8; outerLoopIndex++) {
 
-                squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
+        //    for (var middleLoopIndex = 1; middleLoopIndex <= 8; middleLoopIndex++) {
 
-                if (common.squaresObj.squareStatus(squareId) === common.squaresObj.statuses.occupiedByPlayer) {
+        //        squareId = outerLoopIndex.toString() + middleLoopIndex.toString();
 
-                    common.squaresObj.possibleMoves.squareId = squareId;
-                    common.squaresObj.possibleMoves.loadPossibleMoves();
+        //        if (common.squaresObj.squareStatus(squareId) === common.squaresObj.statuses.occupiedByPlayer) {
 
-                    for (var innerLoopIndex = 0; innerLoopIndex < common.squaresObj.possibleMoves.getKeys().length; innerLoopIndex++) {
+        //            common.squaresObj.possibleMoves.squareId = squareId;
+        //            common.squaresObj.possibleMoves.loadPossibleMoves();
 
-                        this.movePieceToNewSquare(squareId, common.squaresObj.possibleMoves.getValue(innerLoopIndex));
+        //            for (var innerLoopIndex = 0; innerLoopIndex < common.squaresObj.possibleMoves.getKeys().length; innerLoopIndex++) {
 
-                        if (!getPossibleMoves.checkForPlayerInCheck()) {
+        //                this.movePieceToNewSquare(squareId, common.squaresObj.possibleMoves.getValue(innerLoopIndex));
 
-                            model(JSON.parse(JSON.stringify(currentSquareModel)));
-                            return false;
-                        }
-                        model(JSON.parse(JSON.stringify(currentSquareModel)));
-                    }
-                }
-            }
-        }
+        //                if (!getPossibleMoves.checkForPlayerInCheck()) {
+
+        //                    model(JSON.parse(JSON.stringify(currentSquareModel)));
+        //                    return false;
+        //                }
+        //                model(JSON.parse(JSON.stringify(currentSquareModel)));
+        //            }
+        //        }
+        //    }
+        //}
 
         return true;
     }

@@ -80,7 +80,10 @@
                     this.setDraggable(squareId);
             }
         }
+        this.showCapturedPieces();
+    },
 
+    showCapturedPieces: function() {
 
         $('[id^=capturePiece]').removeClass();
         var counterTop = 0;
@@ -90,14 +93,14 @@
 
         for (var loopIndex = 0; loopIndex < Object.keys(common.squaresObj.getCapturedPieces()).length; loopIndex++) {
 
-            key = Object.keys(getCapturedPieces())[loopIndex];
-            color = getCapturedPieces()[key].color;
-                
+            key = Object.keys(common.squaresObj.getCapturedPieces())[loopIndex];
+            color = common.squaresObj.getCapturedPieces()[key].color;
+
             if (color === requests.currentPlayer) // The captured piece should go on the top because the color playing is at the bottom.
 
-                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + getCapturedPieces()[key].type);
+                $('#capturePieceTop' + (++counterTop).toString()).addClass(color + '_' + common.squaresObj.getCapturedPieces()[key].type);
             else
-                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + getCapturedPieces()[key].type);
+                $('#capturePieceBottom' + (++counterBottom).toString()).addClass(color + '_' + common.squaresObj.getCapturedPieces()[key].type);
         }
     },
 
@@ -200,8 +203,8 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            $('#' + keys[loopIndex]).removeClass(color(keys[loopIndex]) + '_Square');
-            $('#' + keys[loopIndex]).addClass(color(keys[loopIndex]) + '_PossibleMove');
+            $('#' + keys[loopIndex]).removeClass(common.squaresObj.color(keys[loopIndex]) + '_Square');
+            $('#' + keys[loopIndex]).addClass(common.squaresObj.color(keys[loopIndex]) + '_PossibleMove');
         }
     },
 
@@ -211,8 +214,8 @@
 
         for (var loopIndex = 0; loopIndex < keys.length; loopIndex++) {
 
-            $('#' + keys[loopIndex]).removeClass(color(keys[loopIndex]) + '_PossibleMove');
-            $('#' + keys[loopIndex]).addClass(color(keys[loopIndex]) + '_Square');
+            $('#' + keys[loopIndex]).removeClass(common.squaresObj.color(keys[loopIndex]) + '_PossibleMove');
+            $('#' + keys[loopIndex]).addClass(common.squaresObj.color(keys[loopIndex]) + '_Square');
         }
     }
 }

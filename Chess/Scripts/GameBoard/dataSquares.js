@@ -533,20 +533,76 @@
 
     function setPossibleMovesStandard(squareId) {
 
-        var key = '';
+        var key;
 
         for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares[squareId].playerAttacks).length; loopIndex++) {
 
             key = Object.keys(squaresAndPieces.squares[squareId].playerAttacks)[loopIndex];
 
             if (getPieceColor(key) !== requests.currentPlayer) {
-                squaresAndPieces.squares[key].possibleMoves[key] = '';
+                squaresAndPieces.squares[squareId].possibleMoves[key] = '';
             }
         }
     };
 
-    function setPossibleMovesPawn(squareId) {
+    function setForwardPossibleMovesPawn(squareId) {
 
+        var key;
+
+        for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.squares[squareId].playerAttacks).length; loopIndex++) {
+
+            key = Object.keys(squaresAndPieces.squares[squareId].playerAttacks)[loopIndex];
+
+            if (getPieceColor(key) === requests.currentOpponent) {
+                squaresAndPieces.squares[squareId].possibleMoves[key] = '';
+            }
+        }
+
+        var rank = common.getRank(squareId);
+        var file = common.getFile(squareId);
+        var targetSquareId;
+
+        if (rank <= 7) {
+
+            targetSquareId = (rank + 1).toString() + file.toString();
+
+            if (squaresAndPieces.squares[targetSquareId].pieceId === '') {
+
+                squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+
+                targetSquareId = (rank + 2).toString() + file.toString();
+
+                if (rank === 2 && squaresAndPieces.squares[targetSquareId].pieceId === '') {
+
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                }
+            }
+        }
+
+        if (rank === 5) {
+        
+            if (file <= 7) {
+                
+                targetSquareId = rank.toString() + (file + 1).toString();
+
+                if (getPieceEnPassantEligible(targetSquareId)) {
+
+                    targetSquareId = (rank + 1).toString() + (file + 1).toString();
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                }
+            }
+
+            if (file >= 2) {
+
+                targetSquareId = rank.toString() + (file - 1).toString();
+
+                if (getPieceEnPassantEligible(targetSquareId)) {
+
+                    targetSquareId = (rank + 1).toString() + (file - 1).toString();
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                }
+            }
+        }
     };
 
     function setPossibleMoves(squareId) {
@@ -555,26 +611,26 @@
 
         if (pieceType !== '') {
 
+
             if (pieceType !== common.pieces.pawn) {
 
                 setPossibleMovesStandard(squareId);
             } else {
-                setPossibleMovesPawn(squareId);
+                setForwardPossibleMovesPawn(squareId);
             }
 
             if (pieceType === common.pieces.king) {
-                //en passant
+                // todo setPossibleMovesCastle
             }
         }
 
-        // Remove moves in check
-
+        // todo Remove moves in check
     };
 
     function setVectorProperties () {
 
         var squareIds = getSquareIds();
-        var loopIndex = 0;
+        var loopIndex;
 
         for (loopIndex = 0; loopIndex < squareIds.length; loopIndex++) {
 
@@ -781,7 +837,7 @@
 
     function setEnPassantIneligibleForPlayer () {
 
-        var key = '';
+        var key;
         for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.pieces).length; loopIndex++) {
 
             key = Object.keys(squaresAndPieces.pieces)[loopIndex];
@@ -793,7 +849,7 @@
 
     function getCapturedPieces () {
 
-        var key = '';
+        var key;
         var returnPieces = {};
 
         for (var loopIndex = 0; loopIndex < Object.keys(squaresAndPieces.pieces).length; loopIndex++) {
@@ -805,48 +861,6 @@
         }
 
         return returnPieces;
-    };
-
-    function changeSquareModelToOtherPlayer () {
-
-        var newSquares = {};
-
-        for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
-
-            for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
-
-                newSquares[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
-                {
-                    color: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].color,
-                    pieceId: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].pieceId,
-                    frontVector: {},
-                    rearVector: {},
-                    leftVector: {},
-                    rightVector: {},
-                    frontLeftVector: {},
-                    frontRightVector: {},
-                    rearLeftVector: {},
-                    rearRightVector: {},
-                    knightVector: {},
-                    kingVector: {},
-                    possibleMoves: {},
-                    squaresAttackedBySquare: {},
-                    squaresAttackedBySquareButBlocked: {},
-                    playerAttacks: {},
-                    playerAttacksButBlocked: {},
-                    opponentAttacks: {},
-                    opponentAttacksButBlocked: {},
-                    attackedByPlayer: {},
-                    attackedByPlayerButBlocked: {},
-                    attackedByOpponent: {},
-                    attackedByOpponentButBlocked: {}
-                };
-            }
-        }
-
-        squaresAndPieces.squares = newSquares;
-        loadVectors();
-        setVectorProperties();
     };
 
     function showTestData (squareId) {
@@ -989,7 +1003,47 @@
 
         setEnPassantIneligibleForPlayer: function () { return setEnPassantIneligibleForPlayer(); },
 
-        changeSquareModelToOtherPlayer: function () { return changeSquareModelToOtherPlayer(); },
+        changeSquareModelToOtherPlayer: function() {
+
+            var newSquares = {};
+
+            for (var rankIndex = 1; rankIndex <= 8; rankIndex++) {
+
+                for (var fileIndex = 1; fileIndex <= 8; fileIndex++) {
+
+                    newSquares[(9 - rankIndex).toString() + (9 - fileIndex).toString()] =
+                    {
+                        color: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].color,
+                        pieceId: squaresAndPieces.squares[rankIndex.toString() + fileIndex.toString()].pieceId,
+                        frontVector: {},
+                        rearVector: {},
+                        leftVector: {},
+                        rightVector: {},
+                        frontLeftVector: {},
+                        frontRightVector: {},
+                        rearLeftVector: {},
+                        rearRightVector: {},
+                        knightVector: {},
+                        kingVector: {},
+                        possibleMoves: {},
+                        squaresAttackedBySquare: {},
+                        squaresAttackedBySquareButBlocked: {},
+                        playerAttacks: {},
+                        playerAttacksButBlocked: {},
+                        opponentAttacks: {},
+                        opponentAttacksButBlocked: {},
+                        attackedByPlayer: {},
+                        attackedByPlayerButBlocked: {},
+                        attackedByOpponent: {},
+                        attackedByOpponentButBlocked: {}
+                    };
+                }
+            }
+
+            squaresAndPieces.squares = newSquares;
+            loadVectors();
+            setVectorProperties();
+        },
 
         showTestData: function (squareId) { return showTestData(squareId); },
 
