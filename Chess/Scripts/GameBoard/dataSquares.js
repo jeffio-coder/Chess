@@ -62,6 +62,36 @@
         occupiedByOpponent: 'occupiedByOpponent'
     };
 
+    var castleWhite = {
+        king: '15',
+        kingsRook: '18',
+        kingsKnight: '17',
+        kingsBishop: '16',
+        queensRook: '11',
+        queensKnight: '12',
+        queensBishop: '13',
+        queen: '14',
+        kingSideKingTarget: '17',
+        queenSideKingTarget: '13',
+        kingSideRookTarget: '16',
+        queenSideRookTarget: '14'
+    };
+
+    var castleBlack = {
+        king: '14',
+        kingsRook: '11',
+        kingsKnight: '12',
+        kingsBishop: '13',
+        queensRook: '18',
+        queensKnight: '17',
+        queensBishop: '16',
+        queen: '15',
+        kingSideKingTarget: '12',
+        queenSideKingTarget: '16',
+        kingSideRookTarget: '13',
+        queenSideRookTarget: '15'
+    };
+
     function getVal() {
         return squaresAndPieces;
     };
@@ -187,68 +217,28 @@
         }
     };
 
-    function castleKing(targetId) {
+    function castleKing() {
 
-        var whiteKingTargetId = '17';
-        var whiteKingsRookTargetId = '16';
-        var whiteKingSourceId = '15';
-        var whiteKingsRookSourceId = '18';
-        var blackKingTargetId = '12';
-        var blackKingsRookTargetId = '13';
-        var blackKingSourceId = '14';
-        var blackKingsRookSourceId = '11';
+        var castlePieces = requests.currentPlayer === common.colors.white ? castleWhite : castleBlack;
 
-        if (targetId === whiteKingTargetId) {
-
-            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            setPieceId(whiteKingsRookTargetId, common.pieceIds.whiteKingsRook);
-            setPieceId(whiteKingSourceId, common.pieceIds.none);
-            setPieceId(whiteKingsRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(whiteKingTargetId, true);
-            setPieceHasMoved(whiteKingsRookTargetId, true);
-        }
-
-        if (targetId === blackKingTargetId) {
-
-            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
-            setPieceId(blackKingsRookTargetId, common.pieceIds.blackKingsRook);
-            setPieceId(blackKingSourceId, common.pieceIds.none);
-            setPieceId(blackKingsRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(blackKingTargetId, true);
-            setPieceHasMoved(blackKingsRookTargetId, true);
-        }
+        setPieceId(castlePieces.kingSideKingTarget, common.pieceIds.whiteKing);
+        setPieceId(castlePieces.kingSideRookTarget, common.pieceIds.whiteKingsRook);
+        setPieceId(castlePieces.king, common.pieceIds.none);
+        setPieceId(castlePieces.kingsRook, common.pieceIds.none);
+        setPieceHasMoved(castlePieces.kingSideKingTarget, true);
+        setPieceHasMoved(castlePieces.kingSideRookTarget, true);
     };
 
-    function castleQueen (targetId) {
+    function castleQueen() {
 
-        var whiteKingTargetId = '13';
-        var whiteQueensRookTargetId = '14';
-        var whiteKingSourceId = '15';
-        var whiteQueensRookSourceId = '11';
-        var blackKingTargetId = '16';
-        var blackQueensRookTargetId = '15';
-        var blackKingSourceId = '14';
-        var blackQueensRookSourceId = '18';
+        var castlePieces = requests.currentPlayer === common.colors.white ? castleWhite : castleBlack;
 
-        if (targetId === whiteKingTargetId) {
-
-            setPieceId(whiteKingTargetId, common.pieceIds.whiteKing);
-            setPieceId(whiteQueensRookTargetId, common.pieceIds.whiteQueensRook);
-            setPieceId(whiteKingSourceId, common.pieceIds.none);
-            setPieceId(whiteQueensRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(whiteKingTargetId, true);
-            setPieceHasMoved(whiteQueensRookTargetId, true);
-        }
-
-        if (targetId === blackKingTargetId) {
-
-            setPieceId(blackKingTargetId, common.pieceIds.blackKing);
-            setPieceId(blackQueensRookTargetId, common.pieceIds.blackQueensRook);
-            setPieceId(blackKingSourceId, common.pieceIds.none);
-            setPieceId(blackQueensRookSourceId, common.pieceIds.none);
-            setPieceHasMoved(blackKingTargetId, true);
-            setPieceHasMoved(blackQueensRookTargetId, true);
-        }
+        setPieceId(castlePieces.queenSideKingTarget, common.pieceIds.whiteKing);
+        setPieceId(castlePieces.queenSideRookTarget, common.pieceIds.whiteKingsRook);
+        setPieceId(castlePieces.king, common.pieceIds.none);
+        setPieceId(castlePieces.queensRook, common.pieceIds.none);
+        setPieceHasMoved(castlePieces.queenSideKingTarget, true);
+        setPieceHasMoved(castlePieces.queenSideRookTarget, true);
     };
 
     function movePieceToNewSquare (sourceId, targetId) {
@@ -277,14 +267,13 @@
 
         if (getPossibleMove(sourceId, targetId) === specialMoves.castleKing) {
 
-            castleKing(targetId);
-
+            castleKing();
             return true;
         }
 
         if (getPossibleMove(sourceId, targetId) === specialMoves.castleQueen) {
 
-            castleQueen(targetId);
+            castleQueen();
         }
 
         return true;
@@ -540,7 +529,7 @@
             key = Object.keys(squaresAndPieces.squares[squareId].playerAttacks)[loopIndex];
 
             if (getPieceColor(key) !== requests.currentPlayer) {
-                squaresAndPieces.squares[squareId].possibleMoves[key] = '';
+                squaresAndPieces.squares[squareId].possibleMoves[key] = specialMoves.none;
             }
         }
     };
@@ -568,13 +557,13 @@
 
             if (squaresAndPieces.squares[targetSquareId].pieceId === '') {
 
-                squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = specialMoves.none;
 
                 targetSquareId = (rank + 2).toString() + file.toString();
 
                 if (rank === 2 && squaresAndPieces.squares[targetSquareId].pieceId === '') {
 
-                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = specialMoves.none;
                 }
             }
         }
@@ -588,7 +577,7 @@
                 if (getPieceEnPassantEligible(targetSquareId)) {
 
                     targetSquareId = (rank + 1).toString() + (file + 1).toString();
-                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = specialMoves.enPassant;
                 }
             }
 
@@ -599,28 +588,53 @@
                 if (getPieceEnPassantEligible(targetSquareId)) {
 
                     targetSquareId = (rank + 1).toString() + (file - 1).toString();
-                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = '';
+                    squaresAndPieces.squares[squareId].possibleMoves[targetSquareId] = specialMoves.enPassant;
                 }
             }
         }
     };
 
+    function setCastlePossibleMoves(squareId) {
+
+        //todo check for in check
+
+        var castlePieces = getPieceColor(squareId) === common.colors.white ? castleWhite : castleBlack;
+
+        if (!getPieceHasMoved(castlePieces.kingsRook)
+            && squareStatus(castlePieces.kingsKnight) === statuses.open
+            && Object.keys(squaresAndPieces.squares[castlePieces.kingsKnight].attackedByOpponent).length === 0
+            && squareStatus(castlePieces.kingsBishop) === statuses.open
+            && Object.keys(squaresAndPieces.squares[castlePieces.kingsBishop].attackedByOpponent).length === 0) {
+
+            squaresAndPieces.squares[squareId].possibleMoves[castlePieces.kingSideKingTarget] = specialMoves.castleKing;
+        }
+
+        if (!getPieceHasMoved(castlePieces.queensRook)
+            && squareStatus(castlePieces.queensKnight) === statuses.open
+            && Object.keys(squaresAndPieces.squares[castlePieces.queensKnight].attackedByOpponent).length === 0
+            && squareStatus(castlePieces.queensBishop) === statuses.open
+            && Object.keys(squaresAndPieces.squares[castlePieces.queensBishop].attackedByOpponent).length === 0
+            && squareStatus(castlePieces.queen) === statuses.open
+            && Object.keys(squaresAndPieces.squares[castlePieces.queen].attackedByOpponent).length === 0) {
+
+            squaresAndPieces.squares[squareId].possibleMoves[castlePieces.queenSideKingTarget] = specialMoves.castleQueen;
+        }
+    };
+
     function setPossibleMoves(squareId) {
 
-        var pieceType = getPieceType(squareId);
+        if (getPieceType(squareId) !== '') {
 
-        if (pieceType !== '') {
-
-
-            if (pieceType !== common.pieces.pawn) {
+            if (getPieceType(squareId) !== common.pieces.pawn) {
 
                 setPossibleMovesStandard(squareId);
             } else {
                 setForwardPossibleMovesPawn(squareId);
             }
 
-            if (pieceType === common.pieces.king) {
-                // todo setPossibleMovesCastle
+            if (getPieceType(squareId) === common.pieces.king && !getPieceHasMoved(squareId)) {
+
+                setCastlePossibleMoves(squareId);
             }
         }
 
